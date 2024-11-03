@@ -1,3 +1,9 @@
+BioSTAR (Bioinformatics Software for Targeted Analysis and Research) is my passion project.
+It kickstarted my journey to learn how to program and transition from a Biochemistry Major to working with software.
+The library is inteded to be as simple as possible to use and also complete complex tasks effectively.
+
+I'm setting up an API for usage on this library to host it on my python website, and I decided to share and update the code on github too.
+
 How to use the BioSTAR library
 
 from BioStar.nucleic_acids import DNA, RNA, OpenReadFrame
