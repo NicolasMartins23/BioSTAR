@@ -99,6 +99,8 @@ class ClassifyNucleotideSequenceMutation:
         self.CODON_TABLE_REF: list = TABLE_DNA_CODON_TO_AMINOACID
         self.STOP_CODON_REF: list = STOP_CODON_DNA
         self.stop_codon_found: bool = False
+        self.__codon_position: int = 1
+        self.__nucleotide_absolute_position: int = 1
 
     def classify(
         self,
@@ -120,7 +122,8 @@ class ClassifyNucleotideSequenceMutation:
 
             if test_codon in self.STOP_CODON_REF:
                 nonsense_codon_map = self._mutation_nonsense(
-                    reference_codon, test_codon
+                    reference_codon, test_codon,
+                    reference_aminoacid, test_aminoacid
                     )
                 for nucleotide in nonsense_codon_map:
                     mutation_results.append(nucleotide)
@@ -129,14 +132,16 @@ class ClassifyNucleotideSequenceMutation:
 
             else:
                 missense_codon_map = self._mutation_missense(
-                    reference_codon, test_codon
+                    reference_codon, test_codon,
+                    reference_aminoacid, test_aminoacid
                     )
                 for nucleotide in missense_codon_map:
                     mutation_results.append(nucleotide)
 
         else:
             missense_codon_map = self._mutation_silent(
-                reference_codon, test_codon
+                reference_codon, test_codon,
+                reference_aminoacid, test_aminoacid
                 )
             for nucleotide in missense_codon_map:
                 mutation_results.append(nucleotide)
@@ -145,16 +150,38 @@ class ClassifyNucleotideSequenceMutation:
 
     def get_mutation_map(
             self,
-            nucleotide: str,
+            new_nucleotide: str,
+            old_nucleotide: str,
             mutation: str,
-            position: int,
+            new_codon: str,
+            old_codon: str,
+            new_aminoacid: str,
+            old_aminoacid: str,
+            codon_position: int,
+            nucleotide_absolute_position: int,
+            nucleotide_relative_position: int,
             changed_aminoacid: bool
             ) -> dict:
         nucleotide_mutation_map = {
-            "nucleotide": nucleotide,
             "mutation_type": mutation,
-            "position": position,
-            "changed_aminoacid_flag": changed_aminoacid,
+            "nucleotide_details": {
+                "new_nucleotide": new_nucleotide,
+                "old_nucleotide": old_nucleotide,
+                "nucleotide_absolute_position": nucleotide_absolute_position,
+                "nucleotide_relative_position": nucleotide_relative_position,
+
+            },
+            "codon_details": {
+                "new_codon": new_codon,
+                "old_codon": old_codon,
+                "codon_position": codon_position,
+            },
+            "aminoacid_details": {
+                "new_aminoacid": new_aminoacid,
+                "old_aminoacid": old_aminoacid,
+                "changed_aminoacid_flag": changed_aminoacid,
+            },
+            
             "stop_codon_found_flag": self.stop_codon_found
         }
 
@@ -165,67 +192,100 @@ class ClassifyNucleotideSequenceMutation:
             mutation_name: str,
             reference_codon: str,
             test_codon: str,
+            reference_aminoacid: str,
+            test_aminoacid: str,
             changed_aminoacid_flag: bool,
         ) -> list[dict]:
 
         mutation_list = []
 
+
         for i in range(CODON_SIZE):
             if test_codon[i] == reference_codon[i]:
                 mutation_list.append(
                     self.get_mutation_map(
-                        nucleotide=test_codon[i],
+                        new_nucleotide=test_codon[i],
+                        old_nucleotide=reference_codon[i],
                         mutation="no_mutation",
-                        position=i+1,
-                        changed_aminoacid=changed_aminoacid_flag
+                        nucleotide_absolute_position=self.__nucleotide_absolute_position,
+                        nucleotide_relative_position=i+1,
+                        new_codon=test_codon,
+                        old_codon=reference_codon,
+                        codon_position=self.__codon_position,
+                        changed_aminoacid=changed_aminoacid_flag,
+                        new_aminoacid=test_aminoacid,
+                        old_aminoacid=reference_aminoacid,
                     )
                 )
             else:
                 mutation_list.append(
                     self.get_mutation_map(
-                        nucleotide=test_codon[i],
+                        new_nucleotide=test_codon[i],
+                        old_nucleotide=reference_codon[i],
                         mutation=mutation_name,
-                        position=i+1,
-                        changed_aminoacid=changed_aminoacid_flag
+                        nucleotide_absolute_position=self.__nucleotide_absolute_position,
+                        nucleotide_relative_position=i+1,
+                        new_codon=test_codon,
+                        old_codon=reference_codon,
+                        codon_position=self.__codon_position,
+                        changed_aminoacid=changed_aminoacid_flag,
+                        new_aminoacid=test_aminoacid,
+                        old_aminoacid=reference_aminoacid,
                     )
                 )
+
+            self.__nucleotide_absolute_position += 1  # Updates the nucleotide counter
+        
+        self.__codon_position +=1  # Updates the nucleotide counter
         return mutation_list
 
     def _mutation_silent(
             self,
             reference_codon,
-            test_codon
+            test_codon,
+            reference_aminoacid,
+            test_aminoacid
         ) -> list[dict]:
 
         return self.mutation_per_nucleotides_in_codon(
             mutation_name="silent",
             reference_codon=reference_codon,
             test_codon=test_codon,
+            reference_aminoacid=reference_aminoacid,
+            test_aminoacid=test_aminoacid,
             changed_aminoacid_flag=True
         )
 
     def _mutation_nonsense(
             self,
             reference_codon,
-            test_codon
+            test_codon,
+            reference_aminoacid,
+            test_aminoacid
         ) -> list[dict]:
 
         return self.mutation_per_nucleotides_in_codon(
             mutation_name="nonsense",
             reference_codon=reference_codon,
             test_codon=test_codon,
+            reference_aminoacid=reference_aminoacid,
+            test_aminoacid=test_aminoacid,
             changed_aminoacid_flag=True
         )
 
     def _mutation_missense(
             self,
             reference_codon,
-            test_codon
+            test_codon,
+            reference_aminoacid,
+            test_aminoacid
         ) -> list[dict]:
 
         return self.mutation_per_nucleotides_in_codon(
             mutation_name="missense",
             reference_codon=reference_codon,
             test_codon=test_codon,
+            reference_aminoacid=reference_aminoacid,
+            test_aminoacid=test_aminoacid,
             changed_aminoacid_flag=True
         )
