@@ -1,10 +1,10 @@
 
-AMINOACIDS = "ACDEFGHIKLMNPQRSTVWY"
-AMINOACIDS_AROMATIC = "FWY"
-AMINOACIDS_NONPOLAR = "ACGILMPV"
-AMINOACIDS_POLAR = "DEHKNQRSTQ"
+AMINOACIDS: list[str] = ["A", "C", "D", "E", "F", "G", "H", "I", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "V", "W", "Y"]
+AMINOACIDS_AROMATIC: list[str] = ["F", "W", "Y"]
+AMINOACIDS_NONPOLAR: list[str] = ["A", "C", "G", "I", "L", "M", "P", "V"]
+AMINOACIDS_POLAR: list[str] = ["D", "E", "H", "K", "N", "Q", "R", "S", "T", "Q"]
 
-CODON_SIZE = int(3)
+CODON_SIZE: int = 3
 
 AMINOACID_TABLE_TO_CODON_DNA: dict = {
     '*': ['TAA', 'TGA', 'TAG'],
@@ -120,31 +120,6 @@ STOP_CODON_DNA = ["TAA", "TAG", "TGA"]
 
 START_CODON_TNA = "ATG"
 STOP_CODON_RNA = ["UAA", "UAG", "UGA"]
-
-AMINOACID_WEIGHT = {
-    "A": 89.1,
-    "R": 174.2,
-    "N": 132.1,
-    "D": 133.1,
-    "C": 121.2,
-    "E": 147.1,
-    "Q": 146.2,
-    "G": 75.1,
-    "H": 155.2,
-    "I": 131.2,
-    "L": 131.2,
-    "K": 146.2,
-    "M": 149.2,
-    "F": 165.2,
-    "P": 115.1,
-    "S": 105.1,
-    "T": 119.1,
-    "W": 204.2,
-    "Y": 181.2,
-    "V": 117.1,
-    "*": 0
-}
-
 
 AMINOACID_TABLE = {
     "A": {
