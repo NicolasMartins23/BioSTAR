@@ -62,5 +62,5 @@ class Protein:
         return aminoacid_count
 
     def get_aromacity(self) -> float:
-        aromacity: float = self.count['polar'] / self.count['total']
+        aromacity: float = self.count['aromatic'] / self.count['total']
         return round((aromacity * 100), 1)
