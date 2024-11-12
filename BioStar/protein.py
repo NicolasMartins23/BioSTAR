@@ -1,18 +1,19 @@
 from re import sub
 from BioStar.DataBiochemistry import (AMINOACIDS, AMINOACID_TABLE,
-    AMINOACIDS_AROMATIC, AMINOACIDS_NONPOLAR, AMINOACIDS_POLAR)
+    AMINOACIDS_AROMATIC, AMINOACIDS_NONPOLAR, AMINOACIDS_POLAR,
+    WATER_MASS)
 
 class Protein:
     def __init__(self, sequence: str = "") -> None:
         self.sequence: str = self._fasta_sequence(sequence)
-        self.count: dict = self._get_count()
+        self.count: dict = self._update_count()
         self.sequence_size = self.count["total"]
 
     def _fasta_sequence(self, sequence: str = "") -> str:
         fasta_sequence = sub(r'[^ACDEFGHIKLMNPQRSTVWY]', '', sequence.upper())
         return fasta_sequence
 
-    def _get_count(self) -> dict:
+    def _update_count(self) -> dict:
         count_by_aminoacid: dict = {aa: 0 for aa in AMINOACIDS}
 
         count_total: int = 0
@@ -61,6 +62,47 @@ class Protein:
 
         return aminoacid_count
 
-    def get_aromacity(self) -> float:
+    def aromacity(self) -> float:
         aromacity: float = self.count['aromatic'] / self.count['total']
         return round((aromacity * 100), 1)
+
+    def composition_ratio(self, multiply_by: int = 1) -> dict:
+        '''
+        Method which returns the ratio composition of all aminoacids.
+        By default the sum adds up to 1 but you can change the multiplier.
+        '''
+        total = self.count["total"]
+        composition_summary = {aa: round((count / total) * multiply_by, 2) for aa, count in self.count['by_aminoacid'].items()}
+        return composition_summary
+
+    def hydrophobic_index(self) -> float:
+        # Hydrophobic index of a protein
+        h_index = sum(AMINOACID_TABLE[aa]['hydrophobicity'] for aa in self.sequence)
+        return round(hydrophobicity / len(self.sequence), 2)
+
+    def molecular_weight(self) -> float:
+
+        # Sum the weight of every aminoacid present in the protein
+        molecular_weight = sum(AMINOACID_TABLE[aa]['weight'] for aa in self.sequence)
+
+        # Subtract water from the amount of peptide bonds
+        molecular_weight -= (self.count["total"] - 1) * WATER_MASS
+
+        return round(molecular_weight, 2)
+
+    def secondary_structure_propensity(self) -> dict:
+        '''
+        Function returns a dictionary of alpha_helix, beta_sheet or coil propensity
+
+        Propensity for secondary structures represents an intrinsic property of amino acid,
+        and it is used for generating new algorithms and prediction methods.
+        '''
+
+        alpha_helix_propensity = sum(AMINOACID_TABLE[aa]['alpha_helix'] for aa in self.sequence) / len(self.sequence)
+        beta_sheet_propensity = sum(AMINOACID_TABLE[aa]['beta_sheet'] for aa in self.sequence) / len(self.sequence)
+        coil_propensity = 1 - (alpha_helix_propensity + beta_sheet_propensity)  # Simplified assumption
+        return {
+            'alpha_helix': round(alpha_helix_propensity * 100, 2),
+            'beta_sheet': round(beta_sheet_propensity * 100, 2),
+            'coil': round(coil_propensity * 100, 2)
+        }
