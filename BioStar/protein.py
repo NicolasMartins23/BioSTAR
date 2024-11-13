@@ -62,11 +62,11 @@ class Protein:
 
         return aminoacid_count
 
-    def aromacity(self) -> float:
+    def aromacity(self, multiply_by: float = 1.0) -> float:
         aromacity: float = self.count['aromatic'] / self.count['total']
-        return round((aromacity * 100), 1)
+        return round((aromacity * multiply_by), 1)
 
-    def composition_ratio(self, multiply_by: int = 1) -> dict:
+    def composition_ratio(self, multiply_by: float = 1.0) -> dict:
         '''
         Method which returns the ratio composition of all aminoacids.
         By default the sum adds up to 1 but you can change the multiplier.
@@ -106,3 +106,4 @@ class Protein:
             'beta_sheet': round(beta_sheet_propensity * 100, 2),
             'coil': round(coil_propensity * 100, 2)
         }
+
