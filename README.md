@@ -1,24 +1,32 @@
-BioSTAR (Bioinformatics Software for Targeted Analysis and Research) is my passion project.
+1 - PROJECT NAME
+BioSTAR (Bioinformatics System for Targeted Analysis and Research)
+
+2 - PROJECT DESCRIPTION
 It kickstarted my journey to learn how to program and transition from a Biochemistry Major to working with software.
 The library is inteded to be as simple as possible to use and also complete complex tasks effectively.
 
-I'm setting up an API for usage on this library to host it on my python website, and I decided to share and update the code on github too.
+3 - MAIN USAGE
+The 3 main classes on this library as DNA, RNA and Protein
 
-How to use the BioSTAR library
+All of those classes will have a property named sequence, which stores the genetic/peptide sequence as string. I also added a how_to_use.txt to make things more practical
 
-from BioStar.nucleic_acids import DNA, RNA, OpenReadFrame
-from BioStar.protein import Protein
-from BioStar.tools.compare_sequence import CompareNucleotideSequence
+DNA and RNA both inherit from the NucleicAcid parent class
+get_peptide_sequence()
+    Returns a string which represents the peptide sequence of a given NucleicAcid when translated intto a protein.
+    If you wish to return a protein object instead, use the method to_protein()
 
-Easily transform DNA to RNA and to Protein
-DNA, Protein and RNA already have some built-in physical-chemical properties.
+to_protein()
+    Returns a protein object of a given NucleicAcid when translated into a protein.
+    If you wish to return a protein object instead, use the method to_protein()
 
-DNA, RNA and Protein constructors share one optional argument "sequence"
-They must be passed as the object is instantiated (recommended approach)
+When creating an instance of DNA("SEQUENCE") or RNA("SEQUENCE") you must pass the sequence when instantiating the new variable as a DNA object.
+The recommended approach is to create a string variable first then pass it as an property, although it is only a matter of preference.
 
-There is a how_to_use.py on the directory which can be helpful, too!
+This is a summary of all functionality
+DNA: peptide_sequence(), to_protein(), rna_sequence(), to_rna(), at_skew(), at_content(), gc_content(), gc_skew(), template_strand(), get_orf_map()
+RNA: peptide_sequence(), to_protein(), dna_sequence(), to_dna()
+Protein: aromacity(), composition_ratio(), hydrophobic_index(), molecular_weight(), secondary_structure_propensity()
 
 There will be more changes added latter.
-- Molecular mass and pH calculation
-- Optimize sequence for expression in model organisms
-- Identify possible signal peptide sequences
+- Protein: pI and charge at pH, identify possible signal peptide sequences
+- Nucleic Acids: Optimize sequence for expression in model organisms
