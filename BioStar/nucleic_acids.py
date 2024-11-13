@@ -14,24 +14,15 @@ class NucleicAcid():
     The DNA and RNA classes use this as a parent class.
     This class has functions that handle the logic of biological processes DNA and RNA share.
     """
-    def __init__(
-            self,
-            sequence: str,
-            codon_table: dict,
-        ) -> None:
+    def __init__(self, sequence: str, codon_table: dict) -> None:
         self.sequence = sequence
-        self.codon_table = codon_table
-        self.count = self.get_count()
         self.sequence_size = len(self.sequence)
+        self.sequence_map = self.get_sequence_map()
+        self.codon_table = codon_table
 
-
-    def get_peptide_sequence(
-            self,
-            show_stop_codon: bool = False
-        ) -> str:
+    def get_peptide_sequence(self, show_stop_codon: bool = False) -> str:
         """
-        Returns the peptide sequence string of a NucleicAcid instance.
-        The codon_table is a variable that is defined on the children class callback of the function.
+        Returns a string which represents the peptide sequence of a given NucleicAcid when translated intto a protein.
         If you wish to return a protein object instead, use the method to_protein()
         """
         peptide_sequence: str = ""
@@ -46,22 +37,23 @@ class NucleicAcid():
             return peptide_sequence[:-1]
         
     def to_protein(self) -> Protein:
+        """
+        Returns a protein object of a given NucleicAcid when translated into a protein.
+        If you wish to return a protein object instead, use the method to_protein()
+        """
         peptide_sequence = self.get_peptide_sequence()
         return Protein(peptide_sequence)
 
 
 class DNA(NucleicAcid):
     """
-    This class handles DNA specialized functions and inherits NucleicAcid functions.
+    This class handles DNA specific functions and inherits NucleicAcid functions.
     It must be initialized passing a valid nucleotide sequence as a parameter.
     """
-    def __init__(
-            self,
-            sequence: str,
-        ) -> None:
+    def __init__(self, sequence: str) -> None:
         super().__init__(sequence, TABLE_DNA_CODON_TO_AMINOACID)
 
-    def get_count(self) -> dict:
+    def get_sequence_map(self) -> dict:
         # Overrides parent function
         count: dict = {
             "A": 0,
@@ -87,49 +79,30 @@ class DNA(NucleicAcid):
         return fasta_sequence
 
 
-    def gc_content(
-            self,
-            multiply_result_by_100: bool = True,
-            decimal_digits: int = 1
-            ) -> float:
+    def gc_content(self, multiply_by: float = 1.0) -> float:
         """
-        When multiply_result_by_100 is true the result returns as 40, 60, etc.
-        Else, it will return as 0.4 0.6
+        Returns the ratio of Guanine and Cytosine content of the sequence.
         """
         gc_count: int = self.count["C"] + self.count["G"]
-        gc_content: float = (gc_count / self.sequence_size)
+        gc_content: float = (gc_count / self.sequence_size) * multiply_by
 
-        if multiply_result_by_100:            
-            return round((gc_content * 100), decimal_digits)
-        else:
-            return round((gc_content), decimal_digits)
+        return round(gc_content, 2)
 
-    def at_skew(
-            self,
-            multiply_result_by_100: bool = True,
-            decimal_digits: int = 1
-            ) -> float:
+    def at_skew(self, multiply_by: float = 1.0) -> float:
         """
-        The GC skew is positive and negative in the leading strand and in the lagging strand respectively; therefore, it is expected to see a switch in GC skew sign just at the point of DNA replication origin and terminus.
-        When multiply_result_by_100 is true the result returns as 40, 60, etc.
-        Else, it will return as 0.4 0.6
+        Returns the skew of Adenine and Thymine content of the sequence.
+        A higher value means a prevalence of Adenine.
+        A lower value means a prevalence of Cytosine.
         """
         at_skew: float = (self.count["A"] - self.count["T"]) / (self.count["A"] + self.count["T"])
 
-        if multiply_result_by_100:            
-            return round((at_skew * 100), decimal_digits)
-        else:
-            return round((at_skew), decimal_digits)
+        return round((at_skew * multiply_by), 2)
 
-    def gc_skew(
-            self,
-            multiply_result_by_100: bool = True,
-            decimal_digits: int = 1
-            ) -> float:
+    def gc_skew(self, multiply_by: float = 1.0) -> float:
         """
-        The GC skew is positive and negative in the leading strand and in the lagging strand respectively; therefore, it is expected to see a switch in GC skew sign just at the point of DNA replication origin and terminus.
-        When multiply_result_by_100 is true the result returns as 40, 60, etc.
-        Else, it will return as 0.4 0.6
+        Returns the skew of Guanine and Cytosine content of the sequence.
+        A higher value means a prevalence of Guanine.
+        A lower value means a prevalence of Cytosine.
         """
         gc_skew: float = (self.count["G"] - self.count["C"]) / (self.count["G"] + self.count["C"])
 
@@ -138,8 +111,7 @@ class DNA(NucleicAcid):
         else:
             return round((gc_skew), decimal_digits)
 
-    def template_strand(self,
-                            reverse_string: bool = True) -> str:
+    def template_strand(self, reverse_string: bool = True) -> str:
         template_strand: str = ""
         for nucleotide in self.sequence:
             if nucleotide == "A":
@@ -156,15 +128,18 @@ class DNA(NucleicAcid):
         else:
             return template_strand
 
-    def rna_string(self) -> str:
+    def rna_sequence(self) -> str:
         """
-        Returns a DNA sequence of a given RNA instance.\n
+        Returns a string which represents the corresponding RNA sequence.
         """
         rna_sequence: str = self.sequence.replace("T", "U")
         return rna_sequence
 
     def to_rna(self):
-        rna_sequence: str = self.rna_string()
+        """
+        Returns an RNA() object instance.
+        """
+        rna_sequence: str = self.rna_sequence()
         return RNA(rna_sequence)
 
     def orf_map(self, length_threshold: int = 0) -> dict:
@@ -173,13 +148,10 @@ class DNA(NucleicAcid):
 
 
 class RNA(NucleicAcid):
-    def __init__(
-            self,
-            sequence: str,
-        ) -> None:
+    def __init__(self, sequence: str) -> None:
         super().__init__(sequence, TABLE_RNA_CODON_TO_AMINOACID)
 
-    def get_count(self) -> dict:
+    def get_sequence_map(self) -> dict:
         # Overrides parent function
         count: dict = {
             "A": 0,
@@ -213,20 +185,23 @@ class RNA(NucleicAcid):
                     return trimmed_sequence
 
 
-    def dna_string(self) -> str:
+    def dna_sequence(self) -> str:
         """
-        Returns a DNA sequence of a given RNA instance.\n
+        Returns a string which represents the corresponding DNA sequence.
         """
         dna_sequence: str = self.sequence.replace("U", "T")
         return dna_sequence
 
     def to_dna(self):
+        """
+        Returns a DNA() object instance.
+        """
         dna_sequence: str = self.dna_string()
         return DNA(dna_sequence)
 
 
 class OpenReadFrame:
-    def __init__(self, sequence, length_threshold: int = 0) -> None:
+    def __init__(self, sequence: str, length_threshold: int = 0) -> None:
         """
         This class handles ORF related logic.\n
         This is not intended to be used without first creating a DNA instance.
@@ -243,18 +218,16 @@ class OpenReadFrame:
     }
 
 
-    def _get_fasta_sequence_map(self, sequence) -> list:
+    def _get_fasta_sequence_map(self, sequence: str) -> list:
         parser = FastaParserDNA()
         return parser.get_sequence_map(sequence)
 
-    def extract_data_from_fasta_map(
-            self,
+    def extract_data_from_fasta_map(self,
             sequence: str,
             label: str,
             n: int,
             frame_reference: str,
-            sequence_size: int
-            ) -> None:
+            sequence_size: int) -> None:
 
         frame_sequence: str = ""
         
@@ -288,7 +261,10 @@ class OpenReadFrame:
                     # The frame should reset after a stop codon regardless of the size
                     # Only when the stop codon is found, then  the frame string will be appeneded to the list
 
-    def find_start_codon(self, position, frame_reference, seq_size):
+    def find_start_codon(self,
+        position: int,
+        frame_reference: str,
+        seq_size: int) -> int:
         if frame_reference in ["+", "++", "+++"]:
             position += 1
             return position
@@ -296,7 +272,10 @@ class OpenReadFrame:
             position = abs(position - seq_size)
             return position
 
-    def find_stop_codon(self, position, frame_reference, seq_size):
+    def find_stop_codon(self,
+        position: int,
+        frame_reference: str,
+        seq_size: int) -> int:
         if frame_reference in ["+", "++", "+++"]:
             position += 2
             return position
@@ -352,4 +331,3 @@ class OpenReadFrame:
         map_sorted = sorted(self.orf_map, key=lambda x: len(x['sequence']), reverse=True)
         
         return map_sorted
-
