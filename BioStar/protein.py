@@ -67,7 +67,7 @@ class Protein:
         aromacity: float = self.count['aromatic'] / self.count['total']
         return round((aromacity * multiply_by), 1)
 
-    def charge_at_ph(self, pH: float) -> float:
+    def charge_at_pH(self, pH: float) -> float:
         """
         This function takes the pH as a parameter.
         Returns the floating point value of the estimated charge of a protein.
@@ -119,6 +119,30 @@ class Protein:
         composition_summary = {aa: round((count / total) * multiply_by, 2) for aa, count in self.count['by_aminoacid'].items()}
         return composition_summary
 
+    def isoelectric_point(self) -> float:
+        """
+        Returns the floating point value of the isoelectric point (pI) of the protein.
+        The pI is the pH at which the protein's net charge is zero.
+        """
+        # Set a range for pH values and a tolerance for charge
+        low_pH = 0.0
+        high_pH = 14.0
+        tolerance = 0.01  # Acceptable deviation for "zero charge"
+
+        while high_pH - low_pH > 0.01:  # Precision up to 2 decimal places
+            mid_pH = (low_pH + high_pH) / 2.0
+            net_charge = self.charge_at_pH(mid_pH)
+
+            if abs(net_charge) < tolerance:  # Net charge close enough to zero
+                return round(mid_pH, 2)
+            elif net_charge > 0:  # Protein is positively charged
+                low_pH = mid_pH
+            else:  # Protein is negatively charged
+                high_pH = mid_pH
+
+        # Return the midpoint as the best estimate of the pI
+        return round((low_pH + high_pH) / 2.0, 2)
+    
     def hydrophobic_index(self) -> float:
         '''
         Hydrophic index calculated by the sum of the hydrophobicity
