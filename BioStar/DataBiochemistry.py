@@ -1,10 +1,12 @@
+CODON_SIZE: int = 3
+WATER_MASS: float = 18.01528
+N_TERM_PKA: float = 7.7
+C_TERM_PKA: float = 3.5
 
 AMINOACIDS: list[str] = ["A", "C", "D", "E", "F", "G", "H", "I", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "V", "W", "Y"]
 AMINOACIDS_AROMATIC: list[str] = ["F", "W", "Y"]
 AMINOACIDS_NONPOLAR: list[str] = ["A", "C", "G", "I", "L", "M", "P", "V"]
 AMINOACIDS_POLAR: list[str] = ["D", "E", "H", "K", "N", "Q", "R", "S", "T", "Q"]
-
-CODON_SIZE: int = 3
 
 AMINOACID_TABLE_TO_CODON_DNA: dict = {
     '*': ['TAA', 'TGA', 'TAG'],
