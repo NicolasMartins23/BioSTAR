@@ -1,7 +1,8 @@
 from re import sub
 from BioStar.DataBiochemistry import (AMINOACIDS, AMINOACID_TABLE,
-    AMINOACIDS_AROMATIC, AMINOACIDS_NONPOLAR, AMINOACIDS_POLAR,
-    WATER_MASS)
+    AMINOACIDS_AROMATIC, AMINOACIDS_NONPOLAR,
+    AMINOACIDS_POLAR, AMINOACIDS_POSITIVE, AMINOACIDS_NEGATIVE,
+    C_TERM_PKA, N_TERM_PKA, WATER_MASS)
 
 class Protein:
     def __init__(self, sequence: str = "") -> None:
@@ -66,6 +67,49 @@ class Protein:
         aromacity: float = self.count['aromatic'] / self.count['total']
         return round((aromacity * multiply_by), 1)
 
+    def charge_at_ph(self, pH: float) -> float:
+        """
+        This function takes the pH as a parameter.
+        Returns the floating point value of the estimated charge of a protein.
+        """
+        normalized_pH: float = round(pH, 3)
+        positive_charge: float = 0.0
+        negative_charge: float = 0.0
+
+        # Charged residues and their pKa values
+        positive_residues = AMINOACIDS_POSITIVE # Lys, Arg, His
+        negative_residues = AMINOACIDS_NEGATIVE  # Asp, Glu, Cys, Tyr
+
+        # Positive residues
+        for aa in positive_residues:
+            if aa in self.count['by_aminoacid']:
+                count = self.count['by_aminoacid'][aa]
+                pKa = AMINOACID_TABLE[aa]['pKr']
+                if pKa is not None:  # Ensure pKa is defined
+                    partial_charge = 1.0 / (1.0 + 10 ** (normalized_pH - pKa))
+                    positive_charge += count * partial_charge
+
+        # Negative residues
+        for aa in negative_residues:
+            if aa in self.count['by_aminoacid']:
+                count = self.count['by_aminoacid'][aa]
+                pKa = AMINOACID_TABLE[aa]['pKr']
+                if pKa is not None:  # Ensure pKa is defined
+                    partial_charge = 1.0 / (1.0 + 10 ** (pKa - normalized_pH))
+                    negative_charge += count * partial_charge
+
+        # N-terminal contribution
+        partial_charge = 1.0 / (1.0 + 10 ** (normalized_pH - N_TERM_PKA))
+        positive_charge += partial_charge
+
+        # C-terminal contribution
+        partial_charge = 1.0 / (1.0 + 10 ** (C_TERM_PKA - normalized_pH))
+        negative_charge += partial_charge
+
+        # Net charge
+        return round(positive_charge - negative_charge, 2)
+
+
     def composition_ratio(self, multiply_by: float = 1.0) -> dict:
         '''
         Method which returns the ratio composition of all aminoacids.
@@ -76,13 +120,18 @@ class Protein:
         return composition_summary
 
     def hydrophobic_index(self) -> float:
-        # Hydrophobic index of a protein
+        '''
+        Hydrophic index calculated by the sum of the hydrophobicity
+        of every aminoacid present in the protein
+        '''
         h_index = sum(AMINOACID_TABLE[aa]['hydrophobicity'] for aa in self.sequence)
         return round(hydrophobicity / len(self.sequence), 2)
 
     def molecular_weight(self) -> float:
-
-        # Sum the weight of every aminoacid present in the protein
+        '''
+        Sum the weight of every aminoacid present in the protein
+        '''
+        
         molecular_weight = sum(AMINOACID_TABLE[aa]['weight'] for aa in self.sequence)
 
         # Subtract water from the amount of peptide bonds
@@ -106,4 +155,3 @@ class Protein:
             'beta_sheet': round(beta_sheet_propensity * 100, 2),
             'coil': round(coil_propensity * 100, 2)
         }
-
