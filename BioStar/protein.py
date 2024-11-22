@@ -109,7 +109,6 @@ class Protein:
         # Net charge
         return round(positive_charge - negative_charge, 2)
 
-
     def composition_ratio(self, multiply_by: float = 1.0) -> dict:
         '''
         Method which returns the ratio composition of all aminoacids.
@@ -119,6 +118,48 @@ class Protein:
         composition_summary = {aa: round((count / total) * multiply_by, 2) for aa, count in self.count['by_aminoacid'].items()}
         return composition_summary
 
+    def extinction_coefficient(self) -> dict:
+        """
+        Summary:
+        Calculate the extinction coefficient of the protein at 280 nm.
+        Based on the number of Trp, Tyr, and Cys residues.
+
+        Parameters:
+            self
+
+        Returns:
+            dict: The extinction coefficient (in M^-1 cm^-1).
+                cys_cystines assumes all cys residues form cystines
+                cys_reduced assumes all cys residues are reduced
+        """
+        # Aromatic residues contributing to absorbance
+        c_count = self.sequence.count("C")  # Cysteine
+        w_count = self.sequence.count("W")  # Tryptophan
+        y_count = self.sequence.count("Y")  # Tyrosine
+
+        # Assuming all Cys form disulfide bonds
+        disulfide_bonds = c_count // 2
+
+        # Extinction coefficients (in M^-1 cm^-1)
+        c_coeff = 125
+        w_coeff = 5500
+        y_coeff = 1490
+
+        # Total extinction coefficient
+        coeff_no_c = (
+            (w_count * w_coeff) +
+            (y_count * y_coeff)
+        )
+
+        coeff_with_c = coeff_no_c + (disulfide_bonds * c_coeff)
+
+        coefficients: dict = {
+            "cys_cystines": round(coeff_with_c, 2),
+            "cys_reduced": round(coeff_no_c, 2),
+        }
+
+        return coefficients
+    
     def isoelectric_point(self) -> float:
         """
         Returns the floating point value of the isoelectric point (pI) of the protein.
