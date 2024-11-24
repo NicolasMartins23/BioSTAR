@@ -25,7 +25,7 @@ The recommended approach is to create a string variable first then pass it as an
 This is a summary of all functionality
 DNA: peptide_sequence(), to_protein(), rna_sequence(), to_rna(), at_skew(), at_content(), gc_content(), gc_skew(), template_strand(), get_orf_map()
 RNA: peptide_sequence(), to_protein(), dna_sequence(), to_dna()
-Protein: aromacity(), composition_ratio(), hydrophobic_index(), molecular_weight(), secondary_structure_propensity()
+Protein: aromacity(), charge_at_pH(), composition_ratio(), extinction_coefficient(), hydrophobic_index(), isoelectric_point(), molecular_weight(), secondary_structure_propensity()
 
 There will be more changes added latter.
 - Protein: pI and charge at pH, identify possible signal peptide sequences
