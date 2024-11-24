@@ -22,8 +22,15 @@ class NucleicAcid():
 
     def get_peptide_sequence(self, show_stop_codon: bool = False) -> str:
         """
-        Returns a string which represents the peptide sequence of a given NucleicAcid when translated intto a protein.
-        If you wish to return a protein object instead, use the method to_protein()
+        Translates the nucleic acid sequence into a peptide sequence and returns it as a string.
+    
+        Parameters:
+            show_stop_codon (bool): If True, includes the stop codon in the returned peptide sequence. 
+                                    Defaults to False, which excludes the stop codon.
+    
+        Returns:
+            str: The peptide sequence derived from the nucleic acid, translated based on the codon table. 
+                 If show_stop_codon is False, the sequence excludes the stop codon.
         """
         peptide_sequence: str = ""
 
@@ -38,8 +45,10 @@ class NucleicAcid():
         
     def to_protein(self) -> Protein:
         """
-        Returns a protein object of a given NucleicAcid when translated into a protein.
-        If you wish to return a protein object instead, use the method to_protein()
+        Converts the nucleic acid sequence into a Protein object.
+    
+        Returns:
+            Protein: A Protein object containing the peptide sequence translated from the nucleic acid sequence.
         """
         peptide_sequence = self.get_peptide_sequence()
         return Protein(peptide_sequence)
@@ -47,14 +56,25 @@ class NucleicAcid():
 
 class DNA(NucleicAcid):
     """
-    This class handles DNA specific functions and inherits NucleicAcid functions.
-    It must be initialized passing a valid nucleotide sequence as a parameter.
+    Handles DNA-specific functions and inherits NucleicAcid functionality.
+    It must be initialized with a valid nucleotide sequence as a parameter.
     """
     def __init__(self, sequence: str) -> None:
+        """
+        Initializes a DNA object with a nucleotide sequence and sets the codon table for DNA.
+
+        Parameters:
+            sequence (str): A string representing the DNA sequence.
+        """
         super().__init__(sequence, TABLE_DNA_CODON_TO_AMINOACID)
 
     def get_sequence_map(self) -> dict:
-        # Overrides parent function
+        """
+        Calculates the frequency of each nucleotide (A, C, G, T) in the DNA sequence.
+
+        Returns:
+            dict: A dictionary with counts for each nucleotide and the total count.
+        """
         count: dict = {
             "A": 0,
             "C": 0,
@@ -75,13 +95,27 @@ class DNA(NucleicAcid):
         return count
 
     def _fasta_sequence(self, dna_seq: str = "") -> str:
+        """
+        Converts a given DNA sequence to FASTA format by removing invalid characters.
+
+        Parameters:
+            dna_seq (str): A DNA sequence string. Defaults to an empty string.
+
+        Returns:
+            str: A valid DNA sequence containing only A, C, G, and T.
+        """
         fasta_sequence = re.sub(r'[^ACGT]', '', dna_seq.upper())
         return fasta_sequence
 
-
     def gc_content(self, multiply_by: float = 1.0) -> float:
         """
-        Returns the ratio of Guanine and Cytosine content of the sequence.
+        Calculates the GC content ratio of the DNA sequence.
+
+        Parameters:
+            multiply_by (float): A multiplier for the GC content value. Defaults to 1.0.
+
+        Returns:
+            float: The GC content ratio, rounded to two decimal places.
         """
         gc_count: int = self.count["C"] + self.count["G"]
         gc_content: float = (gc_count / self.sequence_size) * multiply_by
@@ -90,9 +124,14 @@ class DNA(NucleicAcid):
 
     def at_skew(self, multiply_by: float = 1.0) -> float:
         """
-        Returns the skew of Adenine and Thymine content of the sequence.
-        A higher value means a prevalence of Adenine.
-        A lower value means a prevalence of Cytosine.
+        Calculates the skew of Adenine (A) and Thymine (T) content in the DNA sequence.
+
+        Parameters:
+            multiply_by (float): A multiplier for the skew value. Defaults to 1.0.
+
+        Returns:
+            float: The AT skew, where a higher value indicates an Adenine prevalence,
+                   and a lower value indicates a Thymine prevalence, rounded to two decimal places.
         """
         at_skew: float = (self.count["A"] - self.count["T"]) / (self.count["A"] + self.count["T"])
 
@@ -100,18 +139,28 @@ class DNA(NucleicAcid):
 
     def gc_skew(self, multiply_by: float = 1.0) -> float:
         """
-        Returns the skew of Guanine and Cytosine content of the sequence.
-        A higher value means a prevalence of Guanine.
-        A lower value means a prevalence of Cytosine.
+        Calculates the skew of Guanine (G) and Cytosine (C) content in the DNA sequence.
+
+        Parameters:
+            multiply_by (float): A multiplier for the skew value. Defaults to 1.0.
+
+        Returns:
+            float: The GC skew, where a higher value indicates a Guanine prevalence,
+                   and a lower value indicates a Cytosine prevalence, rounded to two decimal places.
         """
         gc_skew: float = (self.count["G"] - self.count["C"]) / (self.count["G"] + self.count["C"])
-
-        if multiply_result_by_100:            
-            return round((gc_skew * 100), decimal_digits)
-        else:
-            return round((gc_skew), decimal_digits)
+        return round((gc_skew * multiply_by), 2)
 
     def template_strand(self, reverse_string: bool = True) -> str:
+        """
+        Generates the complementary strand of the DNA sequence (template strand).
+
+        Parameters:
+            reverse_string (bool): If True, returns the reversed complementary strand. Defaults to True.
+
+        Returns:
+            str: The template strand of the DNA sequence.
+        """
         template_strand: str = ""
         for nucleotide in self.sequence:
             if nucleotide == "A":
@@ -130,29 +179,59 @@ class DNA(NucleicAcid):
 
     def rna_sequence(self) -> str:
         """
-        Returns a string which represents the corresponding RNA sequence.
+        Converts the DNA sequence into the corresponding RNA sequence.
+
+        Returns:
+            str: A string representing the RNA sequence, with Thymine (T) replaced by Uracil (U).
         """
         rna_sequence: str = self.sequence.replace("T", "U")
         return rna_sequence
 
     def to_rna(self):
         """
-        Returns an RNA() object instance.
+        Converts the DNA sequence into an RNA object.
+
+        Returns:
+            RNA: An RNA object created from the converted RNA sequence.
         """
         rna_sequence: str = self.rna_sequence()
         return RNA(rna_sequence)
 
     def orf_map(self, length_threshold: int = 0) -> dict:
+        """
+        Identifies open reading frames (ORFs) in the DNA sequence.
+
+        Parameters:
+            length_threshold (int): Minimum length for an ORF to be included. Defaults to 0.
+
+        Returns:
+            dict: A dictionary representing the identified ORFs and their positions in the sequence.
+        """
         orf = OpenReadFrame(sequence=self.sequence, length_threshold=length_threshold)
         return orf.orf_map
 
 
 class RNA(NucleicAcid):
+    """
+    Handles RNA-specific functions and inherits NucleicAcid functionality.
+    It must be initialized with a valid RNA nucleotide sequence as a parameter.
+    """
     def __init__(self, sequence: str) -> None:
+        """
+        Initializes an RNA object with a nucleotide sequence and sets the codon table for RNA.
+
+        Parameters:
+            sequence (str): A string representing the RNA sequence.
+        """
         super().__init__(sequence, TABLE_RNA_CODON_TO_AMINOACID)
 
     def get_sequence_map(self) -> dict:
-        # Overrides parent function
+        """
+        Calculates the frequency of each nucleotide (A, C, G, U) in the RNA sequence.
+
+        Returns:
+            dict: A dictionary with counts for each nucleotide and the total count.
+        """
         count: dict = {
             "A": 0,
             "C": 0,
@@ -173,70 +252,117 @@ class RNA(NucleicAcid):
         return count
 
     def _fasta_sequence(self, sequence: str = "") -> str:
+        """
+        Converts a given RNA sequence to FASTA format by removing invalid characters.
+
+        Parameters:
+            sequence (str): An RNA sequence string. Defaults to an empty string.
+
+        Returns:
+            str: A valid RNA sequence containing only A, C, G, and U.
+        """
         fasta_sequence = re.sub(r'[^ACGU]', '', sequence.upper())
         return fasta_sequence
 
-    def trim_on_stop_codon(self):
+    def trim_on_stop_codon(self) -> str:
+        """
+        Trims the RNA sequence at the first stop codon.
+
+        Returns:
+            str: The RNA sequence truncated at the first stop codon. If no stop codon is found, 
+                 the full sequence is returned.
+        """
         trimmed_sequence: str = ""
         for i in range(0, self.sequence_size, CODON_SIZE):
-                codon: str = self.sequence[i:i + CODON_SIZE]
-                trimmed_sequence += codon
-                if codon in STOP_CODON_RNA:
-                    return trimmed_sequence
-
+            codon: str = self.sequence[i:i + CODON_SIZE]
+            trimmed_sequence += codon
+            if codon in STOP_CODON_RNA:
+                return trimmed_sequence
+        return trimmed_sequence
 
     def dna_sequence(self) -> str:
         """
-        Returns a string which represents the corresponding DNA sequence.
+        Converts the RNA sequence into the corresponding DNA sequence.
+
+        Returns:
+            str: A string representing the DNA sequence, with Uracil (U) replaced by Thymine (T).
         """
         dna_sequence: str = self.sequence.replace("U", "T")
         return dna_sequence
 
     def to_dna(self):
         """
-        Returns a DNA() object instance.
+        Converts the RNA sequence into a DNA object.
+
+        Returns:
+            DNA: A DNA object created from the converted DNA sequence.
         """
-        dna_sequence: str = self.dna_string()
+        dna_sequence: str = self.dna_sequence()
         return DNA(dna_sequence)
 
 
 class OpenReadFrame:
+    """
+    Handles Open Reading Frame (ORF) detection and related logic.
+    This class is designed to be used in conjunction with a DNA object.
+    When instantiated, it initializes by parsing the provided sequence into FASTA format,
+    calculating ORFs, and sorting them by size.
+    """
     def __init__(self, sequence: str, length_threshold: int = 0) -> None:
         """
-        This class handles ORF related logic.\n
-        This is not intended to be used without first creating a DNA instance.
-        Whenever this class is instantiated, it will call the _get_orfs() method and store it as a local variable.
-        By default, it will order the ORFs by size.
+        Initializes an OpenReadFrame instance with a DNA sequence.
+
+        Parameters:
+            sequence (str): The nucleotide sequence to process.
+            length_threshold (int): Minimum length of an ORF to include in results. Defaults to 0.
         """
         self.length_threshold = length_threshold
         self.fasta_map: list = self._get_fasta_sequence_map(sequence)
         self.orf_map: list = []
         self.update_orf_map()
         self.largest_fame: dict = {
-        'nt_length': int(len(self.orf_map[0]['sequence'])),
-        'aa_length': int(len(self.orf_map[0]['sequence']) / CODON_SIZE)
-    }
-
+            'nt_length': int(len(self.orf_map[0]['sequence'])),
+            'aa_length': int(len(self.orf_map[0]['sequence']) / CODON_SIZE)
+        }
 
     def _get_fasta_sequence_map(self, sequence: str) -> list:
+        """
+        Converts a sequence into a FASTA-formatted sequence map.
+
+        Parameters:
+            sequence (str): The nucleotide sequence to convert.
+
+        Returns:
+            list: A list of parsed FASTA sequences.
+        """
         parser = FastaParserDNA()
         return parser.get_sequence_map(sequence)
 
-    def extract_data_from_fasta_map(self,
-            sequence: str,
-            label: str,
-            n: int,
-            frame_reference: str,
-            sequence_size: int) -> None:
+    def extract_data_from_fasta_map(
+        self,
+        sequence: str,
+        label: str,
+        n: int,
+        frame_reference: str,
+        sequence_size: int
+    ) -> None:
+        """
+        Extracts ORF data from a single FASTA-formatted sequence and updates the ORF map.
 
+        Parameters:
+            sequence (str): The nucleotide sequence to analyze.
+            label (str): The label associated with the FASTA sequence.
+            n (int): Frame offset (start position).
+            frame_reference (str): Frame reference indicator (e.g., "+", "-", "++").
+            sequence_size (int): The length of the nucleotide sequence.
+        """
         frame_sequence: str = ""
-        
-        start_codon: int = 0
-        stop_codon: int = 0
+        codon_start: int = 0
+
         for i in range(sequence_size)[n::CODON_SIZE]:
             codon: str = sequence[i:i + CODON_SIZE]
             if frame_sequence == "":
-                if codon == "ATG":
+                if codon == "ATG":  # Start codon
                     codon_start = self.find_start_codon(i, frame_reference, sequence_size)
                     frame_sequence += codon
             else:
@@ -245,26 +371,33 @@ class OpenReadFrame:
                     if len(frame_sequence) > self.length_threshold:
                         values = {
                             'codon_start': codon_start,
-                            'codon_stop': self.find_stop_codon(
-                                i, frame_reference, sequence_size
-                                ),
-                            'count_aa': int( (len(frame_sequence) / CODON_SIZE) - 1),
-                            'count_nt': int( (len(frame_sequence)) - 3),
+                            'codon_stop': self.find_stop_codon(i, frame_reference, sequence_size),
+                            'count_aa': int((len(frame_sequence) / CODON_SIZE) - 1),
+                            'count_nt': int(len(frame_sequence) - 3),
                             'label': label,
                             'sequence': frame_sequence,
                             'reference': frame_reference
-                            }
-
+                        }
                         self.orf_map.append(values)
-                        
-                    frame_sequence = ""
-                    # The frame should reset after a stop codon regardless of the size
-                    # Only when the stop codon is found, then  the frame string will be appeneded to the list
+                    frame_sequence = ""  # Reset after a stop codon
 
-    def find_start_codon(self,
+    def find_start_codon(
+        self,
         position: int,
         frame_reference: str,
-        seq_size: int) -> int:
+        seq_size: int
+    ) -> int:
+        """
+        Finds the start position of a codon in the specified reading frame.
+
+        Parameters:
+            position (int): Current position in the sequence.
+            frame_reference (str): Frame reference (e.g., "+", "-", "++").
+            seq_size (int): Total sequence size.
+
+        Returns:
+            int: Adjusted start position of the codon.
+        """
         if frame_reference in ["+", "++", "+++"]:
             position += 1
             return position
@@ -272,10 +405,23 @@ class OpenReadFrame:
             position = abs(position - seq_size)
             return position
 
-    def find_stop_codon(self,
+    def find_stop_codon(
+        self,
         position: int,
         frame_reference: str,
-        seq_size: int) -> int:
+        seq_size: int
+    ) -> int:
+        """
+        Finds the stop position of a codon in the specified reading frame.
+
+        Parameters:
+            position (int): Current position in the sequence.
+            frame_reference (str): Frame reference (e.g., "+", "-", "++").
+            seq_size (int): Total sequence size.
+
+        Returns:
+            int: Adjusted stop position of the codon.
+        """
         if frame_reference in ["+", "++", "+++"]:
             position += 2
             return position
@@ -283,31 +429,31 @@ class OpenReadFrame:
             position = abs((position + 2) - seq_size)
             return position
 
-
     def update_orf_map(self) -> dict:
-        """        
-        :length_threshold: int | minimal length of any given aminoacid sequence to be translated. Values inferior to this will be disqualified.\n
+        """
+        Updates the ORF map by identifying potential ORFs in all reading frames.
 
-        This function will return a list with key-value pair relationship:\n
-        'count_aa' is how many aminoacids are in the frame
-        'count_nt' is the length of the frame
-        'label' is the label of FASTA sequence determined by >
-        'sequence' is the orf peptide sequence
-        'reference' The orf_frame_reference:\n
-            "+"   is the 1st possible read of the frame 5'->3'
-            "++"  is the 2nd possible read of the frame 5'->3'
-            "+++" is the 3rd possible read of the frame 5'->3'
-            "-"   is the 1st possible read of the frame 3'->5'
-            "--"  is the 2rd possible read of the frame 3'->5'
-            "---" is the 3rd possible read of the frame 3'->5'
+        Returns:
+            dict: A list of identified ORFs, sorted by sequence length.
 
-
+        Key-value pairs in the ORF map:
+            - 'count_aa': Number of amino acids in the ORF.
+            - 'count_nt': Length of the ORF in nucleotides.
+            - 'label': Label of the FASTA sequence (e.g., ">seq1").
+            - 'sequence': ORF peptide sequence.
+            - 'reference': Reading frame reference:
+                "+"   - 1st frame (5'->3')
+                "++"  - 2nd frame (5'->3')
+                "+++" - 3rd frame (5'->3')
+                "-"   - 1st frame (3'->5')
+                "--"  - 2nd frame (3'->5')
+                "---" - 3rd frame (3'->5')
         """
         for item in self.fasta_map:
             dna = DNA(item["sequence"])
             label = item["label"]
-            
-            for i in range(CODON_SIZE*2):
+
+            for i in range(CODON_SIZE * 2):
                 orf_frame_reference = ["+", "++", "+++", "-", "--", "---"]
 
                 if i < CODON_SIZE:
@@ -316,18 +462,17 @@ class OpenReadFrame:
                         label=label,
                         n=i,
                         frame_reference=orf_frame_reference[i],
-                        sequence_size = dna.sequence_size
+                        sequence_size=dna.sequence_size
                     )
-
                 elif i >= CODON_SIZE:
                     self.extract_data_from_fasta_map(
                         sequence=dna.template_strand(),
                         label=label,
-                        n=(i-CODON_SIZE),
+                        n=(i - CODON_SIZE),
                         frame_reference=orf_frame_reference[i],
-                        sequence_size = dna.sequence_size
+                        sequence_size=dna.sequence_size
                     )
 
         map_sorted = sorted(self.orf_map, key=lambda x: len(x['sequence']), reverse=True)
-        
         return map_sorted
+
