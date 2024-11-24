@@ -7,8 +7,7 @@ from BioStar.DataBiochemistry import (AMINOACIDS, AMINOACID_TABLE,
 class Protein:
     def __init__(self, sequence: str = "") -> None:
         """
-        Summary:
-            Initializes the Protein object with a sequence and computes amino acid counts.
+        SummInitializes the Protein object with a sequence and computes amino acid counts.
 
         Parameters:
             sequence (str): The protein sequence in FASTA format (default is an empty string).
@@ -22,8 +21,7 @@ class Protein:
 
     def _fasta_sequence(self, sequence: str = "") -> str:
         """
-        Summary:
-            Converts the input sequence into a valid FASTA format, removing non-amino acid characters.
+        Converts the input sequence into a valid FASTA format, removing non-amino acid characters.
 
         Parameters:
             sequence (str): The input protein sequence.
@@ -36,8 +34,7 @@ class Protein:
 
     def _update_count(self) -> dict:
         """
-        Summary:
-            Updates and returns a dictionary with the counts of each type of amino acid in the protein sequence.
+        Updates and returns a dictionary with the counts of each type of amino acid in the protein sequence.
 
         Parameters:
             self
@@ -89,8 +86,7 @@ class Protein:
 
     def aromacity(self, multiply_by: float = 1.0) -> float:
         """
-        Summary:
-            Calculates the aromacity of the protein, defined as the fraction of aromatic residues.
+        Calculates the aromacity of the protein, defined as the fraction of aromatic residues.
 
         Parameters:
             multiply_by (float): A multiplier to scale the result (default is 1.0).
@@ -103,8 +99,7 @@ class Protein:
 
     def charge_at_pH(self, pH: float) -> float:
         """
-        Summary:
-            Calculates the charge of the protein at a given pH based on its amino acid composition.
+        Calculates the charge of the protein at a given pH based on its amino acid composition.
 
         Parameters:
             pH (float): The pH at which the protein charge is to be calculated.
@@ -151,8 +146,7 @@ class Protein:
 
     def composition_ratio(self, multiply_by: float = 1.0) -> dict:
         """
-        Summary:
-            Calculates the composition ratio of amino acids in the protein sequence.
+        Calculates the composition ratio of amino acids in the protein sequence.
 
         Parameters:
             multiply_by (float): A multiplier to scale the composition ratios (default is 1.0).
@@ -166,9 +160,8 @@ class Protein:
 
     def extinction_coefficient(self) -> dict:
         """
-        Summary:
-            Calculates the extinction coefficient of the protein at 280 nm.
-            Based on the number of Trp, Tyr, and Cys residues.
+        Calculates the extinction coefficient of the protein at 280 nm.
+        Based on the number of Trp, Tyr, and Cys residues.
 
         Parameters:
             self
@@ -207,8 +200,7 @@ class Protein:
 
     def hydrophobic_index(self) -> float:
         """
-        Summary:
-            Calculates the hydrophobic index of the protein based on the hydrophobicity of each amino acid.
+        Calculates the hydrophobic index of the protein based on the hydrophobicity of each amino acid.
 
         Parameters:
             self
@@ -221,8 +213,7 @@ class Protein:
 
     def isoelectric_point(self) -> float:
         """
-        Summary:
-            Calculates the isoelectric point (pI) of the protein, the pH at which the net charge of the protein is zero.
+        Calculates the isoelectric point (pI) of the protein, the pH at which the net charge of the protein is zero.
 
         Parameters:
             self
@@ -250,8 +241,7 @@ class Protein:
 
     def molecular_weight(self) -> float:
         """
-        Summary:
-            Calculates the molecular weight of the protein by summing the weights of its amino acids.
+        Calculates the molecular weight of the protein by summing the weights of its amino acids.
 
         Parameters:
             self
@@ -266,10 +256,9 @@ class Protein:
 
         return round(molecular_weight, 2)
 
-    def secondary_structure_propensity(self) -> dict:
+    def isoelectric_point(self) -> dict:
         """
-        Summary:
-            Calculates the propensity for secondary structures (alpha helix, beta sheet, coil) in the protein.
+        Calculates the propensity for secondary structures (alpha helix, beta sheet, coil) in the protein.
 
         Parameters:
             self
