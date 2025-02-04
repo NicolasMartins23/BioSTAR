@@ -97,7 +97,7 @@ class Protein:
         aromacity: float = self.count['aromatic'] / self.count['total']
         return round((aromacity * multiply_by), 1)
 
-    def charge_at_pH(self, pH: float) -> float:
+    def charge_at_pH(self, pH: float = 7.0) -> float:
         """
         Calculates the charge of the protein at a given pH based on its amino acid composition.
 
