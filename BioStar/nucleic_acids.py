@@ -8,6 +8,7 @@ from .protein import Protein
 
 from .data_handler import FastaParserDNA
 
+
 class NucleicAcid():
     """
     Base class for Nucleic Acid functionality.
@@ -117,7 +118,7 @@ class DNA(NucleicAcid):
         Returns:
             float: The GC content ratio, rounded to two decimal places.
         """
-        gc_count: int = self.count["C"] + self.count["G"]
+        gc_count: int = self.sequence_map["C"] + self.sequence_map["G"]
         gc_content: float = (gc_count / self.sequence_size) * multiply_by
 
         return round(gc_content, 2)
@@ -133,7 +134,7 @@ class DNA(NucleicAcid):
             float: The AT skew, where a higher value indicates an Adenine prevalence,
                    and a lower value indicates a Thymine prevalence, rounded to two decimal places.
         """
-        at_skew: float = (self.count["A"] - self.count["T"]) / (self.count["A"] + self.count["T"])
+        at_skew: float = (self.sequence_map["A"] - self.sequence_map["T"]) / (self.sequence_map["A"] + self.sequence_map["T"])
 
         return round((at_skew * multiply_by), 2)
 
@@ -148,7 +149,7 @@ class DNA(NucleicAcid):
             float: The GC skew, where a higher value indicates a Guanine prevalence,
                    and a lower value indicates a Cytosine prevalence, rounded to two decimal places.
         """
-        gc_skew: float = (self.count["G"] - self.count["C"]) / (self.count["G"] + self.count["C"])
+        gc_skew: float = (self.sequence_map["G"] - self.sequence_map["C"]) / (self.sequence_map["G"] + self.sequence_map["C"])
         return round((gc_skew * multiply_by), 2)
 
     def template_strand(self, reverse_string: bool = True) -> str:
