@@ -7,10 +7,10 @@ AMINOACIDS: list[str] = ["A", "C", "D", "E", "F", "G", "H", "I", "K", "L", "M", 
 AMINOACIDS_AROMATIC: list[str] = ["F", "W", "Y"]
 AMINOACIDS_NONPOLAR: list[str] = ["A", "C", "G", "I", "L", "M", "P", "V"]
 AMINOACIDS_POLAR: list[str] = ["D", "E", "H", "K", "N", "Q", "R", "S", "T", "Q"]
-AMINOACIDS_POSITIVE: list[str] = ["K", "R", "H"]  # Positively charged amino acids
-AMINOACIDS_NEGATIVE: list[str] = ["D", "E"]  # Negatively charged amino acids
+AMINOACIDS_POSITIVE: list[str] = ["K", "R", "H"]
+AMINOACIDS_NEGATIVE: list[str] = ["D", "E"]
 
-AMINOACID_TABLE_TO_CODON_DNA: dict = {
+AMINOACID_TABLE_TO_CODON_DNA: dict[str, list[str]] = {
     '*': ['TAA', 'TGA', 'TAG'],
     'A': ['GCA', 'GCC', 'GCG', 'GCT'],
     'C': ['TGC', 'TGT'],
@@ -34,7 +34,7 @@ AMINOACID_TABLE_TO_CODON_DNA: dict = {
     'Y': ['TAC', 'TAT']
 }
 
-AMINOACID_TABLE_TO_CODON_RNA: dict = {
+AMINOACID_TABLE_TO_CODON_RNA: dict[str, list[str]] = {
     '*': ['UAA', 'UGA', 'UAG'],
     'A': ['GCA', 'GCC', 'GCG', 'GCU'],
     'C': ['UGC', 'UGU'],
@@ -58,7 +58,7 @@ AMINOACID_TABLE_TO_CODON_RNA: dict = {
     'Y': ['UAC', 'UAU']
 }
 
-TABLE_DNA_CODON_TO_AMINOACID: dict = {
+TABLE_DNA_CODON_TO_AMINOACID: dict[str, str] = {
 #A
 # A           C           G           T
 'AAA': 'K', 'ACA': 'T', 'AGA': 'R', 'ATA': 'I', #A
@@ -89,7 +89,7 @@ TABLE_DNA_CODON_TO_AMINOACID: dict = {
 }
 
 
-TABLE_RNA_CODON_TO_AMINOACID: dict = {
+TABLE_RNA_CODON_TO_AMINOACID: dict[str, str] = {
 #A
 # A           C           G           U
 'AAA': 'K', 'ACA': 'T', 'AGA': 'R', 'AUA': 'I', #A
@@ -119,13 +119,13 @@ TABLE_RNA_CODON_TO_AMINOACID: dict = {
 'UAU': 'Y', 'UCU': 'S', 'UGU': 'C', 'UUU': 'F', #U
 }
 
-START_CODON_DNA = "ATG"
-STOP_CODON_DNA = ["TAA", "TAG", "TGA"]
+START_CODON_DNA: str = "ATG"
+STOP_CODON_DNA: list[str] = ["TAA", "TAG", "TGA"]
 
-START_CODON_TNA = "ATG"
-STOP_CODON_RNA = ["UAA", "UAG", "UGA"]
+START_CODON_TNA: str = "ATG"
+STOP_CODON_RNA: list[str] = ["UAA", "UAG", "UGA"]
 
-AMINOACID_TABLE = {
+AMINOACID_TABLE: dict[str, dict[str, str]] = {
     "A": {
         "single_letter": "A",
         "abbreviation": "Ala",
@@ -135,7 +135,9 @@ AMINOACID_TABLE = {
         "weight": 89.09,
         "hydrophobicity": 1.8,
         "alpha_helix": 1.45,
-        "beta_sheet": 0.97
+        "beta_sheet": 0.97,
+        "pKa": 2.35,
+        "pKb": 9.87
     },
     "C": {
         "single_letter": "C",
@@ -146,7 +148,9 @@ AMINOACID_TABLE = {
         "weight": 121.15,
         "hydrophobicity": 2.5,
         "alpha_helix": 0.77,
-        "beta_sheet": 1.30
+        "beta_sheet": 1.30,
+        "pKa": 1.96,
+        "pKb": 10.28
     },
     "D": {
         "single_letter": "D",
@@ -157,7 +161,10 @@ AMINOACID_TABLE = {
         "weight": 133.10,
         "hydrophobicity": -3.5,
         "alpha_helix": 1.01,
-        "beta_sheet": 0.54
+        "beta_sheet": 0.54,
+        "pKa": 1.88,
+        "pKb": 9.60,
+        "pKr": 3.65
     },
     "E": {
         "single_letter": "E",
@@ -168,7 +175,10 @@ AMINOACID_TABLE = {
         "weight": 147.13,
         "hydrophobicity": -3.5,
         "alpha_helix": 1.53,
-        "beta_sheet": 0.37
+        "beta_sheet": 0.37,
+        "pKa": 2.19,
+        "pKb": 9.67,
+        "pKr": 4.25
     },
     "F": {
         "single_letter": "F",
@@ -179,7 +189,9 @@ AMINOACID_TABLE = {
         "weight": 165.19,
         "hydrophobicity": 2.8,
         "alpha_helix": 1.13,
-        "beta_sheet": 1.38
+        "beta_sheet": 1.38,
+        "pKa": 2.58,
+        "pKb": 9.24
     },
     "G": {
         "single_letter": "G",
@@ -190,7 +202,9 @@ AMINOACID_TABLE = {
         "weight": 75.07,
         "hydrophobicity": -0.4,
         "alpha_helix": 0.57,
-        "beta_sheet": 0.75
+        "beta_sheet": 0.75,
+        "pKa": 2.34,
+        "pKb": 9.60
     },
     "H": {
         "single_letter": "H",
@@ -201,7 +215,10 @@ AMINOACID_TABLE = {
         "weight": 155.16,
         "hydrophobicity": -3.2,
         "alpha_helix": 1.24,
-        "beta_sheet": 0.87
+        "beta_sheet": 0.87,
+        "pKa": 1.80,
+        "pKb": 9.33,
+        "pKr": 6.04
     },
     "I": {
         "single_letter": "I",
@@ -212,7 +229,9 @@ AMINOACID_TABLE = {
         "weight": 131.18,
         "hydrophobicity": 4.5,
         "alpha_helix": 1.00,
-        "beta_sheet": 1.60
+        "beta_sheet": 1.60,
+        "pKa": 2.36,
+        "pKb": 9.60
     },
     "K": {
         "single_letter": "K",
@@ -223,7 +242,10 @@ AMINOACID_TABLE = {
         "weight": 146.19,
         "hydrophobicity": -3.9,
         "alpha_helix": 1.07,
-        "beta_sheet": 0.74
+        "beta_sheet": 0.74,
+        "pKa": 2.18,
+        "pKb": 9.60,
+        "pKr": 10.53
     },
     "L": {
         "single_letter": "L",
@@ -234,7 +256,9 @@ AMINOACID_TABLE = {
         "weight": 131.18,
         "hydrophobicity": 3.8,
         "alpha_helix": 1.34,
-        "beta_sheet": 1.22
+        "beta_sheet": 1.22,
+        "pKa": 2.36,
+        "pKb": 9.60
     },
     "M": {
         "single_letter": "M",
@@ -245,7 +269,9 @@ AMINOACID_TABLE = {
         "weight": 149.21,
         "hydrophobicity": 1.9,
         "alpha_helix": 1.20,
-        "beta_sheet": 1.05
+        "beta_sheet": 1.05,
+        "pKa": 2.28,
+        "pKb": 9.21
     },
     "N": {
         "single_letter": "N",
@@ -256,7 +282,9 @@ AMINOACID_TABLE = {
         "weight": 132.12,
         "hydrophobicity": -3.5,
         "alpha_helix": 0.73,
-        "beta_sheet": 0.65
+        "beta_sheet": 0.65,
+        "pKa": 2.16,
+        "pKb": 8.79
     },
     "P": {
         "single_letter": "P",
@@ -267,7 +295,9 @@ AMINOACID_TABLE = {
         "weight": 115.13,
         "hydrophobicity": -1.6,
         "alpha_helix": 0.59,
-        "beta_sheet": 0.62
+        "beta_sheet": 0.62,
+        "pKa": 1.99,
+        "pKb": 10.60
     },
     "Q": {
         "single_letter": "Q",
@@ -278,7 +308,9 @@ AMINOACID_TABLE = {
         "weight": 146.15,
         "hydrophobicity": -3.5,
         "alpha_helix": 1.17,
-        "beta_sheet": 1.00
+        "beta_sheet": 1.00,
+        "pKa": 2.17,
+        "pKb": 9.13
     },
     "R": {
         "single_letter": "R",
@@ -289,7 +321,10 @@ AMINOACID_TABLE = {
         "weight": 174.20,
         "hydrophobicity": -4.5,
         "alpha_helix": 0.79,
-        "beta_sheet": 0.90
+        "beta_sheet": 0.90,
+        "pKa": 1.82,
+        "pKb": 9.04,
+        "pKr": 12.48
     },
     "S": {
         "single_letter": "S",
@@ -300,7 +335,9 @@ AMINOACID_TABLE = {
         "weight": 105.09,
         "hydrophobicity": -0.8,
         "alpha_helix": 0.82,
-        "beta_sheet": 0.75
+        "beta_sheet": 0.75,
+        "pKa": 2.21,
+        "pKb": 9.15
     },
     "T": {
         "single_letter": "T",
@@ -311,7 +348,9 @@ AMINOACID_TABLE = {
         "weight": 119.12,
         "hydrophobicity": -0.7,
         "alpha_helix": 0.83,
-        "beta_sheet": 1.19
+        "beta_sheet": 1.19,
+        "pKa": 2.09,
+        "pKb": 9.10
     },
     "V": {
         "single_letter": "V",
@@ -322,7 +361,9 @@ AMINOACID_TABLE = {
         "weight": 117.15,
         "hydrophobicity": 4.2,
         "alpha_helix": 1.06,
-        "beta_sheet": 1.70
+        "beta_sheet": 1.70,
+        "pKa": 2.32,
+        "pKb": 9.62
     },
     "W": {
         "single_letter": "W",
@@ -333,7 +374,9 @@ AMINOACID_TABLE = {
         "weight": 204.23,
         "hydrophobicity": -0.9,
         "alpha_helix": 1.08,
-        "beta_sheet": 1.37
+        "beta_sheet": 1.37,
+        "pKa": 2.38,
+        "pKb": 9.39
     },
     "Y": {
         "single_letter": "Y",
@@ -344,7 +387,9 @@ AMINOACID_TABLE = {
         "weight": 181.19,
         "hydrophobicity": -1.3,
         "alpha_helix": 0.69,
-        "beta_sheet": 1.47
+        "beta_sheet": 1.47,
+        "pKa": 2.20,
+        "pKb": 9.11
     },
     "*": {
         "single_letter": "*",
