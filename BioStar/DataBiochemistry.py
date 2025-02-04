@@ -7,6 +7,8 @@ AMINOACIDS: list[str] = ["A", "C", "D", "E", "F", "G", "H", "I", "K", "L", "M", 
 AMINOACIDS_AROMATIC: list[str] = ["F", "W", "Y"]
 AMINOACIDS_NONPOLAR: list[str] = ["A", "C", "G", "I", "L", "M", "P", "V"]
 AMINOACIDS_POLAR: list[str] = ["D", "E", "H", "K", "N", "Q", "R", "S", "T", "Q"]
+AMINOACIDS_POSITIVE: list[str] = ["K", "R", "H"]  # Positively charged amino acids
+AMINOACIDS_NEGATIVE: list[str] = ["D", "E"]  # Negatively charged amino acids
 
 AMINOACID_TABLE_TO_CODON_DNA: dict = {
     '*': ['TAA', 'TGA', 'TAG'],
