@@ -108,7 +108,7 @@ class DNA(NucleicAcid):
         fasta_sequence = re.sub(r'[^ACGT]', '', dna_seq.upper())
         return fasta_sequence
 
-    def gc_content(self, multiply_by: float = 1.0) -> float:
+    def gc_content(self, multiply_by: float = 1.0, decimal_places: int = 4) -> float:
         """
         Calculates the GC content ratio of the DNA sequence.
 
@@ -121,9 +121,9 @@ class DNA(NucleicAcid):
         gc_count: int = self.sequence_map["C"] + self.sequence_map["G"]
         gc_content: float = (gc_count / self.sequence_size) * multiply_by
 
-        return round(gc_content, 2)
+        return round(gc_content, decimal_places)
 
-    def at_skew(self, multiply_by: float = 1.0) -> float:
+    def at_skew(self, multiply_by: float = 1.0, decimal_places: int = 4) -> float:
         """
         Calculates the skew of Adenine (A) and Thymine (T) content in the DNA sequence.
 
@@ -136,9 +136,9 @@ class DNA(NucleicAcid):
         """
         at_skew: float = (self.sequence_map["A"] - self.sequence_map["T"]) / (self.sequence_map["A"] + self.sequence_map["T"])
 
-        return round((at_skew * multiply_by), 2)
+        return round((at_skew * multiply_by), decimal_places)
 
-    def gc_skew(self, multiply_by: float = 1.0) -> float:
+    def gc_skew(self, multiply_by: float = 1.0, decimal_places: int = 4) -> float:
         """
         Calculates the skew of Guanine (G) and Cytosine (C) content in the DNA sequence.
 
@@ -150,7 +150,7 @@ class DNA(NucleicAcid):
                    and a lower value indicates a Cytosine prevalence, rounded to two decimal places.
         """
         gc_skew: float = (self.sequence_map["G"] - self.sequence_map["C"]) / (self.sequence_map["G"] + self.sequence_map["C"])
-        return round((gc_skew * multiply_by), 2)
+        return round((gc_skew * multiply_by), decimal_places)
 
     def template_strand(self, reverse_string: bool = True) -> str:
         """
