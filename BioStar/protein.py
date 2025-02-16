@@ -84,7 +84,7 @@ class Protein:
 
         return aminoacid_count
 
-    def aromacity(self, multiply_by: float = 1.0) -> float:
+    def aromacity(self, multiply_by: float = 1.0, decimal_places: int = 4) -> float:
         """
         Calculates the aromacity of the protein, defined as the fraction of aromatic residues.
 
@@ -95,7 +95,7 @@ class Protein:
             float: The aromacity of the protein, scaled by the multiplier.
         """
         aromacity: float = self.count['aromatic'] / self.count['total']
-        return round((aromacity * multiply_by), 1)
+        return round((aromacity * multiply_by), decimal_places: int = 4)
 
     def charge_at_pH(self, pH: float = 7.0) -> float:
         """
@@ -144,7 +144,7 @@ class Protein:
         # Net charge
         return round(positive_charge - negative_charge, 2)
 
-    def composition_ratio(self, multiply_by: float = 1.0) -> dict:
+    def composition_ratio(self, multiply_by: float = 1.0, decimal_places: int = 4) -> dict:
         """
         Calculates the composition ratio of amino acids in the protein sequence.
 
@@ -155,7 +155,7 @@ class Protein:
             dict: A dictionary of amino acid composition ratios, scaled by the multiplier.
         """
         total = self.count["total"]
-        composition_summary = {aa: round((count / total) * multiply_by, 2) for aa, count in self.count['by_aminoacid'].items()}
+        composition_summary = {aa: round((count / total) * multiply_by, decimal_places) for aa, count in self.count['by_aminoacid'].items()}
         return composition_summary
 
     def extinction_coefficient(self) -> dict:
