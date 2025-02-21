@@ -1,3 +1,5 @@
+The web version of this project can be accessed here: https://softwaremartins.pythonanywhere.com/biostar
+
 1 - PROJECT NAME
 BioSTAR (Bioinformatics System for Targeted Analysis and Research)
 
