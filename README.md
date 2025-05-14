@@ -1,3 +1,5 @@
+# This repository has been discontinued and has been merged with BioApps. I do not recommend using this repository as it is no longer actively maintained
+
 The web version of this project can be accessed here: https://softwaremartins.pythonanywhere.com/biostar
 
 1 - PROJECT NAME
