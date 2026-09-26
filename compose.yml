@@ -55,22 +55,18 @@ services:
       retries: 10
       start_period: 10s
 
-  open-studio:
-    build:
-      context: .
-      dockerfile: docker/open-studio.Dockerfile
-      additional_contexts:
-        openstudio: https://github.com/andersmyrmel/open-studio.git#main
-    container_name: biostar-open-studio
+  cloudbeaver:
+    image: dbeaver/cloudbeaver:latest
+    container_name: biostar-cloudbeaver
     restart: unless-stopped
     depends_on:
       postgres:
         condition: service_healthy
-    environment:
-      DATABASE_URL: postgresql://biostar:${POSTGRES_PASSWORD:-biostar}@postgres:5432/${POSTGRES_DB:-biostar}
-      PORT: 3000
     ports:
-      - "8080:3000"
+      - "8080:8978"
+    volumes:
+      - cloudbeaver-workspace:/opt/cloudbeaver/workspace
 
 volumes:
   biostar-postgres-data:
+  cloudbeaver-workspace:
