@@ -42,6 +42,6 @@ def register_exception_handlers(app) -> None:
             status_code=422,
             content=APIResponse[None](
                 data=None,
-                message=get_message(MessageCode.INVALID_SEQUENCE),
+                message=get_message(MessageCode.VALIDATION_ERROR),
             ).model_dump(mode="json"),
         )
