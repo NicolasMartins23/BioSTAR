@@ -55,5 +55,15 @@ services:
       retries: 10
       start_period: 10s
 
+  adminer:
+    image: adminer:latest
+    container_name: biostar-adminer
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+
 volumes:
   biostar-postgres-data:
