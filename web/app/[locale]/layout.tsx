@@ -1,7 +1,10 @@
+import { notFound } from "next/navigation";
 import { ThemeProvider } from "../../components/theme-provider";
 
+const LOCALES = ["en", "pt", "es"] as const;
+
 export async function generateStaticParams() {
-  return [{ locale: "en" }, { locale: "pt" }, { locale: "es" }];
+  return LOCALES.map((locale) => ({ locale }));
 }
 
 export default async function LocaleLayout({
@@ -11,7 +14,11 @@ export default async function LocaleLayout({
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
 }>) {
-  await params;
+  const { locale } = await params;
+
+  if (!LOCALES.includes(locale as (typeof LOCALES)[number])) {
+    notFound();
+  }
 
   return <ThemeProvider>{children}</ThemeProvider>;
 }
