@@ -69,3 +69,15 @@ from BioStar import DNA, RNA, Protein, NucleicAcid, OpenReadFrame
 
 Legacy module imports are retained as compatibility shims while new engine code
 should use the organized package structure.
+
+
+## Local PostgreSQL
+
+The repository includes a PostgreSQL development database:
+
+```bash
+docker compose -f docker-compose.database.yml up -d
+export BIOSTAR_DATABASE_URL="postgresql+psycopg://biostar:biostar@localhost:5432/biostar"
+alembic upgrade head
+python -m BioStarAPI.database.seed
+```
