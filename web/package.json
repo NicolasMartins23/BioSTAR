@@ -1,1 +1,20 @@
-{"name":"biostar-web","version":"0.1.0","private":true,"scripts":{"dev":"next dev","build":"next build","start":"next start","lint":"next lint"},"dependencies":{"next":"15.5.4","react":"19.1.1","react-dom":"19.1.1"},"devDependencies":{"@types/node":"24.5.2","@types/react":"19.1.13","@types/react-dom":"19.1.9","typescript":"5.9.2"}}
+{
+  "name": "biostar-web",
+  "version": "0.2.0",
+  "private": true,
+  "scripts": {
+    "dev": "quasar dev",
+    "build": "quasar build",
+    "lint": "quasar lint"
+  },
+  "dependencies": {
+    "quasar": "^2.33.2",
+    "vue": "^3.5.22",
+    "vue-router": "^5.0.6"
+  },
+  "devDependencies": {
+    "@quasar/app-vite": "^3.10.0",
+    "@quasar/extras": "^1.17.0",
+    "typescript": "^5.9.2"
+  }
+}
