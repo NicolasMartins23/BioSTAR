@@ -5,6 +5,18 @@ export interface MessageResource {
   message: string;
 }
 
+export class APIError extends Error {
+  public readonly status: number;
+  public readonly messageResource: MessageResource | null;
+
+  constructor(status: number, messageResource: MessageResource | null) {
+    super(messageResource?.message ?? `API request failed with status ${status}`);
+    this.name = "APIError";
+    this.status = status;
+    this.messageResource = messageResource;
+  }
+}
+
 export interface APIResponse<T> {
   data: T | null;
   message: MessageResource | null;
@@ -58,9 +70,7 @@ const request = async <T>(path: string, init?: RequestInit): Promise<APIResponse
   }
 
   if (!response.ok) {
-    throw new Error(
-      body.message?.message ?? `API request failed with status ${response.status}`,
-    );
+    throw new APIError(response.status, body.message);
   }
 
   return body;
