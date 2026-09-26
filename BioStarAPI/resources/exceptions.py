@@ -22,17 +22,21 @@ class BioStarAPIError(Exception):
         super().__init__(self.message.message)
 
 
+def api_error_response(exception: BioStarAPIError) -> JSONResponse:
+    return JSONResponse(
+        status_code=exception.status_code,
+        headers=exception.headers,
+        content=APIResponse[None](
+            data=None,
+            message=exception.message,
+        ).model_dump(mode="json"),
+    )
+
+
 def register_exception_handlers(app) -> None:
     @app.exception_handler(BioStarAPIError)
     async def handle_api_error(request: Request, exception: BioStarAPIError) -> JSONResponse:
-        return JSONResponse(
-            status_code=exception.status_code,
-            headers=exception.headers,
-            content=APIResponse[None](
-                data=None,
-                message=exception.message,
-            ).model_dump(mode="json"),
-        )
+        return api_error_response(exception)
 
     @app.exception_handler(RequestValidationError)
     async def handle_validation_error(
