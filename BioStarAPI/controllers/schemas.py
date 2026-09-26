@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from pydantic import BaseModel, Field, StrictBool, StrictFloat
+from pydantic import BaseModel, Field, StrictBool
 
 
 class ProteinAnalysisRequest(BaseModel):
@@ -8,7 +8,7 @@ class ProteinAnalysisRequest(BaseModel):
     get_full_test_results: StrictBool = False
     get_aminoacids_count: StrictBool = False
     get_isoelectric_point: StrictBool = False
-    get_charge_at_pH: StrictFloat | None = None
+    get_charge_at_pH: float | None = None
     get_aromaticity: StrictBool = False
     get_secondary_structure_propensity: StrictBool = False
     get_molecular_weight: StrictBool = False
