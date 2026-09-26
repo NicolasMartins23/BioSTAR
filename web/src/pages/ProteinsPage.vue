@@ -184,7 +184,7 @@ const copySequence = async (): Promise<void> => {
 const formatValue = (value: unknown): string => {
   if (typeof value === "number") return Number.isInteger(value) ? String(value) : value.toFixed(4);
   if (typeof value === "string") return value;
-  return JSON.stringify(value);
+  return JSON.stringify(value) ?? String(value);
 };
 </script>
 
