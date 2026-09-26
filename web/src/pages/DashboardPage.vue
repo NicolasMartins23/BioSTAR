@@ -1,35 +1,53 @@
 <template>
-  <q-page padding>
-    <div class="page-shell">
-      <div class="text-overline text-primary">Bioinformatics Platform</div>
-      <div class="text-h3 text-weight-bold q-mb-sm">Welcome to BioSTAR</div>
-      <div class="text-body1 text-grey-6 q-mb-md">
-        Analyze biological sequences, proteins, and mutations in one workspace.
-      </div>
+  <q-page class="biostar-page">
+    <main class="biostar-content">
+      <section>
+        <div class="biostar-eyebrow">Bioinformatics Analysis Suite</div>
+        <h1 class="biostar-title">Biological analysis, in one workspace.</h1>
+        <p class="biostar-subtitle">
+          BioSTAR provides sequence conversion and biochemical analysis tools
+          through a unified scientific workspace.
+        </p>
+      </section>
 
-      <q-chip
-        icon="cloud"
-        :color="apiStatusColor"
-        text-color="white"
-      >
-        API: {{ apiStatusLabel }}
-      </q-chip>
-
-      <div class="row q-col-gutter-lg q-mt-md">
-        <div v-for="card in cards" :key="card.title" class="col-12 col-md-4">
-          <q-card flat bordered class="analysis-card">
-            <q-card-section>
-              <q-icon :name="card.icon" size="32px" color="primary" />
-              <div class="text-h6 q-mt-md">{{ card.title }}</div>
-              <div class="text-body2 text-grey-6 q-mt-sm">{{ card.description }}</div>
-            </q-card-section>
-            <q-card-actions>
-              <q-btn flat color="primary" :label="card.action" :to="card.to" />
-            </q-card-actions>
-          </q-card>
+      <section class="q-mt-xl">
+        <div class="biostar-panel">
+          <div class="biostar-panel__body row items-center justify-between q-col-gutter-lg">
+            <div class="col-12 col-sm">
+              <div class="biostar-section-label">System status</div>
+              <div class="text-body2 text-grey-6 q-mt-xs">
+                Connection to the BioSTAR analysis API
+              </div>
+            </div>
+            <div class="col-auto">
+              <q-chip square :color="apiStatusColor" text-color="white" :icon="apiStatusIcon">
+                {{ apiStatusLabel }}
+              </q-chip>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      </section>
+
+      <section class="q-mt-xl">
+        <div class="biostar-section-label q-mb-md">Analysis tools</div>
+        <div class="row q-col-gutter-md">
+          <div v-for="card in cards" :key="card.title" class="col-12 col-md-4">
+            <q-card flat class="biostar-panel tool-card">
+              <q-card-section>
+                <q-icon :name="card.icon" size="30px" color="primary" />
+                <div class="text-h6 text-weight-bold q-mt-lg">{{ card.title }}</div>
+                <div class="text-body2 text-grey-6 q-mt-sm tool-card__description">
+                  {{ card.description }}
+                </div>
+              </q-card-section>
+              <q-card-actions class="q-px-md q-pb-md">
+                <q-btn flat no-caps color="primary" :label="card.action" :to="card.to" />
+              </q-card-actions>
+            </q-card>
+          </div>
+        </div>
+      </section>
+    </main>
   </q-page>
 </template>
 
@@ -50,49 +68,43 @@ interface AnalysisCard {
 const apiStatus = ref<ApiStatus>("checking");
 
 const apiStatusLabel = computed<string>(() => {
-  if (apiStatus.value === "connected") {
-    return "Connected";
-  }
-
-  if (apiStatus.value === "unavailable") {
-    return "Unavailable";
-  }
-
-  return "Checking...";
+  if (apiStatus.value === "connected") return "API connected";
+  if (apiStatus.value === "unavailable") return "API unavailable";
+  return "Checking API";
 });
 
 const apiStatusColor = computed<string>(() => {
-  if (apiStatus.value === "connected") {
-    return "positive";
-  }
-
-  if (apiStatus.value === "unavailable") {
-    return "negative";
-  }
-
+  if (apiStatus.value === "connected") return "positive";
+  if (apiStatus.value === "unavailable") return "negative";
   return "warning";
+});
+
+const apiStatusIcon = computed<string>(() => {
+  if (apiStatus.value === "connected") return "check_circle";
+  if (apiStatus.value === "unavailable") return "error";
+  return "sync";
 });
 
 const cards: AnalysisCard[] = [
   {
-    title: "Sequence Analysis",
-    description: "Convert and inspect nucleotide and amino acid sequences.",
+    title: "Sequence conversion",
+    description: "Convert DNA and RNA sequences and translate nucleotide sequences into proteins.",
     icon: "biotech",
-    action: "Open sequences",
+    action: "Open analysis",
     to: "/sequences",
   },
   {
-    title: "Protein Analysis",
-    description: "Explore protein properties and biological information.",
+    title: "Protein analysis",
+    description: "Calculate biochemical properties and inspect protein composition.",
     icon: "science",
-    action: "Open proteins",
+    action: "Open analysis",
     to: "/proteins",
   },
   {
-    title: "Mutation Analysis",
-    description: "Compare sequences and inspect potential mutations.",
+    title: "Mutation analysis",
+    description: "Compare biological sequences and identify sequence-level changes.",
     icon: "compare_arrows",
-    action: "Open mutations",
+    action: "Open analysis",
     to: "/mutations",
   },
 ];
@@ -100,13 +112,7 @@ const cards: AnalysisCard[] = [
 onMounted(async (): Promise<void> => {
   try {
     const health = await getHealth();
-
-    if (health.data?.status !== "ok") {
-      apiStatus.value = "unavailable";
-      return;
-    }
-
-    apiStatus.value = "connected";
+    apiStatus.value = health.data?.status === "ok" ? "connected" : "unavailable";
   } catch {
     apiStatus.value = "unavailable";
   }
@@ -114,12 +120,18 @@ onMounted(async (): Promise<void> => {
 </script>
 
 <style scoped>
-.page-shell {
-  max-width: 1200px;
-  margin: 0 auto;
+.tool-card {
+  height: 100%;
+  transition: border-color 120ms ease, transform 120ms ease;
 }
 
-.analysis-card {
-  height: 100%;
+.tool-card:hover {
+  border-color: rgb(23 107 135 / 35%);
+  transform: translateY(-1px);
+}
+
+.tool-card__description {
+  min-height: 48px;
+  line-height: 1.55;
 }
 </style>
