@@ -28,7 +28,7 @@ class CreateAPIKeyResponse(BaseModel):
 def create_api_key(
     request: CreateAPIKeyRequest,
     x_admin_key: str | None = Header(default=None, alias="X-Admin-Key"),
-) -> CreateAPIKeyResponse:
+) -> APIResponse[CreateAPIKeyResponse]:
     expected = os.getenv("BIOSTAR_AUTH_ADMIN_KEY")
     if not expected or not x_admin_key or not secrets_compare(x_admin_key, expected):
         raise BioStarAPIError(401, MessageCode.INVALID_ADMIN_KEY)
@@ -43,10 +43,10 @@ def create_api_key(
 def delete_api_key(
     key_id: int,
     x_admin_key: str | None = Header(default=None, alias="X-Admin-Key"),
-) -> dict[str, object]:
+) -> APIResponse[dict[str, object]]:
     expected = os.getenv("BIOSTAR_AUTH_ADMIN_KEY")
     if not expected or not x_admin_key or not secrets_compare(x_admin_key, expected):
-        raise HTTPException(status_code=401, detail="Invalid authentication administrator key")
+        raise BioStarAPIError(401, MessageCode.INVALID_ADMIN_KEY)
     if not revoke_api_key(key_id):
         raise BioStarAPIError(404, MessageCode.API_KEY_NOT_FOUND)
     return APIResponse(
