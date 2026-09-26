@@ -17,6 +17,7 @@ from BioStarAPI.database.connection import engine
 from BioStarAPI.database.models import (
     AminoAcid,
     AminoAcidClass,
+    AminoAcidClassMember,
     Codon,
     GeneticCode,
     Nucleotide,
@@ -86,15 +87,7 @@ def _seed_amino_acid_classes(session: Session) -> None:
             amino_acid = amino_acids[symbol]
             if not any(member.amino_acid_id == amino_acid.id for member in amino_acid_class.members):
                 amino_acid_class.members.append(
-                    type(amino_acid_class.members[0])(
-                        amino_acid=amino_acid,
-                        amino_acid_class=amino_acid_class,
-                    )
-                    if amino_acid_class.members
-                    else __import__(
-                        "BioStarAPI.database.models",
-                        fromlist=["AminoAcidClassMember"],
-                    ).AminoAcidClassMember(
+                    AminoAcidClassMember(
                         amino_acid=amino_acid,
                         amino_acid_class=amino_acid_class,
                     )
