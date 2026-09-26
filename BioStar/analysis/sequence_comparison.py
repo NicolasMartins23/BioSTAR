@@ -1,16 +1,17 @@
-from BioStar.data.biochemistry import CODON_SIZE, STOP_CODON_DNA, TABLE_DNA_CODON_TO_AMINOACID
+from BioStar.data.biochemistry import CODON_SIZE
+from BioStar.engine.biochemistry import BiochemistryData
 
 
 class CompareNucleotideSequence:
     """Compares a reference DNA sequence against one or more sequences."""
 
-    def __init__(self, original_sequence: str = "", compared_sequence: str | list[str] = "") -> None:
+    def __init__(self, original_sequence: str = "", compared_sequence: str | list[str] = "", data: BiochemistryData | None = None) -> None:
         self.original_sequence: str = original_sequence.upper()
         if isinstance(compared_sequence, str):
             self.compared_sequences: list[str] = [compared_sequence.upper()]
         else:
             self.compared_sequences = [sequence.upper() for sequence in compared_sequence]
-        self.classify_mutation: ClassifyNucleotideSequenceMutation = ClassifyNucleotideSequenceMutation()
+        self.data: BiochemistryData = data or __import__("BioStar.engine.default_data", fromlist=["get_default_biochemistry"]).get_default_biochemistry()\n        self.classify_mutation: ClassifyNucleotideSequenceMutation = ClassifyNucleotideSequenceMutation(self.data)
 
     def compare(self, show_only_mutations: bool = True) -> list[dict[str, object]]:
         reference_codons: list[str] = self._get_codons(self.original_sequence)
