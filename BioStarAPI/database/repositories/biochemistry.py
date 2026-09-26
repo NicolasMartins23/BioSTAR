@@ -5,6 +5,8 @@ from sqlalchemy.orm import Session
 
 from BioStar.engine.biochemistry import AminoAcidData, BiochemistryData
 from BioStarAPI.database.models import AminoAcid, AminoAcidClass, Codon, GeneticCode
+from BioStarAPI.resources.exceptions import BioStarAPIError
+from BioStarAPI.resources.messages import MessageCode
 
 
 class BiochemistryRepository:
@@ -18,11 +20,11 @@ class BiochemistryRepository:
             select(GeneticCode).where(GeneticCode.ncbi_id == 1)
         )
         if genetic_code is None:
-            raise RuntimeError("Standard genetic code is not seeded")
+            raise BioStarAPIError(500, MessageCode.STANDARD_GENETIC_CODE_NOT_SEEDED)
 
         amino_acids = list(self.session.scalars(select(AminoAcid)))
         if not amino_acids:
-            raise RuntimeError("Amino acid reference data is not seeded")
+            raise BioStarAPIError(500, MessageCode.AMINO_ACID_DATA_NOT_SEEDED)
 
         classes = list(
             self.session.scalars(
