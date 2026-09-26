@@ -15,9 +15,11 @@ class BioStarAPIError(Exception):
         self,
         status_code: int,
         message_code: MessageCode,
+        headers: dict[str, str] | None = None,
         **parameters: object,
     ) -> None:
         self.status_code = status_code
+        self.headers = headers or {}
         self.message = get_message(message_code, **parameters)
         super().__init__(self.message.message)
 
@@ -27,6 +29,7 @@ def register_exception_handlers(app) -> None:
     async def handle_api_error(request: Request, exception: BioStarAPIError) -> JSONResponse:
         return JSONResponse(
             status_code=exception.status_code,
+            headers=exception.headers,
             content=APIResponse[None](
                 data=None,
                 message=exception.message,
