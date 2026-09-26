@@ -1,3 +1,4 @@
+import os
 from logging.config import fileConfig
 
 from alembic import context
@@ -7,6 +8,12 @@ from BioStarAPI.database.models import Base
 from BioStarAPI.database.models import auth, reference  # noqa: F401
 
 config = context.config
+database_url: str = os.getenv("BIOSTAR_DATABASE_URL", "")
+
+if not database_url:
+    raise RuntimeError("BIOSTAR_DATABASE_URL must be set before running migrations.")
+
+config.set_main_option("sqlalchemy.url", database_url)
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
