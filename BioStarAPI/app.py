@@ -8,15 +8,15 @@ from BioStarAPI.auth.service import _check_short_rate_limit, enforce_request_lim
 from BioStarAPI.controllers.analysis import (
     GET_SEQUENCE_MAX_LENGTH,
     POST_SEQUENCE_MAX_LENGTH,
-    dna_to_protein,
-    dna_to_rna,
-    mutation_compare,
-    protein_analysis,
-    rna_to_dna,
-    rna_to_protein,
 )
 from BioStarAPI.controllers.schemas import BatchSequenceRequest, MutationCompareRequest, ProteinAnalysisRequest
 from BioStarAPI.database.connection import engine
+from BioStarAPI.database.repositories.biochemistry import BiochemistryRepository
+from BioStarAPI.services.dependencies import get_biochemistry_repository
+from BioStarAPI.services.mutation_service import MutationService
+from BioStarAPI.services.protein_service import ProteinService
+from BioStarAPI.services.sequence_service import SequenceService
+from fastapi import Depends
 from BioStarAPI.openapi import custom_openapi
 
 app = FastAPI(title="BioSTAR API", version="0.5.0")
@@ -122,9 +122,9 @@ def post_protein(request: ProteinAnalysisRequest) -> dict[str, object]:
     ),
     response_description="The two normalized sequences and detected mutations.",
 )
-def post_mutation_compare(request: MutationCompareRequest) -> dict[str, object]:
+def post_mutation_compare(request: MutationCompareRequest, repository: BiochemistryRepository = Depends(get_biochemistry_repository)) -> dict[str, object]:
     """Compare two coding DNA sequences and return detected mutations."""
-    return mutation_compare(request.reference, request.sequence)
+    return MutationService(repository).compare(request.reference, request.sequence)
 
 
 @app.post(
@@ -133,8 +133,8 @@ def post_mutation_compare(request: MutationCompareRequest) -> dict[str, object]:
     summary="Convert a larger DNA sequence to RNA",
     description=f"POST variant of DNA-to-RNA conversion. Maximum {POST_SEQUENCE_MAX_LENGTH:,} nucleotides.",
 )
-def batch_dna_rna(request: BatchSequenceRequest) -> dict[str, str]:
-    return dna_to_rna(request.sequence, POST_SEQUENCE_MAX_LENGTH)
+def batch_dna_rna(request: BatchSequenceRequest, service: SequenceService = Depends(get_sequence_service)) -> dict[str, str]:
+    return service.dna_to_rna(request.sequence, POST_SEQUENCE_MAX_LENGTH)
 
 
 @app.post(
@@ -143,8 +143,8 @@ def batch_dna_rna(request: BatchSequenceRequest) -> dict[str, str]:
     summary="Translate a larger DNA sequence to protein",
     description=f"POST variant of DNA-to-protein translation. Maximum {POST_SEQUENCE_MAX_LENGTH:,} nucleotides.",
 )
-def batch_dna_protein(request: BatchSequenceRequest) -> dict[str, str]:
-    return dna_to_protein(request.sequence, POST_SEQUENCE_MAX_LENGTH)
+def batch_dna_protein(request: BatchSequenceRequest, service: SequenceService = Depends(get_sequence_service)) -> dict[str, str]:
+    return service.dna_to_protein(request.sequence, POST_SEQUENCE_MAX_LENGTH)
 
 
 @app.post(
@@ -153,8 +153,8 @@ def batch_dna_protein(request: BatchSequenceRequest) -> dict[str, str]:
     summary="Translate a larger RNA sequence to protein",
     description=f"POST variant of RNA-to-protein translation. Maximum {POST_SEQUENCE_MAX_LENGTH:,} nucleotides.",
 )
-def batch_rna_protein(request: BatchSequenceRequest) -> dict[str, str]:
-    return rna_to_protein(request.sequence, POST_SEQUENCE_MAX_LENGTH)
+def batch_rna_protein(request: BatchSequenceRequest, service: SequenceService = Depends(get_sequence_service)) -> dict[str, str]:
+    return service.rna_to_protein(request.sequence, POST_SEQUENCE_MAX_LENGTH)
 
 
 @app.post(
@@ -163,8 +163,8 @@ def batch_rna_protein(request: BatchSequenceRequest) -> dict[str, str]:
     summary="Convert a larger RNA sequence to DNA",
     description=f"POST variant of RNA-to-DNA conversion. Maximum {POST_SEQUENCE_MAX_LENGTH:,} nucleotides.",
 )
-def batch_rna_dna(request: BatchSequenceRequest) -> dict[str, str]:
-    return rna_to_dna(request.sequence, POST_SEQUENCE_MAX_LENGTH)
+def batch_rna_dna(request: BatchSequenceRequest, service: SequenceService = Depends(get_sequence_service)) -> dict[str, str]:
+    return service.rna_to_dna(request.sequence, POST_SEQUENCE_MAX_LENGTH)
 
 
 app.include_router(auth_router)
