@@ -319,3 +319,5 @@ onMounted(async (): Promise<void> => {
     padding-left: 0.5rem;
   }
 }
+
+</style>
