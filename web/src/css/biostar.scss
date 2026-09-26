@@ -1,0 +1,98 @@
+:root {
+  --biostar-navy: #12324a;
+  --biostar-blue: #176b87;
+  --biostar-teal: #238b8f;
+  --biostar-green: #4f8a5b;
+  --biostar-bg: #f5f7f8;
+  --biostar-surface: #ffffff;
+  --biostar-border: #d9e1e5;
+  --biostar-text: #18313f;
+  --biostar-muted: #647782;
+}
+
+body {
+  background: var(--biostar-bg);
+  color: var(--biostar-text);
+}
+
+body.body--dark {
+  --biostar-bg: #101a20;
+  --biostar-surface: #16242c;
+  --biostar-border: #2c3d46;
+  --biostar-text: #e6eef2;
+  --biostar-muted: #9eb0b9;
+}
+
+.biostar-page {
+  min-height: calc(100vh - 64px);
+  padding: 32px;
+}
+
+.biostar-content {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.biostar-eyebrow {
+  color: var(--biostar-blue);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.biostar-title {
+  margin: 4px 0 0;
+  color: var(--biostar-navy);
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.body--dark .biostar-title {
+  color: var(--biostar-text);
+}
+
+.biostar-subtitle {
+  max-width: 760px;
+  margin-top: 10px;
+  color: var(--biostar-muted);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.biostar-panel {
+  border: 1px solid var(--biostar-border);
+  border-radius: 6px;
+  background: var(--biostar-surface);
+  box-shadow: 0 2px 8px rgb(18 50 74 / 4%);
+}
+
+.biostar-panel__header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--biostar-border);
+}
+
+.biostar-panel__body {
+  padding: 24px;
+}
+
+.biostar-section-label {
+  color: var(--biostar-text);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.biostar-sequence {
+  font-family: "Roboto Mono", "Courier New", monospace;
+  letter-spacing: 0.04em;
+}
+
+@media (max-width: 599px) {
+  .biostar-page {
+    padding: 20px 16px;
+  }
+}
