@@ -115,12 +115,13 @@ onMounted(async (): Promise<void> => {
 .hero {
   position: relative;
   display: flex;
-  min-height: 330px;
+  min-height: 20rem;
   align-items: center;
   overflow: hidden;
-  padding: 52px 56px;
-  border-radius: 10px;
-  background: #123d59;
+  padding: 3.25rem 5%;
+  border-radius: 0.9rem;
+  background: linear-gradient(115deg, #123d59 0%, #176b87 62%, #238b8f 100%);
+  box-shadow: 0 1.5rem 3rem rgb(18 61 89 / 14%);
   color: white;
 }
 
@@ -129,13 +130,13 @@ onMounted(async (): Promise<void> => {
 }
 
 .hero .biostar-subtitle {
-  color: rgb(255 255 255 / 68%);
+  color: rgb(255 255 255 / 70%);
 }
 
 .hero-copy {
   position: relative;
   z-index: 1;
-  max-width: 730px;
+  max-width: 45rem;
 }
 
 .hero .biostar-title {
@@ -144,19 +145,17 @@ onMounted(async (): Promise<void> => {
 
 .hero-art {
   position: absolute;
-  top: 0;
-  right: 0;
+  inset: 0 0 0 auto;
   width: 38%;
-  height: 100%;
-  opacity: 0.55;
+  opacity: 0.5;
 }
 
 .helix {
   position: absolute;
-  top: 42px;
-  right: 80px;
-  width: 130px;
-  height: 250px;
+  top: 12%;
+  right: 16%;
+  width: 8rem;
+  height: 15rem;
   transform: rotate(16deg);
 }
 
@@ -165,21 +164,21 @@ onMounted(async (): Promise<void> => {
   position: absolute;
   top: 0;
   bottom: 0;
-  width: 3px;
+  width: 0.2rem;
   content: "";
   background: #55c7c0;
-  border-radius: 4px;
+  border-radius: 0.25rem;
 }
 
-.helix::before { left: 20px; transform: rotate(8deg); }
-.helix::after { right: 20px; transform: rotate(-8deg); }
+.helix::before { left: 12%; transform: rotate(8deg); }
+.helix::after { right: 12%; transform: rotate(-8deg); }
 
 .helix i {
   position: absolute;
-  top: calc((var(--n) - 1) * 38px + 8px);
-  left: 30px;
-  width: 70px;
-  height: 2px;
+  top: calc((var(--n) - 1) * 2.375rem + 0.5rem);
+  left: 23%;
+  width: 54%;
+  height: 0.125rem;
   background: rgb(255 255 255 / 55%);
   transform: rotate(calc((var(--n) - 4) * 7deg));
 }
@@ -187,15 +186,15 @@ onMounted(async (): Promise<void> => {
 .status-line {
   display: flex;
   align-items: center;
-  gap: 9px;
-  margin: 20px 2px 54px;
+  gap: 0.55rem;
+  margin: 1.25rem 0.125rem 3.5rem;
   color: var(--bio-muted);
   font-size: 0.78rem;
 }
 
 .status-marker {
-  width: 7px;
-  height: 7px;
+  width: 0.45rem;
+  height: 0.45rem;
   border-radius: 50%;
   background: #d6a23d;
 }
@@ -209,7 +208,7 @@ onMounted(async (): Promise<void> => {
 }
 
 .tools-heading h2 {
-  margin: 6px 0 20px;
+  margin: 0.375rem 0 1.25rem;
   color: var(--bio-ink);
   font-size: 1.65rem;
   letter-spacing: -0.025em;
@@ -220,18 +219,20 @@ onMounted(async (): Promise<void> => {
 }
 
 .tool-row {
-  min-height: 98px;
-  padding: 12px 8px;
+  min-height: 6rem;
+  padding: 0.75rem 0.5rem;
   border-bottom: 1px solid var(--bio-line);
   border-radius: 0;
+  transition: background 160ms ease, padding 160ms ease;
 }
 
 .tool-row:hover {
-  background: rgb(23 107 135 / 4%);
+  background: linear-gradient(90deg, rgb(23 107 135 / 6%), rgb(40 165 160 / 2%));
+  padding-inline: 0.75rem;
 }
 
 .tool-index {
-  width: 44px;
+  width: 2.75rem;
   color: #9aabb2;
   font-family: "Roboto Mono", "Courier New", monospace;
   font-size: 0.72rem;
@@ -244,7 +245,77 @@ onMounted(async (): Promise<void> => {
 }
 
 .tool-row :deep(.q-item__label--caption) {
-  margin-top: 4px;
+  margin-top: 0.25rem;
   color: var(--bio-muted);
 }
-</style>
+
+@media (max-width: 59.99rem) {
+  .hero {
+    min-height: 18rem;
+    padding: 2.75rem 5%;
+  }
+
+  .hero-art {
+    width: 30%;
+  }
+
+  .status-line {
+    margin-bottom: 2.75rem;
+  }
+}
+
+@media (max-width: 37.49rem) {
+  .hero {
+    min-height: 25rem;
+    align-items: flex-start;
+    padding: 2rem 1.25rem;
+  }
+
+  .hero .biostar-title {
+    font-size: clamp(2rem, 10vw, 2.8rem);
+  }
+
+  .hero .biostar-subtitle {
+    max-width: 100%;
+    font-size: 0.92rem;
+  }
+
+  .hero-art {
+    top: auto;
+    right: -10%;
+    bottom: -20%;
+    width: 75%;
+    height: 60%;
+    opacity: 0.28;
+  }
+
+  .helix {
+    top: 0;
+    right: 12%;
+  }
+
+  .status-line {
+    margin: 1rem 0.125rem 2.5rem;
+  }
+
+  .tool-row {
+    min-height: 5.5rem;
+    padding: 0.75rem 0;
+  }
+
+  .tool-row:hover {
+    padding-inline: 0.25rem;
+  }
+
+  .tool-index {
+    display: none;
+  }
+
+  .tool-row :deep(.q-item__section--avatar) {
+    min-width: 2.75rem;
+  }
+
+  .tool-row :deep(.q-item__section--side:last-child) {
+    padding-left: 0.5rem;
+  }
+}
