@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import re
 
-from fastapi import HTTPException
+from BioStarAPI.resources.exceptions import BioStarAPIError
+from BioStarAPI.resources.messages import MessageCode
 
 from BioStar.domain.nucleic_acid import DNA, RNA
 from BioStarAPI.database.repositories.biochemistry import BiochemistryRepository
@@ -21,24 +22,18 @@ class SequenceService:
         if value.startswith(">"):
             records = self._parse_fasta(value)
             if len(records) != 1:
-                raise HTTPException(status_code=422, detail="Exactly one FASTA sequence is required")
+                raise BioStarAPIError(422, MessageCode.FASTA_SINGLE_SEQUENCE_REQUIRED)
             value = records[0]
         else:
             value = re.sub(r"\s+", "", value)
 
         if not value:
-            raise HTTPException(status_code=422, detail=f"{kind} sequence cannot be empty")
+            raise BioStarAPIError(422, MessageCode.EMPTY_SEQUENCE, kind=kind)
         if len(value) > max_length:
-            raise HTTPException(
-                status_code=422,
-                detail=f"{kind} sequence cannot exceed {max_length} characters",
-            )
+            raise BioStarAPIError(422, MessageCode.SEQUENCE_TOO_LONG, kind=kind, max_length=max_length)
         invalid = sorted(set(value) - alphabet)
         if invalid:
-            raise HTTPException(
-                status_code=422,
-                detail=f"Invalid {kind} sequence characters: {', '.join(invalid)}",
-            )
+            raise BioStarAPIError(422, MessageCode.INVALID_SEQUENCE, kind=kind, characters=", ".join(invalid))
         return value
 
     def normalize_dna(self, sequence: str, max_length: int) -> str:
@@ -84,7 +79,7 @@ class SequenceService:
                 current = []
                 continue
             if current is None:
-                raise HTTPException(status_code=422, detail="Invalid FASTA sequence")
+                raise BioStarAPIError(422, MessageCode.INVALID_FASTA)
             current.append(line)
         if current is not None:
             records.append("".join(current))
