@@ -1,36 +1,83 @@
-# This repository has been discontinued and has been merged with BioApps. I do not recommend using this repository as it is no longer actively maintained
+# BioSTAR
 
-The web version of this project can be accessed here: https://softwaremartins.pythonanywhere.com/biostar
+BioSTAR is an object-oriented Python library for biological sequence analysis.
 
-1 - PROJECT NAME
-BioSTAR (Bioinformatics System for Targeted Analysis and Research)
+## Architecture
 
-2 - PROJECT DESCRIPTION
-It kickstarted my journey to learn how to program and transition from a Biochemistry Major to working with software.
-The library is inteded to be as simple as possible to use and also complete complex tasks effectively.
+The **BioSTAR package is the engine**. It contains the biological domain model and
+reusable analysis functionality and does not depend on FastAPI, SQLAlchemy,
+PostgreSQL, authentication, or HTTP.
 
-3 - MAIN USAGE
-The 3 main classes on this library as DNA, RNA and Protein
+- `BioStar/domain/` — DNA, RNA, Protein and other biological objects.
+- `BioStar/data/` — current in-memory biochemical reference data.
+- `BioStar/analysis/` — sequence-analysis algorithms.
+- `BioStar/io/` — input parsing such as FASTA.
+- `BioStar/utils/` — framework-independent helpers.
 
-All of those classes will have a property named sequence, which stores the genetic/peptide sequence as string. I also added a how_to_use.txt to make things more practical
+The API is a separate application layer:
 
-DNA and RNA both inherit from the NucleicAcid parent class
-get_peptide_sequence()
-    Returns a string which represents the peptide sequence of a given NucleicAcid when translated intto a protein.
-    If you wish to return a protein object instead, use the method to_protein()
+```
+HTTP
+  ↓
+BioStarAPI/controllers
+  ↓
+BioStarAPI/services
+  ↓
+BioStarAPI/database/repositories
+  ↓
+SQLAlchemy
+  ↓
+PostgreSQL
 
-to_protein()
-    Returns a protein object of a given NucleicAcid when translated into a protein.
-    If you wish to return a protein object instead, use the method to_protein()
+BioStarAPI/services
+  ↓
+BioSTAR engine
+```
 
-When creating an instance of DNA("SEQUENCE") or RNA("SEQUENCE") you must pass the sequence when instantiating the new variable as a DNA object.
-The recommended approach is to create a string variable first then pass it as an property, although it is only a matter of preference.
+## API foundation
 
-This is a summary of all functionality
-DNA: peptide_sequence(), to_protein(), rna_sequence(), to_rna(), at_skew(), at_content(), gc_content(), gc_skew(), template_strand(), get_orf_map()
-RNA: peptide_sequence(), to_protein(), dna_sequence(), to_dna()
-Protein: aromacity(), charge_at_pH(), composition_ratio(), extinction_coefficient(), hydrophobic_index(), isoelectric_point(), molecular_weight(), secondary_structure_propensity()
+`BioStarAPI/` contains the initial database and application-layer structure.
 
-There will be more changes added latter.
-- Protein: pI and charge at pH, identify possible signal peptide sequences
-- Nucleic Acids: Optimize sequence for expression in model organisms
+The database currently models:
+
+- amino acids and their biochemical properties
+- amino acid classifications
+- nucleotides
+- genetic codes and codons
+- organisms and codon usage
+- scientific reference sources
+- users and refresh tokens
+
+Alembic migrations live in `BioStarAPI/database/migrations/`.
+
+Database migrations use:
+
+```bash
+export BIOSTAR_DATABASE_URL="postgresql+psycopg://user:password@localhost:5432/biostar"
+alembic upgrade head
+```
+
+Scientific reference data is intentionally not inserted by the initial schema
+migration. It will be seeded separately so schema migrations and scientific
+data imports remain independent.
+
+## Public API
+
+```python
+from BioStar import DNA, RNA, Protein, NucleicAcid, OpenReadFrame
+```
+
+Legacy module imports are retained as compatibility shims while new engine code
+should use the organized package structure.
+
+
+## Local PostgreSQL
+
+The repository includes a PostgreSQL development database:
+
+```bash
+docker compose -f docker-compose.database.yml up -d
+export BIOSTAR_DATABASE_URL="postgresql+psycopg://biostar:biostar@localhost:5432/biostar"
+alembic upgrade head
+python -m BioStarAPI.database.seed
+```

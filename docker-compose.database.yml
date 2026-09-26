@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: biostar-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: biostar
+      POSTGRES_USER: biostar
+      POSTGRES_PASSWORD: biostar
+    ports:
+      - "5432:5432"
+    volumes:
+      - biostar-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U biostar -d biostar"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  biostar-postgres-data:
