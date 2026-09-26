@@ -93,6 +93,9 @@ class DNA(NucleicAcid):
     def orf_map(self, length_threshold: int = 0) -> list[dict[str, object]]:
         return OpenReadFrame(self.sequence, length_threshold).orf_map
 
+    def get_orf_map(self, length_threshold: int = 0) -> list[dict[str, object]]:
+        return self.orf_map(length_threshold)
+
 
 class RNA(NucleicAcid):
     """Represents an RNA sequence and RNA-specific analyses."""
