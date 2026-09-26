@@ -10,7 +10,7 @@ from BioStarAPI.controllers.schemas import BatchSequenceRequest, MutationCompare
 from BioStarAPI.database.connection import engine
 from BioStarAPI.database.repositories.biochemistry import BiochemistryRepository
 from BioStarAPI.openapi import custom_openapi
-from BioStarAPI.resources.exceptions import register_exception_handlers
+from BioStarAPI.resources.exceptions import BioStarAPIError, api_error_response, register_exception_handlers
 from BioStarAPI.resources.responses import APIResponse
 from BioStarAPI.services.dependencies import get_biochemistry_repository
 from BioStarAPI.services.mutation_service import MutationService
@@ -35,13 +35,16 @@ async def api_rate_limit_middleware(request: Request, call_next):
     if path == "/health" or path == "/api/v1/health":
         return await call_next(request)
 
-    if path.startswith("/api/auth/"):
-        _check_short_rate_limit(request, authenticated=True)
-    elif path.startswith("/api/"):
-        api_key_id = resolve_api_key(request.headers.get("X-API-Key"))
-        enforce_request_limits(request, api_key_id)
+    try:
+        if path.startswith("/api/auth/"):
+            _check_short_rate_limit(request, authenticated=True)
+        elif path.startswith("/api/"):
+            api_key_id = resolve_api_key(request.headers.get("X-API-Key"))
+            enforce_request_limits(request, api_key_id)
 
-    return await call_next(request)
+        return await call_next(request)
+    except BioStarAPIError as exception:
+        return api_error_response(exception)
 
 
 def _check_database_health() -> dict[str, str]:
