@@ -30,7 +30,7 @@ Authenticated requests use:
 
 ## Formats
 
-Protein analysis accepts a single FASTA sequence. DNA/RNA conversion endpoints accept raw sequences.
+Protein analysis accepts a single raw or FASTA protein sequence. DNA/RNA conversion endpoints accept raw or single FASTA sequences.
 """,
         routes=app.routes,
     )
