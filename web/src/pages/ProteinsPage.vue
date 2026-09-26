@@ -1,107 +1,141 @@
 <template>
-  <q-page padding>
-    <div class="page-shell">
-      <div class="text-overline text-primary">Analysis</div>
-      <div class="text-h4 text-weight-bold">Proteins</div>
-      <div class="text-body1 text-grey-6 q-mt-sm">
-        Analyze a protein sequence with the BioSTAR biochemical engine.
-      </div>
+  <q-page class="biostar-page">
+    <main class="biostar-content">
+      <header>
+        <div class="biostar-eyebrow">Analysis / Proteins</div>
+        <h1 class="biostar-title">Protein analysis</h1>
+        <p class="biostar-subtitle">
+          Calculate physicochemical properties and composition from a protein sequence.
+        </p>
+      </header>
 
-      <q-card flat bordered class="q-mt-xl">
-        <q-card-section>
-          <q-input v-model="sequence" type="textarea" outlined autogrow
+      <section class="biostar-panel q-mt-xl">
+        <div class="biostar-panel__header">
+          <div class="biostar-section-label">Input sequence</div>
+          <div class="text-body2 text-grey-6 q-mt-xs">Protein sequences may contain whitespace and FASTA formatting.</div>
+        </div>
+
+        <div class="biostar-panel__body">
+          <q-input
+            v-model="sequence"
+            type="textarea"
+            outlined
+            autogrow
             label="Protein sequence"
-            hint="Whitespace is ignored. Maximum 10,000 characters."
+            hint="Whitespace is ignored · Maximum 10,000 characters"
             :disable="loading"
-            @keydown.ctrl.enter.prevent="analyze" />
+            input-class="biostar-sequence"
+            @keydown.ctrl.enter.prevent="analyze"
+          />
 
-          <q-toggle v-model="fullAnalysis" label="Full analysis" color="primary" class="q-mt-md" />
-
-          <div v-if="!fullAnalysis" class="options-grid q-mt-md">
-            <q-checkbox v-model="options.aminoacidsCount" label="Amino-acid count" />
-            <q-checkbox v-model="options.isoelectricPoint" label="Isoelectric point" />
-            <q-checkbox v-model="options.chargeAtPh" label="Charge at pH" />
-            <q-checkbox v-model="options.aromaticity" label="Aromaticity" />
-            <q-checkbox v-model="options.secondaryStructure" label="Secondary structure" />
-            <q-checkbox v-model="options.molecularWeight" label="Molecular weight" />
-            <q-checkbox v-model="options.hydrophobicIndex" label="Hydrophobic index" />
-            <q-checkbox v-model="options.compositionRatio" label="Composition ratio" />
-            <q-checkbox v-model="options.extinctionCoefficient" label="Extinction coefficient" />
+          <div class="row items-center q-mt-lg">
+            <q-toggle v-model="fullAnalysis" label="Run complete analysis" color="primary" />
           </div>
 
-          <q-input v-if="!fullAnalysis && options.chargeAtPh"
-            v-model.number="chargePh" type="number" outlined dense
-            label="pH" min="0" max="14" step="0.1" class="ph-input q-mt-md" />
+          <div v-if="!fullAnalysis" class="q-mt-lg">
+            <div class="biostar-section-label q-mb-sm">Requested properties</div>
+            <div class="options-grid">
+              <q-checkbox v-model="options.aminoacidsCount" label="Amino-acid count" />
+              <q-checkbox v-model="options.isoelectricPoint" label="Isoelectric point" />
+              <q-checkbox v-model="options.chargeAtPh" label="Charge at pH" />
+              <q-checkbox v-model="options.aromaticity" label="Aromaticity" />
+              <q-checkbox v-model="options.secondaryStructure" label="Secondary structure" />
+              <q-checkbox v-model="options.molecularWeight" label="Molecular weight" />
+              <q-checkbox v-model="options.hydrophobicIndex" label="Hydrophobic index" />
+              <q-checkbox v-model="options.compositionRatio" label="Composition ratio" />
+              <q-checkbox v-model="options.extinctionCoefficient" label="Extinction coefficient" />
+            </div>
 
-          <q-btn color="primary" icon="science" label="Analyze protein"
-            :loading="loading" :disable="!sequence.trim()"
-            class="q-mt-lg" @click="analyze" />
-        </q-card-section>
-      </q-card>
+            <q-input
+              v-if="options.chargeAtPh"
+              v-model.number="chargePh"
+              type="number"
+              outlined
+              dense
+              label="pH"
+              min="0"
+              max="14"
+              step="0.1"
+              class="ph-input q-mt-md"
+            />
+          </div>
 
-      <q-banner v-if="error" rounded class="bg-negative text-white q-mt-lg">
+          <div class="row items-center justify-between q-mt-lg">
+            <div class="text-caption text-grey-6">Ctrl + Enter to analyze</div>
+            <q-btn
+              unelevated
+              color="primary"
+              icon="science"
+              label="Run analysis"
+              :loading="loading"
+              :disable="!sequence.trim()"
+              @click="analyze"
+            />
+          </div>
+        </div>
+      </section>
+
+      <q-banner v-if="error" rounded class="q-mt-md bg-negative text-white">
+        <template #avatar><q-icon name="error_outline" /></template>
         {{ error }}
       </q-banner>
 
-      <q-card v-if="result" flat bordered class="q-mt-lg">
-        <q-card-section>
-          <div class="row items-center justify-between">
-            <div>
-              <div class="text-h6">Results</div>
-              <div class="text-caption text-grey-6">Length: {{ result.length }}</div>
+      <section v-if="result" class="biostar-panel q-mt-md">
+        <div class="biostar-panel__header row items-center justify-between">
+          <div>
+            <div class="biostar-section-label">Analysis results</div>
+            <div class="text-body2 text-grey-6 q-mt-xs">{{ result.length }} residues</div>
+          </div>
+          <q-btn flat round icon="content_copy" aria-label="Copy sequence" @click="copySequence">
+            <q-tooltip>Copy sequence</q-tooltip>
+          </q-btn>
+        </div>
+
+        <div class="biostar-panel__body">
+          <div class="result-sequence biostar-sequence">{{ result.sequence }}</div>
+
+          <div v-if="scalarResults.length > 0" class="result-grid q-mt-xl">
+            <div v-for="item in scalarResults" :key="item.label" class="metric">
+              <div class="metric__label">{{ item.label }}</div>
+              <div class="metric__value">{{ item.value }}</div>
             </div>
-            <q-btn flat round icon="content_copy" @click="copySequence" />
           </div>
 
-          <q-input :model-value="result.sequence" readonly outlined type="textarea"
-            autogrow class="q-mt-md" />
-        </q-card-section>
-
-        <q-separator />
-
-        <q-card-section v-if="scalarResults.length > 0">
-          <div class="result-grid">
-            <q-card v-for="item in scalarResults" :key="item.label" flat bordered>
-              <q-card-section>
-                <div class="text-caption text-grey-6">{{ item.label }}</div>
-                <div class="text-h6 q-mt-xs">{{ item.value }}</div>
-              </q-card-section>
-            </q-card>
+          <div v-if="result.charge_at_pH" class="result-section">
+            <div class="biostar-section-label">Charge at pH {{ result.charge_at_pH.pH }}</div>
+            <div class="result-value">{{ formatValue(result.charge_at_pH.charge) }}</div>
           </div>
-        </q-card-section>
 
-        <q-card-section v-if="result.charge_at_pH">
-          <div class="text-subtitle1">Charge at pH {{ result.charge_at_pH.pH }}</div>
-          <div class="text-body1">{{ formatValue(result.charge_at_pH.charge) }}</div>
-        </q-card-section>
+          <div v-if="result.aminoacids_count" class="result-section">
+            <div class="biostar-section-label">Amino-acid count</div>
+            <div class="chip-grid">
+              <q-chip v-for="(count, aminoAcid) in result.aminoacids_count" :key="aminoAcid" square>
+                <span class="biostar-sequence">{{ aminoAcid }}</span>&nbsp; {{ count }}
+              </q-chip>
+            </div>
+          </div>
 
-        <q-card-section v-if="result.aminoacids_count">
-          <div class="text-subtitle1 q-mb-sm">Amino-acid count</div>
-          <q-chip v-for="(count, aminoAcid) in result.aminoacids_count"
-            :key="aminoAcid" square>
-            {{ aminoAcid }}: {{ count }}
-          </q-chip>
-        </q-card-section>
+          <div v-if="result.composition_ratio" class="result-section">
+            <div class="biostar-section-label">Composition ratio</div>
+            <div class="chip-grid">
+              <q-chip v-for="(ratio, aminoAcid) in result.composition_ratio" :key="aminoAcid" square>
+                <span class="biostar-sequence">{{ aminoAcid }}</span>&nbsp; {{ formatValue(ratio) }}
+              </q-chip>
+            </div>
+          </div>
 
-        <q-card-section v-if="result.composition_ratio">
-          <div class="text-subtitle1 q-mb-sm">Composition ratio</div>
-          <q-chip v-for="(ratio, aminoAcid) in result.composition_ratio"
-            :key="aminoAcid" square>
-            {{ aminoAcid }}: {{ formatValue(ratio) }}
-          </q-chip>
-        </q-card-section>
+          <div v-if="result.secondary_structure_propensity" class="result-section">
+            <div class="biostar-section-label">Secondary-structure propensity</div>
+            <pre>{{ formatValue(result.secondary_structure_propensity) }}</pre>
+          </div>
 
-        <q-card-section v-if="result.secondary_structure_propensity">
-          <div class="text-subtitle1">Secondary-structure propensity</div>
-          <pre>{{ formatValue(result.secondary_structure_propensity) }}</pre>
-        </q-card-section>
-
-        <q-card-section v-if="result.extinction_coefficient">
-          <div class="text-subtitle1">Extinction coefficient</div>
-          <pre>{{ formatValue(result.extinction_coefficient) }}</pre>
-        </q-card-section>
-      </q-card>
-    </div>
+          <div v-if="result.extinction_coefficient" class="result-section">
+            <div class="biostar-section-label">Extinction coefficient</div>
+            <pre>{{ formatValue(result.extinction_coefficient) }}</pre>
+          </div>
+        </div>
+      </section>
+    </main>
   </q-page>
 </template>
 
@@ -132,6 +166,7 @@ const options = reactive({
 
 const scalarResults = computed(() => {
   if (result.value === null) return [];
+
   const items: Array<{ label: string; value: string }> = [];
   if (result.value.isoelectric_point !== undefined) items.push({ label: "Isoelectric point", value: formatValue(result.value.isoelectric_point) });
   if (result.value.aromaticity !== undefined) items.push({ label: "Aromaticity", value: formatValue(result.value.aromaticity) });
@@ -156,9 +191,11 @@ const buildRequest = (): ProteinAnalysisRequest => ({
 
 const analyze = async (): Promise<void> => {
   if (!sequence.value.trim()) return;
+
   loading.value = true;
   error.value = "";
   result.value = null;
+
   try {
     const response = await analyzeProtein(buildRequest());
 
@@ -177,8 +214,12 @@ const analyze = async (): Promise<void> => {
 
 const copySequence = async (): Promise<void> => {
   if (!result.value) return;
-  await navigator.clipboard.writeText(result.value.sequence);
-  Notify.create({ type: "positive", message: "Protein sequence copied." });
+  try {
+    await navigator.clipboard.writeText(result.value.sequence);
+    Notify.create({ type: "positive", message: "Protein sequence copied." });
+  } catch {
+    Notify.create({ type: "negative", message: "Unable to copy the sequence." });
+  }
 };
 
 const formatValue = (value: unknown): string => {
@@ -189,17 +230,77 @@ const formatValue = (value: unknown): string => {
 </script>
 
 <style scoped>
-.page-shell { max-width: 1200px; margin: 0 auto; }
 .options-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 8px 16px;
 }
-.ph-input { max-width: 180px; }
+
+.ph-input {
+  max-width: 180px;
+}
+
+.result-sequence {
+  padding: 16px;
+  overflow-x: auto;
+  border: 1px solid var(--biostar-border);
+  border-radius: 4px;
+  background: var(--biostar-bg);
+  line-height: 1.7;
+  word-break: break-word;
+}
+
 .result-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 12px;
 }
-pre { white-space: pre-wrap; overflow-x: auto; }
+
+.metric {
+  padding: 18px;
+  border: 1px solid var(--biostar-border);
+  border-radius: 4px;
+}
+
+.metric__label {
+  color: var(--biostar-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.metric__value {
+  margin-top: 6px;
+  color: var(--biostar-text);
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.result-section {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid var(--biostar-border);
+}
+
+.result-value {
+  margin-top: 8px;
+  font-size: 1.1rem;
+}
+
+.chip-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 10px;
+}
+
+pre {
+  margin: 10px 0 0;
+  padding: 14px;
+  overflow-x: auto;
+  border: 1px solid var(--biostar-border);
+  background: var(--biostar-bg);
+  white-space: pre-wrap;
+}
 </style>
