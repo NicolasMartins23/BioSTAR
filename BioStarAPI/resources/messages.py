@@ -17,6 +17,8 @@ class MessageCode(str, Enum):
     EMPTY_SEQUENCE = "empty_sequence"
     SEQUENCE_TOO_LONG = "sequence_too_long"
     INVALID_SEQUENCE = "invalid_sequence"
+    MUTATION_SEQUENCES_SAME_LENGTH = "mutation_sequences_same_length"
+    MUTATION_SEQUENCES_MULTIPLE_OF_THREE = "mutation_sequences_multiple_of_three"
     VALIDATION_ERROR = "validation_error"
 
     RATE_LIMIT_EXCEEDED = "rate_limit_exceeded"
@@ -42,6 +44,8 @@ _MESSAGES: dict[MessageCode, str] = {
     MessageCode.EMPTY_SEQUENCE: "{kind} sequence cannot be empty.",
     MessageCode.SEQUENCE_TOO_LONG: "{kind} sequence cannot exceed {max_length} characters.",
     MessageCode.INVALID_SEQUENCE: "Invalid {kind} sequence characters: {characters}.",
+    MessageCode.MUTATION_SEQUENCES_SAME_LENGTH: "Reference and sequence must have the same length.",
+    MessageCode.MUTATION_SEQUENCES_MULTIPLE_OF_THREE: "Reference and sequence lengths must be multiples of 3.",
     MessageCode.VALIDATION_ERROR: "The request contains invalid or missing fields.",
     MessageCode.RATE_LIMIT_EXCEEDED: "Rate limit exceeded.",
     MessageCode.DAILY_LIMIT_EXCEEDED: "Daily request limit exceeded.",
