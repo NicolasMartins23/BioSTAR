@@ -101,7 +101,7 @@ onMounted(async (): Promise<void> => {
   try {
     const health = await getHealth();
 
-    if (health.status !== "ok") {
+    if (health.data?.status !== "ok") {
       apiStatus.value = "unavailable";
       return;
     }
