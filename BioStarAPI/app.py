@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from sqlalchemy import text
 
+from BioStarAPI.auth.routes import router as auth_router
+from BioStarAPI.auth.service import _check_short_rate_limit, enforce_request_limits, resolve_api_key
 from BioStarAPI.controllers.analysis import (
-    GET_SEQUENCE_MAX_LENGTH,
     dna_to_protein,
     dna_to_rna,
     mutation_compare,
@@ -12,10 +13,25 @@ from BioStarAPI.controllers.analysis import (
     rna_to_dna,
     rna_to_protein,
 )
-from BioStarAPI.controllers.schemas import BatchSequenceRequest, MutationCompareRequest, ProteinAnalysisRequest
+from BioStarAPI.controllers.schemas import MutationCompareRequest, ProteinAnalysisRequest
 from BioStarAPI.database.connection import engine
 
-app = FastAPI(title="BioSTAR API", version="0.4.0")
+app = FastAPI(title="BioSTAR API", version="0.5.0")
+app.state.rate_limit_state = {}
+
+
+@app.middleware("http")
+async def api_rate_limit_middleware(request: Request, call_next):
+    path = request.url.path
+
+    # Documentation and health checks are local operational endpoints and are not quota limited.
+    if path.startswith("/api/auth/"):
+        _check_short_rate_limit(request, authenticated=True)
+    elif path.startswith("/api/"):
+        api_key_id = resolve_api_key(request.headers.get("X-API-Key"))
+        enforce_request_limits(request, api_key_id)
+
+    return await call_next(request)
 
 
 @app.get("/health")
@@ -27,22 +43,22 @@ def health() -> dict[str, str]:
 
 @app.get("/api/dna-rna")
 def get_dna_rna(sequence: str) -> dict[str, str]:
-    return dna_to_rna(sequence, GET_SEQUENCE_MAX_LENGTH)
+    return dna_to_rna(sequence)
 
 
 @app.get("/api/dna-protein")
 def get_dna_protein(sequence: str) -> dict[str, str]:
-    return dna_to_protein(sequence, GET_SEQUENCE_MAX_LENGTH)
+    return dna_to_protein(sequence)
 
 
 @app.get("/api/rna-protein")
 def get_rna_protein(sequence: str) -> dict[str, str]:
-    return rna_to_protein(sequence, GET_SEQUENCE_MAX_LENGTH)
+    return rna_to_protein(sequence)
 
 
 @app.get("/api/rna-dna")
 def get_rna_dna(sequence: str) -> dict[str, str]:
-    return rna_to_dna(sequence, GET_SEQUENCE_MAX_LENGTH)
+    return rna_to_dna(sequence)
 
 
 @app.post("/api/protein")
@@ -55,21 +71,4 @@ def post_mutation_compare(request: MutationCompareRequest) -> dict[str, object]:
     return mutation_compare(request.reference, request.sequence)
 
 
-@app.post("/api/batch/dna-rna")
-def batch_dna_rna(request: BatchSequenceRequest) -> dict[str, str]:
-    return dna_to_rna(request.sequence)
-
-
-@app.post("/api/batch/dna-protein")
-def batch_dna_protein(request: BatchSequenceRequest) -> dict[str, str]:
-    return dna_to_protein(request.sequence)
-
-
-@app.post("/api/batch/rna-protein")
-def batch_rna_protein(request: BatchSequenceRequest) -> dict[str, str]:
-    return rna_to_protein(request.sequence)
-
-
-@app.post("/api/batch/rna-dna")
-def batch_rna_dna(request: BatchSequenceRequest) -> dict[str, str]:
-    return rna_to_dna(request.sequence)
+app.include_router(auth_router)
