@@ -1,0 +1,10 @@
+<template>
+<div><div class="q-mb-lg"><div class="text-overline text-primary bio-mono">MUTATIONS</div><div class="text-h4 brand-title q-mt-sm">Mutation Compare</div><div class="text-body2 text-grey-7 q-mt-sm">Compare two coding DNA sequences. Both sequences must have the same length and be divisible by three.</div></div>
+<q-card class="bio-card q-pa-lg"><div class="row q-col-gutter-md"><div class="col-12 col-md-6"><q-input v-model="reference" outlined type="textarea" autogrow :rows="9" label="Reference sequence" spellcheck="false" class="sequence-input" /></div><div class="col-12 col-md-6"><q-input v-model="sequence" outlined type="textarea" autogrow :rows="9" label="Sequence to compare" spellcheck="false" class="sequence-input" /></div></div><q-btn color="primary" no-caps class="q-mt-md full-width" label="Compare sequences" :loading="loading" :disable="!reference.trim()||!sequence.trim()" @click="run" /></q-card>
+<q-card class="bio-card q-pa-lg q-mt-lg"><div class="text-overline text-grey-6 bio-mono">RESULT</div><q-banner v-if="error" rounded class="bg-red-1 text-negative q-mt-md">{{error}}</q-banner><ResultView v-else-if="result" :result="result" class="q-mt-md" /><div v-else class="text-grey-6 q-py-xl text-center">Run a comparison to see the result.</div></q-card></div>
+</template>
+<script setup lang="ts">
+import { ref } from "vue"; import { Notify } from "quasar"; import ResultView from "./ResultView.vue"; import { apiPost } from "../services/api";
+const reference=ref("");const sequence=ref("");const loading=ref(false);const error=ref("");const result=ref<Record<string,unknown>|null>(null);
+async function run():Promise<void>{loading.value=true;error.value="";result.value=null;try{result.value=await apiPost("/api/mutation_compare",{reference:reference.value,sequence:sequence.value});Notify.create({type:"positive",message:"Comparison completed"});}catch(cause){error.value=cause instanceof Error?cause.message:"Request failed";}finally{loading.value=false;}}
+</script>
