@@ -17,6 +17,7 @@ class MessageCode(str, Enum):
     EMPTY_SEQUENCE = "empty_sequence"
     SEQUENCE_TOO_LONG = "sequence_too_long"
     INVALID_SEQUENCE = "invalid_sequence"
+    VALIDATION_ERROR = "validation_error"
 
     RATE_LIMIT_EXCEEDED = "rate_limit_exceeded"
     DAILY_LIMIT_EXCEEDED = "daily_limit_exceeded"
@@ -41,6 +42,7 @@ _MESSAGES: dict[MessageCode, str] = {
     MessageCode.EMPTY_SEQUENCE: "{kind} sequence cannot be empty.",
     MessageCode.SEQUENCE_TOO_LONG: "{kind} sequence cannot exceed {max_length} characters.",
     MessageCode.INVALID_SEQUENCE: "Invalid {kind} sequence characters: {characters}.",
+    MessageCode.VALIDATION_ERROR: "The request contains invalid or missing fields.",
     MessageCode.RATE_LIMIT_EXCEEDED: "Rate limit exceeded.",
     MessageCode.DAILY_LIMIT_EXCEEDED: "Daily request limit exceeded.",
     MessageCode.STANDARD_GENETIC_CODE_NOT_SEEDED: "Standard genetic code is not seeded.",
