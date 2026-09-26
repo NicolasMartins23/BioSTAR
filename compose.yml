@@ -56,7 +56,7 @@ services:
       start_period: 10s
 
   open-studio:
-    image: ghcr.io/andersmyrmel/open-studio:latest
+    build: https://github.com/andersmyrmel/open-studio.git#main
     container_name: biostar-open-studio
     restart: unless-stopped
     depends_on:
