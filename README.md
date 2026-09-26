@@ -4,25 +4,62 @@ BioSTAR is an object-oriented Python library for biological sequence analysis.
 
 ## Architecture
 
-The **BioSTAR package is the engine**. It contains the biological domain model and reusable analysis functionality and does not depend on a web framework or API layer.
+The **BioSTAR package is the engine**. It contains the biological domain model and
+reusable analysis functionality and does not depend on FastAPI, SQLAlchemy,
+PostgreSQL, authentication, or HTTP.
 
 - `BioStar/domain/` — DNA, RNA, Protein and other biological objects.
-- `BioStar/data/` — biochemical constants and reference tables.
+- `BioStar/data/` — current in-memory biochemical reference data.
 - `BioStar/analysis/` — sequence-analysis algorithms.
 - `BioStar/io/` — input parsing such as FASTA.
-- `BioStar/utils/` — small framework-independent helpers.
+- `BioStar/utils/` — framework-independent helpers.
 
-The package is intentionally independent of HTTP, FastAPI, databases and authentication.
-
-## Future API
-
-A future v2 API can be a separate FastAPI package/project:
+The API is a separate application layer:
 
 ```
-FastAPI API -> BioSTAR engine -> biological domain
+HTTP
+  ↓
+BioStarAPI/controllers
+  ↓
+BioStarAPI/services
+  ↓
+BioStarAPI/database/repositories
+  ↓
+SQLAlchemy
+  ↓
+PostgreSQL
+
+BioStarAPI/services
+  ↓
+BioSTAR engine
 ```
 
-The API should depend on BioSTAR, never the other way around.
+## API foundation
+
+`BioStarAPI/` contains the initial database and application-layer structure.
+
+The database currently models:
+
+- amino acids and their biochemical properties
+- amino acid classifications
+- nucleotides
+- genetic codes and codons
+- organisms and codon usage
+- scientific reference sources
+- users and refresh tokens
+
+Alembic migrations live in `BioStarAPI/database/migrations/`.
+
+Database migrations use:
+
+```bash
+export BIOSTAR_DATABASE_URL="postgresql+psycopg://user:password@localhost:5432/biostar"
+alembic upgrade head
+```
+
+Scientific reference data is intentionally not inserted by the initial schema
+migration. It will be seeded separately so schema migrations and scientific
+data imports remain independent.
 
 ## Public API
 
@@ -30,4 +67,5 @@ The API should depend on BioSTAR, never the other way around.
 from BioStar import DNA, RNA, Protein, NucleicAcid, OpenReadFrame
 ```
 
-Legacy module imports are retained as compatibility shims while new code should use the organized package structure.
+Legacy module imports are retained as compatibility shims while new engine code
+should use the organized package structure.
