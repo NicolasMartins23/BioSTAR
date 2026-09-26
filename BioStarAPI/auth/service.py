@@ -3,9 +3,7 @@ from __future__ import annotations
 import hashlib
 import secrets
 from datetime import UTC, datetime
-from typing import Any
-
-from fastapi import HTTPException, Request
+from fastapi import Request
 from sqlalchemy import text
 
 from BioStarAPI.database.connection import engine
