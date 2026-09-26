@@ -83,7 +83,11 @@ def _check_short_rate_limit(request: Request, authenticated: bool) -> None:
     previous = state.get(key)
     if previous is not None and now - previous < interval:
         retry_after = max(1, int(interval - (now - previous) + 0.999))
-        raise BioStarAPIError(429, MessageCode.RATE_LIMIT_EXCEEDED)
+        raise BioStarAPIError(
+            429,
+            MessageCode.RATE_LIMIT_EXCEEDED,
+            headers={"Retry-After": str(retry_after)},
+        )
     state[key] = now
 
 
