@@ -13,7 +13,7 @@ class AminoAcid(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     symbol: Mapped[str] = mapped_column(String(1), unique=True, nullable=False)
-    abbreviation: Mapped[str] = mapped_column(String(4), nullable=False)
+    abbreviation: Mapped[str] = mapped_column(String(3), nullable=False)
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     molecular_weight: Mapped[Decimal] = mapped_column(Numeric(10, 4), nullable=False)
     hydrophobicity: Mapped[Decimal] = mapped_column(Numeric(6, 3), nullable=False)
