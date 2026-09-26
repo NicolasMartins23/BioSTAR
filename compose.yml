@@ -55,15 +55,18 @@ services:
       retries: 10
       start_period: 10s
 
-  adminer:
-    image: adminer:latest
-    container_name: biostar-adminer
+  open-studio:
+    image: ghcr.io/andersmyrmel/open-studio:latest
+    container_name: biostar-open-studio
     restart: unless-stopped
     depends_on:
       postgres:
         condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://biostar:${POSTGRES_PASSWORD:-biostar}@postgres:5432/${POSTGRES_DB:-biostar}
+      PORT: 3000
     ports:
-      - "8080:8080"
+      - "8080:3000"
 
 volumes:
   biostar-postgres-data:
