@@ -7,6 +7,8 @@
   --bio-line: #dce6ea;
   --bio-paper: #ffffff;
   --bio-background: #f6f9fa;
+  --bio-soft: #edf5f6;
+  --bio-shadow: 0 1rem 2.5rem rgb(18 61 89 / 7%);
 }
 
 body {
@@ -20,15 +22,17 @@ body.body--dark {
   --bio-line: #30434d;
   --bio-paper: #17252c;
   --bio-background: #10191e;
+  --bio-soft: #1d3038;
+  --bio-shadow: 0 1rem 2.5rem rgb(0 0 0 / 22%);
 }
 
 .biostar-page {
-  min-height: calc(100vh - 68px);
-  padding: 48px 44px 64px;
+  min-height: calc(100vh - 4.25rem);
+  padding: 3rem 4%;
 }
 
 .biostar-content {
-  width: min(1120px, 100%);
+  width: min(70rem, 100%);
   margin: 0 auto;
 }
 
@@ -41,7 +45,7 @@ body.body--dark {
 }
 
 .biostar-title {
-  margin: 8px 0 0;
+  margin: 0.5rem 0 0;
   color: var(--bio-ink);
   font-size: clamp(2.35rem, 5vw, 4rem);
   font-weight: 750;
@@ -50,26 +54,29 @@ body.body--dark {
 }
 
 .biostar-subtitle {
-  max-width: 700px;
-  margin: 18px 0 0;
+  max-width: 44rem;
+  margin: 1.125rem 0 0;
   color: var(--bio-muted);
   font-size: 1.02rem;
   line-height: 1.7;
 }
 
 .biostar-panel {
+  overflow: hidden;
   border: 1px solid var(--bio-line);
-  border-radius: 8px;
+  border-radius: 0.75rem;
   background: var(--bio-paper);
+  box-shadow: var(--bio-shadow);
 }
 
 .biostar-panel__header {
-  padding: 20px 24px;
+  padding: 1.25rem 1.5rem;
   border-bottom: 1px solid var(--bio-line);
+  background: linear-gradient(135deg, var(--bio-paper) 0%, var(--bio-soft) 100%);
 }
 
 .biostar-panel__body {
-  padding: 24px;
+  padding: 1.5rem;
 }
 
 .biostar-section-label {
@@ -84,8 +91,27 @@ body.body--dark {
   font-family: "Roboto Mono", "Courier New", monospace;
 }
 
-@media (max-width: 599px) {
+@media (max-width: 59.99rem) {
   .biostar-page {
-    padding: 32px 18px 48px;
+    padding: 2.5rem 3%;
+  }
+
+  .biostar-title {
+    font-size: clamp(2rem, 8vw, 3rem);
+  }
+}
+
+@media (max-width: 37.49rem) {
+  .biostar-page {
+    padding: 2rem 1rem 3rem;
+  }
+
+  .biostar-subtitle {
+    font-size: 0.95rem;
+  }
+
+  .biostar-panel__header,
+  .biostar-panel__body {
+    padding: 1rem;
   }
 }
