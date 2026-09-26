@@ -1,0 +1,1 @@
+"""BioSTAR API package."""
