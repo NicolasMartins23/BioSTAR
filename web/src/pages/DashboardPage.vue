@@ -1,50 +1,58 @@
 <template>
   <q-page class="biostar-page">
     <main class="biostar-content">
-      <section>
-        <div class="biostar-eyebrow">Bioinformatics Analysis Suite</div>
-        <h1 class="biostar-title">Biological analysis, in one workspace.</h1>
-        <p class="biostar-subtitle">
-          BioSTAR provides sequence conversion and biochemical analysis tools
-          through a unified scientific workspace.
-        </p>
-      </section>
+      <section class="hero">
+        <div class="hero-copy">
+          <div class="biostar-eyebrow">BioSTAR · Bioinformatics resource</div>
+          <h1 class="biostar-title">Explore biological data.<br />Run the analysis.</h1>
+          <p class="biostar-subtitle">
+            A focused workspace for sequence conversion and biochemical protein analysis,
+            built around the BioSTAR scientific computing engine.
+          </p>
+        </div>
 
-      <section class="q-mt-xl">
-        <div class="biostar-panel">
-          <div class="biostar-panel__body row items-center justify-between q-col-gutter-lg">
-            <div class="col-12 col-sm">
-              <div class="biostar-section-label">System status</div>
-              <div class="text-body2 text-grey-6 q-mt-xs">
-                Connection to the BioSTAR analysis API
-              </div>
-            </div>
-            <div class="col-auto">
-              <q-chip square :color="apiStatusColor" text-color="white" :icon="apiStatusIcon">
-                {{ apiStatusLabel }}
-              </q-chip>
-            </div>
+        <div class="hero-art" aria-hidden="true">
+          <div class="helix">
+            <i v-for="n in 7" :key="n" :style="{ '--n': n }"></i>
           </div>
         </div>
       </section>
 
-      <section class="q-mt-xl">
-        <div class="biostar-section-label q-mb-md">Analysis tools</div>
-        <div class="row q-col-gutter-md">
-          <div v-for="card in cards" :key="card.title" class="col-12 col-md-4">
-            <q-card flat class="biostar-panel tool-card">
-              <q-card-section>
-                <q-icon :name="card.icon" size="30px" color="primary" />
-                <div class="text-h6 text-weight-bold q-mt-lg">{{ card.title }}</div>
-                <div class="text-body2 text-grey-6 q-mt-sm tool-card__description">
-                  {{ card.description }}
-                </div>
-              </q-card-section>
-              <q-card-actions class="q-px-md q-pb-md">
-                <q-btn flat no-caps color="primary" :label="card.action" :to="card.to" />
-              </q-card-actions>
-            </q-card>
+      <section class="status-line">
+        <span class="status-marker" :class="apiStatus"></span>
+        <span class="status-label">BioSTAR API</span>
+        <span class="status-value">{{ apiStatusLabel }}</span>
+      </section>
+
+      <section class="tools">
+        <div class="tools-heading">
+          <div>
+            <div class="biostar-eyebrow">Analysis tools</div>
+            <h2>Choose a workflow</h2>
           </div>
+        </div>
+
+        <div class="tool-list">
+          <q-item
+            v-for="(card, index) in cards"
+            :key="card.title"
+            clickable
+            v-ripple
+            :to="card.to"
+            class="tool-row"
+          >
+            <q-item-section side class="tool-index">0{{ index + 1 }}</q-item-section>
+            <q-item-section avatar>
+              <q-icon :name="card.icon" size="28px" color="primary" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label class="tool-title">{{ card.title }}</q-item-label>
+              <q-item-label caption>{{ card.description }}</q-item-label>
+            </q-item-section>
+            <q-item-section side>
+              <q-icon name="arrow_forward" color="primary" />
+            </q-item-section>
+          </q-item>
         </div>
       </section>
     </main>
@@ -61,50 +69,34 @@ interface AnalysisCard {
   title: string;
   description: string;
   icon: string;
-  action: string;
   to: string;
 }
 
 const apiStatus = ref<ApiStatus>("checking");
 
 const apiStatusLabel = computed<string>(() => {
-  if (apiStatus.value === "connected") return "API connected";
-  if (apiStatus.value === "unavailable") return "API unavailable";
-  return "Checking API";
-});
-
-const apiStatusColor = computed<string>(() => {
-  if (apiStatus.value === "connected") return "positive";
-  if (apiStatus.value === "unavailable") return "negative";
-  return "warning";
-});
-
-const apiStatusIcon = computed<string>(() => {
-  if (apiStatus.value === "connected") return "check_circle";
-  if (apiStatus.value === "unavailable") return "error";
-  return "sync";
+  if (apiStatus.value === "connected") return "Connected";
+  if (apiStatus.value === "unavailable") return "Unavailable";
+  return "Checking";
 });
 
 const cards: AnalysisCard[] = [
   {
     title: "Sequence conversion",
-    description: "Convert DNA and RNA sequences and translate nucleotide sequences into proteins.",
+    description: "DNA ↔ RNA conversion and nucleotide-to-protein translation.",
     icon: "biotech",
-    action: "Open analysis",
     to: "/sequences",
   },
   {
     title: "Protein analysis",
-    description: "Calculate biochemical properties and inspect protein composition.",
+    description: "Physicochemical properties, composition and biochemical measurements.",
     icon: "science",
-    action: "Open analysis",
     to: "/proteins",
   },
   {
     title: "Mutation analysis",
-    description: "Compare biological sequences and identify sequence-level changes.",
+    description: "Compare biological sequences and inspect sequence-level changes.",
     icon: "compare_arrows",
-    action: "Open analysis",
     to: "/mutations",
   },
 ];
@@ -120,18 +112,139 @@ onMounted(async (): Promise<void> => {
 </script>
 
 <style scoped>
-.tool-card {
+.hero {
+  position: relative;
+  display: flex;
+  min-height: 330px;
+  align-items: center;
+  overflow: hidden;
+  padding: 52px 56px;
+  border-radius: 10px;
+  background: #123d59;
+  color: white;
+}
+
+.hero .biostar-eyebrow {
+  color: #6ed1ca;
+}
+
+.hero .biostar-subtitle {
+  color: rgb(255 255 255 / 68%);
+}
+
+.hero-copy {
+  position: relative;
+  z-index: 1;
+  max-width: 730px;
+}
+
+.hero .biostar-title {
+  color: white;
+}
+
+.hero-art {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 38%;
   height: 100%;
-  transition: border-color 120ms ease, transform 120ms ease;
+  opacity: 0.55;
 }
 
-.tool-card:hover {
-  border-color: rgb(23 107 135 / 35%);
-  transform: translateY(-1px);
+.helix {
+  position: absolute;
+  top: 42px;
+  right: 80px;
+  width: 130px;
+  height: 250px;
+  transform: rotate(16deg);
 }
 
-.tool-card__description {
-  min-height: 48px;
-  line-height: 1.55;
+.helix::before,
+.helix::after {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  content: "";
+  background: #55c7c0;
+  border-radius: 4px;
+}
+
+.helix::before { left: 20px; transform: rotate(8deg); }
+.helix::after { right: 20px; transform: rotate(-8deg); }
+
+.helix i {
+  position: absolute;
+  top: calc((var(--n) - 1) * 38px + 8px);
+  left: 30px;
+  width: 70px;
+  height: 2px;
+  background: rgb(255 255 255 / 55%);
+  transform: rotate(calc((var(--n) - 4) * 7deg));
+}
+
+.status-line {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 20px 2px 54px;
+  color: var(--bio-muted);
+  font-size: 0.78rem;
+}
+
+.status-marker {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #d6a23d;
+}
+
+.status-marker.connected { background: #55a863; }
+.status-marker.unavailable { background: #c65a56; }
+
+.status-label {
+  color: var(--bio-ink);
+  font-weight: 750;
+}
+
+.tools-heading h2 {
+  margin: 6px 0 20px;
+  color: var(--bio-ink);
+  font-size: 1.65rem;
+  letter-spacing: -0.025em;
+}
+
+.tool-list {
+  border-top: 1px solid var(--bio-line);
+}
+
+.tool-row {
+  min-height: 98px;
+  padding: 12px 8px;
+  border-bottom: 1px solid var(--bio-line);
+  border-radius: 0;
+}
+
+.tool-row:hover {
+  background: rgb(23 107 135 / 4%);
+}
+
+.tool-index {
+  width: 44px;
+  color: #9aabb2;
+  font-family: "Roboto Mono", "Courier New", monospace;
+  font-size: 0.72rem;
+}
+
+.tool-title {
+  color: var(--bio-ink);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.tool-row :deep(.q-item__label--caption) {
+  margin-top: 4px;
+  color: var(--bio-muted);
 }
 </style>
