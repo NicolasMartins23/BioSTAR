@@ -1,0 +1,40 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: biostar-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-biostar}
+      POSTGRES_USER: ${POSTGRES_USER:-biostar}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-biostar}
+    volumes:
+      - biostar-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+
+  migrate:
+    build: .
+    environment:
+      BIOSTAR_DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-biostar}:${POSTGRES_PASSWORD:-biostar}@postgres:5432/${POSTGRES_DB:-biostar}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: ["alembic", "upgrade", "head"]
+    restart: "no"
+
+  seed:
+    build: .
+    environment:
+      BIOSTAR_DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-biostar}:${POSTGRES_PASSWORD:-biostar}@postgres:5432/${POSTGRES_DB:-biostar}
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    command: ["python", "-m", "BioStarAPI.database.seed"]
+    restart: "no"
+
+volumes:
+  biostar-postgres-data:
