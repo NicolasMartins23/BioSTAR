@@ -1,35 +1,39 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 const COPY = {
-  en: { brand: "BioSTAR", eyebrow: "Biological sequence analysis", title: "Turn sequences into insight.", subtitle: "A focused workspace for DNA, RNA and protein analysis — powered by the BioSTAR engine.", dnaRna: "DNA → RNA", dnaProtein: "DNA → Protein", rnaProtein: "RNA → Protein", rnaDna: "RNA → DNA", protein: "Protein analysis", mutation: "Mutation compare", sequence: "Sequence", reference: "Reference sequence", analyze: "Analyze", compare: "Compare", results: "Results", clear: "Clear", copy: "Copy", copied: "Copied", options: "Analysis options", full: "Full test suite", count: "Amino-acid count", pi: "Isoelectric point", charge: "Charge at pH", aromaticity: "Aromaticity", secondary: "Secondary structure", weight: "Molecular weight", hydrophobic: "Hydrophobic index", composition: "Composition ratio", extinction: "Extinction coefficient", pH: "pH", empty: "Enter a sequence to begin.", limit: "GET conversions are limited to 1,000 nt.", mutationHint: "Compare two coding DNA sequences of equal length.", footer: "BioSTAR · Open sequence analysis" },
-  pt: { brand: "BioSTAR", eyebrow: "Análise de sequências biológicas", title: "Transforme sequências em informação.", subtitle: "Um espaço focado para análise de DNA, RNA e proteínas — powered pelo motor BioSTAR.", dnaRna: "DNA → RNA", dnaProtein: "DNA → Proteína", rnaProtein: "RNA → Proteína", rnaDna: "RNA → DNA", protein: "Análise de proteína", mutation: "Comparar mutações", sequence: "Sequência", reference: "Sequência de referência", analyze: "Analisar", compare: "Comparar", results: "Resultados", clear: "Limpar", copy: "Copiar", copied: "Copiado", options: "Opções de análise", full: "Suite completa", count: "Contagem de aminoácidos", pi: "Ponto isoelétrico", charge: "Carga em pH", aromaticity: "Aromaticidade", secondary: "Estrutura secundária", weight: "Peso molecular", hydrophobic: "Índice hidrofóbico", composition: "Razão de composição", extinction: "Coeficiente de extinção", pH: "pH", empty: "Insira uma sequência para começar.", limit: "Conversões GET são limitadas a 1.000 nt.", mutationHint: "Compare duas sequências de DNA codificante com o mesmo tamanho.", footer: "BioSTAR · Análise de sequências" },
-  es: { brand: "BioSTAR", eyebrow: "Análisis de secuencias biológicas", title: "Convierte secuencias en información.", subtitle: "Un espacio enfocado para analizar ADN, ARN y proteínas — impulsado por el motor BioSTAR.", dnaRna: "ADN → ARN", dnaProtein: "ADN → Proteína", rnaProtein: "ARN → Proteína", rnaDna: "ARN → ADN", protein: "Análisis de proteína", mutation: "Comparar mutaciones", sequence: "Secuencia", reference: "Secuencia de referencia", analyze: "Analizar", compare: "Comparar", results: "Resultados", clear: "Limpiar", copy: "Copiar", copied: "Copiado", options: "Opciones de análisis", full: "Suite completa", count: "Conteo de aminoácidos", pi: "Punto isoeléctrico", charge: "Carga a pH", aromaticity: "Aromaticidad", secondary: "Estructura secundaria", weight: "Peso molecular", hydrophobic: "Índice hidrofóbico", composition: "Razón de composición", extinction: "Coeficiente de extinción", pH: "pH", empty: "Introduce una secuencia para comenzar.", limit: "Las conversiones GET están limitadas a 1.000 nt.", mutationHint: "Compara dos secuencias de ADN codificante del mismo tamaño.", footer: "BioSTAR · Análisis de secuencias" }
+  en: {
+    brand: "BioSTAR", eyebrow: "Bioinformatics Software for Targeted Analysis and Research", start: "Start", gene: "Gene Section", proteinSection: "Protein Section", experimental: "Experimental Section", help: "Help Section", results: "Results", compare: "Compare", save: "Save JSON", upload: "Upload", optimize: "Optimize Codons", howTo: "How To Use", github: "Visit on GitHub", title: "Targeted biological sequence analysis", subtitle: "Analyze DNA, RNA and proteins in one focused workspace.", sequenceType: "Sequence type", dna: "DNA", rna: "RNA", protein: "Protein", peptideThreshold: "Peptide size threshold", sequence: "Sequence", reference: "Reference sequence", analyze: "Analyze", mutation: "Mutation compare", otherTools: "Other Tools", codonTable: "Codon Table", fasta: "FASTA Format Tool", started: "How To Get Started?", viewer: "3D Protein Viewer", sampleDna: "Load DNA Sample", sampleProtein: "Load Protein Sample", options: "Analysis options", full: "Full test suite", count: "Amino-acid count", pi: "Isoelectric point", charge: "Charge at pH", aromaticity: "Aromaticity", secondary: "Secondary structure", weight: "Molecular weight", hydrophobic: "Hydrophobic index", composition: "Composition ratio", extinction: "Extinction coefficient", pH: "pH", empty: "Enter a sequence to begin.", limit: "GET conversions: 1,000 nt · POST analysis: 10,000 nt", copy: "Copy", copied: "Copied", saved: "JSON saved", mutationHint: "Compare two coding DNA sequences of equal length.", footer: "Developed for BioSTAR", local: "Local-first · API powered", chooseTool: "Choose an analysis from the sidebar.", coming: "Coming soon" },
+  pt: {
+    brand: "BioSTAR", eyebrow: "Software de Bioinformática para Análise e Pesquisa Direcionada", start: "Início", gene: "Seção de Genes", proteinSection: "Seção de Proteínas", experimental: "Seção Experimental", help: "Ajuda", results: "Resultados", compare: "Comparar", save: "Salvar JSON", upload: "Enviar", optimize: "Otimizar Códons", howTo: "Como Usar", github: "Visitar no GitHub", title: "Análise direcionada de sequências biológicas", subtitle: "Analise DNA, RNA e proteínas em um único espaço de trabalho.", sequenceType: "Tipo de sequência", dna: "DNA", rna: "RNA", protein: "Proteína", peptideThreshold: "Limite de tamanho do peptídeo", sequence: "Sequência", reference: "Sequência de referência", analyze: "Analisar", mutation: "Comparar mutações", otherTools: "Outras Ferramentas", codonTable: "Tabela de Códons", fasta: "Formatador FASTA", started: "Como Começar?", viewer: "Visualizador 3D de Proteínas", sampleDna: "Carregar Amostra de DNA", sampleProtein: "Carregar Amostra de Proteína", options: "Opções de análise", full: "Suite completa", count: "Contagem de aminoácidos", pi: "Ponto isoelétrico", charge: "Carga em pH", aromaticity: "Aromaticidade", secondary: "Estrutura secundária", weight: "Peso molecular", hydrophobic: "Índice hidrofóbico", composition: "Razão de composição", extinction: "Coeficiente de extinção", pH: "pH", empty: "Insira uma sequência para começar.", limit: "Conversões GET: 1.000 nt · Análise POST: 10.000 nt", copy: "Copiar", copied: "Copiado", saved: "JSON salvo", mutationHint: "Compare duas sequências de DNA codificante com o mesmo tamanho.", footer: "Desenvolvido para o BioSTAR", local: "Local-first · API", chooseTool: "Escolha uma análise no menu lateral.", coming: "Em breve" },
+  es: {
+    brand: "BioSTAR", eyebrow: "Software de Bioinformática para Análisis e Investigación Dirigida", start: "Inicio", gene: "Sección de Genes", proteinSection: "Sección de Proteínas", experimental: "Sección Experimental", help: "Ayuda", results: "Resultados", compare: "Comparar", save: "Guardar JSON", upload: "Subir", optimize: "Optimizar Codones", howTo: "Cómo Usar", github: "Visitar en GitHub", title: "Análisis dirigido de secuencias biológicas", subtitle: "Analiza ADN, ARN y proteínas en un único espacio de trabajo.", sequenceType: "Tipo de secuencia", dna: "ADN", rna: "ARN", protein: "Proteína", peptideThreshold: "Umbral de tamaño del péptido", sequence: "Secuencia", reference: "Secuencia de referencia", analyze: "Analizar", mutation: "Comparar mutaciones", otherTools: "Otras Herramientas", codonTable: "Tabla de Codones", fasta: "Formateador FASTA", started: "¿Cómo Empezar?", viewer: "Visor 3D de Proteínas", sampleDna: "Cargar Muestra de ADN", sampleProtein: "Cargar Muestra de Proteína", options: "Opciones de análisis", full: "Suite completa", count: "Conteo de aminoácidos", pi: "Punto isoeléctrico", charge: "Carga a pH", aromaticity: "Aromaticidad", secondary: "Estructura secundaria", weight: "Peso molecular", hydrophobic: "Índice hidrofóbico", composition: "Razón de composición", extinction: "Coeficiente de extinción", pH: "pH", empty: "Introduce una secuencia para comenzar.", limit: "Conversiones GET: 1.000 nt · Análisis POST: 10.000 nt", copy: "Copiar", copied: "Copiado", saved: "JSON guardado", mutationHint: "Compara dos secuencias de ADN codificante del mismo tamaño.", footer: "Desarrollado para BioSTAR", local: "Local-first · API", chooseTool: "Elige un análisis en el menú lateral.", coming: "Próximamente" }
 } as const;
 
 type Locale = keyof typeof COPY;
-type Tool = "dnaRna" | "dnaProtein" | "rnaProtein" | "rnaDna" | "protein" | "mutation";
+type Tool = "home" | "dnaRna" | "dnaProtein" | "rnaProtein" | "rnaDna" | "protein" | "mutation";
+type Options = { full: boolean; count: boolean; pi: boolean; charge: boolean; aromaticity: boolean; secondary: boolean; weight: boolean; hydrophobic: boolean; composition: boolean; extinction: boolean };
 
-export default function Page({ params }: { params: Promise<{ locale: string }> }) {
+const defaultOptions: Options = { full: false, count: true, pi: true, charge: false, aromaticity: true, secondary: true, weight: true, hydrophobic: true, composition: false, extinction: false };
+
+export default function Page() {
   const [locale, setLocale] = useState<Locale>("en");
-  const [tool, setTool] = useState<Tool>("protein");
+  const [tool, setTool] = useState<Tool>("home");
+  const [sequenceType, setSequenceType] = useState<"dna" | "rna" | "protein">("dna");
   const [sequence, setSequence] = useState("");
   const [reference, setReference] = useState("");
   const [result, setResult] = useState<unknown>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
-  const [options, setOptions] = useState({ full: false, count: true, pi: true, charge: false, aromaticity: true, secondary: true, weight: true, hydrophobic: true, composition: false, extinction: false });
+  const [saved, setSaved] = useState(false);
+  const [options, setOptions] = useState<Options>(defaultOptions);
   const [pH, setPH] = useState(7);
   const t = COPY[locale];
 
-  const tools = useMemo(() => [
-    ["dnaRna", t.dnaRna], ["dnaProtein", t.dnaProtein], ["rnaProtein", t.rnaProtein], ["rnaDna", t.rnaDna], ["protein", t.protein], ["mutation", t.mutation]
-  ] as [Tool, string][], [t]);
-
   async function run() {
-    setLoading(true); setError(""); setResult(null); setCopied(false);
+    setLoading(true); setError(""); setResult(null); setCopied(false); setSaved(false);
     try {
       let response: Response;
       if (tool === "protein") {
@@ -47,36 +51,53 @@ export default function Page({ params }: { params: Promise<{ locale: string }> }
     finally { setLoading(false); }
   }
 
-  function toggle(key: keyof typeof options) { setOptions((o) => ({ ...o, [key]: !o[key] })); }
-  async function copyResult() { await navigator.clipboard.writeText(JSON.stringify(result, null, 2)); setCopied(true); setTimeout(() => setCopied(false), 1500); }
+  function selectTool(next: Tool) { setTool(next); setResult(null); setError(""); setSaved(false); }
+  function toggle(key: keyof Options) { setOptions((o) => ({ ...o, [key]: !o[key] })); }
+  async function copyResult() { if (!result) return; await navigator.clipboard.writeText(JSON.stringify(result, null, 2)); setCopied(true); setTimeout(() => setCopied(false), 1500); }
+  function saveJson() {
+    if (!result) return;
+    const payload = { application: "BioSTAR", version: "3", saved_at: new Date().toISOString(), tool, sequence: tool === "mutation" ? { reference, sequence } : sequence, options: tool === "protein" ? options : undefined, result };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob); const anchor = document.createElement("a"); anchor.href = url; anchor.download = `biostar-${tool}-${new Date().toISOString().replace(/[:.]/g, "-")}.json`; anchor.click(); URL.revokeObjectURL(url); setSaved(true); setTimeout(() => setSaved(false), 1800);
+  }
+  function loadDnaSample() { setSequenceType("dna"); setTool("dnaProtein"); setSequence(">DNA Sample 1\nGATCTTTGAGAAAGGGGATTTTAATGGTCAGATGCATGAGACCACGGAAGACTGCCCTTCCATCATGGAGCAGTTCCACATGCGGGAGGTCCACTCCTGTAAGGTGCTGGAGGGCGCCTGGATCTTCTATGAGCTGCCCAACTACCGAGGCAGGCAGTACCTGCTGGACAAGAAGGAGTACCGGAAGCCCGTCGACTGGGGTGCAGCTTCCCCAGCTGTCCAGTCTTTCCGCCGCATTGTGGAGTGATGATACAGATGCGGCCAAAC"); }
+  function loadProteinSample() { setSequenceType("protein"); setTool("protein"); setSequence(">Protein Sample\nMVLSPADKTNVKAAW"); }
 
-  return <main className="shell">
-    <header className="topbar">
-      <div className="brand"><div className="brand-mark">B</div><div><strong>{t.brand}</strong><span>{t.eyebrow}</span></div></div>
-      <div className="lang"><button className={locale === "en" ? "active" : ""} onClick={() => setLocale("en")}>EN</button><button className={locale === "pt" ? "active" : ""} onClick={() => setLocale("pt")}>PT</button><button className={locale === "es" ? "active" : ""} onClick={() => setLocale("es")}>ES</button></div>
-    </header>
+  const toolLabel: Record<Tool, string> = { home: t.start, dnaRna: "DNA → RNA", dnaProtein: "DNA → Protein", rnaProtein: "RNA → Protein", rnaDna: "RNA → DNA", protein: t.protein, mutation: t.mutation };
 
-    <section className="hero"><div className="hero-copy"><div className="kicker">{t.eyebrow}</div><h1>{t.title}</h1><p>{t.subtitle}</p></div><div className="hero-orbit"><div className="orbit-dot dot-a">A</div><div className="orbit-dot dot-t">T</div><div className="orbit-dot dot-g">G</div><div className="orbit-dot dot-c">C</div><div className="core">DNA</div></div></section>
+  return <main className="app-shell">
+    <aside className="app-sidebar">
+      <div className="brand"><div className="brand-mark">★</div><div><strong>{t.brand}</strong><span>{t.eyebrow}</span></div></div>
+      <nav>
+        <button className={`nav-item ${tool === "home" ? "active" : ""}`} onClick={() => selectTool("home")}><span>★</span>{t.start}</button>
+        <Section title={t.gene} icon="DNA"><button className="nav-sub" onClick={() => selectTool("dnaProtein")}>↳ {t.results}</button><button className="nav-sub" onClick={() => selectTool("mutation")}>↳ {t.compare}</button><button className="nav-sub disabled">↳ {t.save}</button><button className="nav-sub disabled">↳ {t.upload}</button></Section>
+        <Section title={t.proteinSection} icon="◈"><button className="nav-sub" onClick={() => selectTool("protein")}>↳ {t.results}</button><button className="nav-sub disabled">↳ {t.save}</button><button className="nav-sub disabled">↳ {t.upload}</button></Section>
+        <Section title={t.experimental} icon="⚗"><button className="nav-sub disabled">↳ {t.optimize}</button><button className="nav-sub disabled">↳ {t.save}</button><button className="nav-sub disabled">↳ {t.upload}</button></Section>
+        <Section title={t.help} icon="?"><button className="nav-sub disabled">↳ {t.howTo}</button></Section>
+        <a className="nav-item github" href="https://github.com/NicolasMartins23/BioSTAR" target="_blank" rel="noopener noreferrer"><span>⌘</span>{t.github}</a>
+      </nav>
+    </aside>
 
-    <section className="workspace">
-      <aside className="sidebar"><div className="side-label">Tools</div>{tools.map(([id, label]) => <button key={id} className={`tool ${tool === id ? "selected" : ""}`} onClick={() => { setTool(id); setResult(null); setError(""); }}><span className="tool-dot" />{label}</button>)}</aside>
-      <div className="panel">
-        <div className="panel-head"><div><span className="eyebrow">{t.brand}</span><h2>{tools.find(([id]) => id === tool)?.[1]}</h2></div><span className="limit">{tool === "protein" || tool === "mutation" ? "POST · 10,000" : "GET · 1,000 nt"}</span></div>
-        <div className="editor-grid">
-          <div className="input-card"><label>{tool === "mutation" ? t.reference : t.sequence}</label><textarea value={tool === "mutation" ? reference : sequence} onChange={(e) => tool === "mutation" ? setReference(e.target.value) : setSequence(e.target.value)} placeholder={tool === "protein" ? ">my-protein\nMKWVTFISLLFLFSSAYSR" : tool === "mutation" ? "ATGGCCGAA..." : "ATGGCCGAA..."} spellCheck={false} />{tool === "mutation" && <><label className="second-label">{t.sequence}</label><textarea className="small-textarea" value={sequence} onChange={(e) => setSequence(e.target.value)} placeholder="ATGGTCGAA..." spellCheck={false} /></> }<div className="input-foot"><span>{tool === "mutation" ? t.mutationHint : t.limit}</span><span>{(tool === "mutation" ? Math.max(sequence.length, reference.length) : sequence.length).toLocaleString()} nt</span></div></div>
-          {tool === "protein" && <div className="options-card"><div className="card-title">{t.options}<button className="select-all" onClick={() => setOptions((o) => ({ ...o, full: !o.full }))}>{t.full}</button></div><div className="option-list">{([['count','count'],['pi','pi'],['charge','charge'],['aromaticity','aromaticity'],['secondary','secondary'],['weight','weight'],['hydrophobic','hydrophobic'],['composition','composition'],['extinction','extinction']] as [keyof typeof options, keyof typeof t][]).map(([key,label]) => <label className="check" key={key}><input type="checkbox" checked={options[key]} onChange={() => toggle(key)} /><span>{t[label]}</span>{key === "charge" && options.charge && <input className="ph" type="number" step="0.1" value={pH} onChange={(e) => setPH(Number(e.target.value))} aria-label={t.pH} />}</label>)}</div></div>}
-        </div>
-        <button className="run" disabled={loading || (tool === "mutation" ? !sequence || !reference : !sequence)} onClick={run}>{loading ? "…" : tool === "mutation" ? t.compare : t.analyze}<span>↗</span></button>
-        <div className="results-head"><div><span className="eyebrow">Output</span><h3>{t.results}</h3></div>{result && <button className="copy" onClick={copyResult}>{copied ? t.copied : t.copy}</button>}</div>
-        <div className="result-box">{error ? <div className="error">{error}</div> : result ? <ResultView result={result} /> : <div className="empty"><div className="empty-icon">⌁</div><p>{t.empty}</p></div>}</div>
+    <div className="content-wrap">
+      <header className="topbar"><span>{t.brand} <b>|</b> {t.eyebrow}</span><div className="lang">{(["en", "pt", "es"] as Locale[]).map((l) => <button key={l} className={locale === l ? "active" : ""} onClick={() => setLocale(l)}>{l.toUpperCase()}</button>)}</div></header>
+      <div className="content">
+        {tool === "home" ? <Home t={t} loadDnaSample={loadDnaSample} loadProteinSample={loadProteinSample} onTool={selectTool} /> : <>
+          <div className="page-heading"><div><span className="eyebrow">BioSTAR</span><h1>{toolLabel[tool]}</h1><p>{t.limit}</p></div>{result && <div className="heading-actions"><button onClick={saveJson}>{saved ? t.saved : t.save}</button><button onClick={copyResult}>{copied ? t.copied : t.copy}</button></div>}</div>
+          <section className="analysis-card">
+            {tool === "mutation" ? <div className="two-inputs"><SequenceBox label={t.reference} value={reference} onChange={setReference} /><SequenceBox label={t.sequence} value={sequence} onChange={setSequence} /></div> : <SequenceBox label={t.sequence} value={sequence} onChange={setSequence} fasta={tool === "protein"} />}
+            {tool === "protein" && <ProteinOptions t={t} options={options} toggle={toggle} pH={pH} setPH={setPH} />}
+            <button className="analyze" disabled={loading || (tool === "mutation" ? !sequence || !reference : !sequence)} onClick={run}>{loading ? "…" : tool === "mutation" ? t.compare : t.analyze}<span>→</span></button>
+          </section>
+          <section className="result-section"><div className="section-title"><span className="eyebrow">Output</span><h2>{t.results}</h2></div><div className="result-box">{error ? <div className="error">{error}</div> : result ? <ResultView result={result} /> : <div className="empty"><div>⌁</div><p>{t.empty}</p></div>}</div></section>
+        </>}
       </div>
-    </section>
-    <footer>{t.footer}<span>Local-first · API powered</span></footer>
+      <footer><span>{t.footer}</span><span>{t.local}</span></footer>
+    </div>
   </main>;
 }
 
-function ResultView({ result }: { result: unknown }) {
-  if (typeof result !== "object" || result === null) return <pre>{String(result)}</pre>;
-  const entries = Object.entries(result as Record<string, unknown>);
-  return <div className="result-grid">{entries.map(([key, value]) => <div className="metric" key={key}><span>{key.replaceAll("_", " ")}</span>{typeof value === "object" ? <pre>{JSON.stringify(value, null, 2)}</pre> : <strong>{String(value)}</strong>}</div>)}</div>;
-}
+function Section({ title, icon, children }: { title: string; icon: string; children: React.ReactNode }) { return <div className="nav-section"><div className="nav-section-title"><span>{icon}</span>{title}</div>{children}</div>; }
+function SequenceBox({ label, value, onChange, fasta = false }: { label: string; value: string; onChange: (v: string) => void; fasta?: boolean }) { return <div className="sequence-box"><label>{label}</label><textarea value={value} onChange={(e) => onChange(e.target.value)} placeholder={fasta ? ">protein-name\nMKWVTFISLLFLFSSAYSR" : ">sequence-name\nATGGCCGAA..."} spellCheck={false} /><span>{fasta ? "FASTA format supported" : "Sequence input"}</span></div>; }
+function ProteinOptions({ t, options, toggle, pH, setPH }: { t: typeof COPY.en; options: Options; toggle: (key: keyof Options) => void; pH: number; setPH: (value: number) => void }) { const fields: [keyof Options, keyof typeof COPY.en][] = [["count", "count"], ["pi", "pi"], ["charge", "charge"], ["aromaticity", "aromaticity"], ["secondary", "secondary"], ["weight", "weight"], ["hydrophobic", "hydrophobic"], ["composition", "composition"], ["extinction", "extinction"]]; return <div className="protein-options"><div className="options-head"><h3>{t.options}</h3><button onClick={() => toggle("full")}>{t.full}</button></div><div className="options-grid">{fields.map(([key, label]) => <label key={key}><input type="checkbox" checked={options[key]} onChange={() => toggle(key)} /><span>{t[label]}</span>{key === "charge" && options.charge && <input className="ph" type="number" step="0.1" value={pH} onChange={(e) => setPH(Number(e.target.value))} />}</label>)}</div></div>; }
+function Home({ t, loadDnaSample, loadProteinSample, onTool }: { t: typeof COPY.en; loadDnaSample: () => void; loadProteinSample: () => void; onTool: (tool: Tool) => void }) { return <><div className="home-grid"><section className="welcome"><span className="eyebrow">BioSTAR</span><h1>{t.title}</h1><p>{t.subtitle}</p><div className="home-actions"><button className="primary" onClick={() => onTool("dnaProtein")}>{t.dnaProtein}</button><button onClick={() => onTool("protein")}>{t.protein}</button></div></section><section className="sequence-launch"><div className="launch-title">{t.sequence}</div><select><option>{t.dna}</option><option>{t.rna}</option><option>{t.protein}</option></select><textarea placeholder={t.empty} /><div className="sample-actions"><button onClick={loadDnaSample}>{t.sampleDna}</button><button onClick={loadProteinSample}>{t.sampleProtein}</button></div></section></div><div className="home-lower"><section><div className="section-title"><span className="eyebrow">Tools</span><h2>{t.otherTools}</h2></div><div className="tool-cards"><button onClick={() => onTool("dnaRna")}>{t.dnaRna}</button><button onClick={() => onTool("dnaProtein")}>{t.dnaProtein}</button><button onClick={() => onTool("rnaProtein")}>{t.rnaProtein}</button><button onClick={() => onTool("rnaDna")}>{t.rnaDna}</button><button onClick={() => onTool("mutation")}>{t.mutation}</button><button className="disabled">{t.viewer} · {t.coming}</button></div></section><section className="other-links"><div className="section-title"><span className="eyebrow">BioSTAR</span><h2>{t.otherTools}</h2></div><button>{t.codonTable}</button><button>{t.fasta}</button><button>{t.started}</button></section></div></>; }
+function ResultView({ result }: { result: unknown }) { if (typeof result !== "object" || result === null) return <pre>{String(result)}</pre>; return <div className="result-grid">{Object.entries(result as Record<string, unknown>).map(([key, value]) => <div className="metric" key={key}><span>{key.replaceAll("_", " ")}</span>{typeof value === "object" ? <pre>{JSON.stringify(value, null, 2)}</pre> : <strong>{String(value)}</strong>}</div>)}</div>; }
