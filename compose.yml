@@ -56,7 +56,8 @@ services:
       start_period: 10s
 
   open-studio:
-    build: https://github.com/andersmyrmel/open-studio.git#main
+    build:
+      context: https://github.com/andersmyrmel/open-studio.git#main
     container_name: biostar-open-studio
     restart: unless-stopped
     depends_on:
