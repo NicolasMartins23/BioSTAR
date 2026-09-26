@@ -160,7 +160,14 @@ const analyze = async (): Promise<void> => {
   error.value = "";
   result.value = null;
   try {
-    result.value = await analyzeProtein(buildRequest());
+    const response = await analyzeProtein(buildRequest());
+
+    if (response.data === null) {
+      error.value = response.message?.message ?? "Protein analysis returned no data.";
+      return;
+    }
+
+    result.value = response.data;
   } catch (requestError: unknown) {
     error.value = requestError instanceof Error ? requestError.message : "Protein analysis failed.";
   } finally {
