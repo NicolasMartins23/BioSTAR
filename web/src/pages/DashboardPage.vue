@@ -3,7 +3,8 @@
     <div class="page-shell">
       <div class="text-overline text-primary">Bioinformatics Platform</div>
       <div class="text-h3 text-weight-bold q-mb-sm">Welcome to BioSTAR</div>
-      <div class="text-body1 text-grey-6 q-mb-xl">Analyze biological sequences, proteins, and mutations in one workspace.</div>
+      <div class="text-body1 text-grey-6 q-mb-md">Analyze biological sequences, proteins, and mutations in one workspace.</div>
+      <q-chip icon="cloud" :color="apiStatus === 'Unavailable' ? 'negative' : apiStatus === 'Checking...' ? 'warning' : 'positive'" text-color="white">API: {{ apiStatus }}</q-chip>
       <div class="row q-col-gutter-lg">
         <div v-for="card in cards" :key="card.title" class="col-12 col-md-4">
           <q-card flat bordered class="analysis-card">
@@ -21,6 +22,9 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted, ref } from "vue";
+import { getHealth } from "../services/api";
+
 interface AnalysisCard {
   title: string;
   description: string;
@@ -29,11 +33,22 @@ interface AnalysisCard {
   to: string;
 }
 
+const apiStatus = ref<string>("Checking...");
+
 const cards: AnalysisCard[] = [
   { title: "Sequence Analysis", description: "Convert and inspect nucleotide and amino acid sequences.", icon: "biotech", action: "Open sequences", to: "/sequences" },
   { title: "Protein Analysis", description: "Explore protein properties and biological information.", icon: "science", action: "Open proteins", to: "/proteins" },
   { title: "Mutation Analysis", description: "Compare sequences and inspect potential mutations.", icon: "compare_arrows", action: "Open mutations", to: "/mutations" },
 ];
+
+onMounted(async (): Promise<void> => {
+  try {
+    const health = await getHealth();
+    apiStatus.value = health.status;
+  } catch {
+    apiStatus.value = "Unavailable";
+  }
+});
 </script>
 
 <style scoped>
