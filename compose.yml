@@ -42,6 +42,7 @@ services:
     restart: unless-stopped
     environment:
       BIOSTAR_DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-biostar}:${POSTGRES_PASSWORD:-biostar}@postgres:5432/${POSTGRES_DB:-biostar}
+      BIOSTAR_AUTH_ADMIN_KEY: ${BIOSTAR_AUTH_ADMIN_KEY}
     depends_on:
       seed:
         condition: service_completed_successfully
