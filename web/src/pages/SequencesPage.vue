@@ -109,7 +109,7 @@ import {
   convertDnaToRna,
   convertRnaToDna,
   convertRnaToProtein,
-} from "src/services/api";
+} from "../services/api";
 
 type Conversion = "dna-rna" | "dna-protein" | "rna-protein" | "rna-dna";
 
