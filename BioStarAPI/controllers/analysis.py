@@ -9,13 +9,19 @@ from BioStar.domain.protein import Protein
 from BioStar.io.fasta import FastaParser
 from fastapi import HTTPException
 
-MAX_SEQUENCE_LENGTH = 10_000
+GET_SEQUENCE_MAX_LENGTH = 1_000
+POST_SEQUENCE_MAX_LENGTH = 10_000
 DNA_ALPHABET = set("ACGT")
 RNA_ALPHABET = set("ACGU")
 PROTEIN_ALPHABET = set("ACDEFGHIKLMNPQRSTVWY")
 
 
-def _normalize_single_sequence(sequence: str, alphabet: set[str], kind: str) -> str:
+def _normalize_single_sequence(
+    sequence: str,
+    alphabet: set[str],
+    kind: str,
+    max_length: int,
+) -> str:
     value = sequence.strip().upper()
     if value.startswith(">"):
         records = FastaParser().get_sequence_map(value)
@@ -27,20 +33,20 @@ def _normalize_single_sequence(sequence: str, alphabet: set[str], kind: str) -> 
 
     if not value:
         raise HTTPException(status_code=422, detail=f"{kind} sequence cannot be empty")
-    if len(value) > MAX_SEQUENCE_LENGTH:
-        raise HTTPException(status_code=422, detail=f"{kind} sequence cannot exceed {MAX_SEQUENCE_LENGTH} nucleotides")
+    if len(value) > max_length:
+        raise HTTPException(status_code=422, detail=f"{kind} sequence cannot exceed {max_length} nucleotides")
     invalid = sorted(set(value) - alphabet)
     if invalid:
         raise HTTPException(status_code=422, detail=f"Invalid {kind} sequence characters: {', '.join(invalid)}")
     return value
 
 
-def normalize_dna(sequence: str) -> str:
-    return _normalize_single_sequence(sequence, DNA_ALPHABET, "DNA")
+def normalize_dna(sequence: str, max_length: int = POST_SEQUENCE_MAX_LENGTH) -> str:
+    return _normalize_single_sequence(sequence, DNA_ALPHABET, "DNA", max_length)
 
 
-def normalize_rna(sequence: str) -> str:
-    return _normalize_single_sequence(sequence, RNA_ALPHABET, "RNA")
+def normalize_rna(sequence: str, max_length: int = POST_SEQUENCE_MAX_LENGTH) -> str:
+    return _normalize_single_sequence(sequence, RNA_ALPHABET, "RNA", max_length)
 
 
 def normalize_protein_fasta(sequence: str) -> str:
@@ -51,33 +57,33 @@ def normalize_protein_fasta(sequence: str) -> str:
     protein = re.sub(r"\s+", "", str(records[0]["sequence"]).upper())
     if not protein:
         raise HTTPException(status_code=422, detail="Protein sequence cannot be empty")
-    if len(protein) > MAX_SEQUENCE_LENGTH:
-        raise HTTPException(status_code=422, detail=f"Protein sequence cannot exceed {MAX_SEQUENCE_LENGTH} residues")
+    if len(protein) > POST_SEQUENCE_MAX_LENGTH:
+        raise HTTPException(status_code=422, detail=f"Protein sequence cannot exceed {POST_SEQUENCE_MAX_LENGTH} residues")
     invalid = sorted(set(protein) - PROTEIN_ALPHABET)
     if invalid:
         raise HTTPException(status_code=422, detail=f"Invalid protein sequence characters: {', '.join(invalid)}")
     return protein
 
 
-def dna_to_rna(sequence: str) -> dict[str, Any]:
-    normalized = normalize_dna(sequence)
+def dna_to_rna(sequence: str, max_length: int = POST_SEQUENCE_MAX_LENGTH) -> dict[str, Any]:
+    normalized = normalize_dna(sequence, max_length)
     return {"sequence": DNA(normalized).rna_sequence()}
 
 
-def dna_to_protein(sequence: str) -> dict[str, Any]:
-    normalized = normalize_dna(sequence)
+def dna_to_protein(sequence: str, max_length: int = POST_SEQUENCE_MAX_LENGTH) -> dict[str, Any]:
+    normalized = normalize_dna(sequence, max_length)
     protein = DNA(normalized).to_protein()
     return {"sequence": protein.sequence}
 
 
-def rna_to_protein(sequence: str) -> dict[str, Any]:
-    normalized = normalize_rna(sequence)
+def rna_to_protein(sequence: str, max_length: int = POST_SEQUENCE_MAX_LENGTH) -> dict[str, Any]:
+    normalized = normalize_rna(sequence, max_length)
     protein = RNA(normalized).to_protein()
     return {"sequence": protein.sequence}
 
 
-def rna_to_dna(sequence: str) -> dict[str, Any]:
-    normalized = normalize_rna(sequence)
+def rna_to_dna(sequence: str, max_length: int = POST_SEQUENCE_MAX_LENGTH) -> dict[str, Any]:
+    normalized = normalize_rna(sequence, max_length)
     return {"sequence": RNA(normalized).dna_sequence()}
 
 
@@ -123,8 +129,8 @@ def protein_analysis(request: Any) -> dict[str, Any]:
 
 
 def mutation_compare(reference: str, sequence: str) -> dict[str, Any]:
-    reference_dna = normalize_dna(reference)
-    sequence_dna = normalize_dna(sequence)
+    reference_dna = normalize_dna(reference, POST_SEQUENCE_MAX_LENGTH)
+    sequence_dna = normalize_dna(sequence, POST_SEQUENCE_MAX_LENGTH)
     if len(reference_dna) != len(sequence_dna):
         raise HTTPException(status_code=422, detail="Reference and sequence must have the same length")
     if len(reference_dna) % 3 != 0:
