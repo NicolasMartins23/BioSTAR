@@ -38,7 +38,7 @@ def create_api_key(
     )
 
 
-@router.delete("/keys/{key_id}")
+@router.delete("/keys/{key_id}", response_model=APIResponse[dict[str, object]])
 def delete_api_key(
     key_id: int,
     x_admin_key: str | None = Header(default=None, alias="X-Admin-Key"),
