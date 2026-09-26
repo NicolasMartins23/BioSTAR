@@ -46,6 +46,7 @@ services:
     restart: unless-stopped
     environment:
       BIOSTAR_DOMAIN: ${BIOSTAR_DOMAIN}
+      NGINX_ENVSUBST_FILTER: ^BIOSTAR_DOMAIN$
     volumes:
       - ./nginx/default.conf.template:/etc/nginx/templates/default.conf.template:ro
     depends_on:
