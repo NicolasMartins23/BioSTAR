@@ -158,7 +158,12 @@ const convert = async (): Promise<void> => {
       response = await convertRnaToDna(input);
     }
 
-    result.value = response.sequence;
+    if (response.data === null) {
+      errorMessage.value = response.message?.message ?? "Sequence conversion returned no data.";
+      return;
+    }
+
+    result.value = response.data.sequence;
   } catch (error: unknown) {
     errorMessage.value = error instanceof Error
       ? error.message
