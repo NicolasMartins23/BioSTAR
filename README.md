@@ -1,36 +1,33 @@
-# This repository has been discontinued and has been merged with BioApps. I do not recommend using this repository as it is no longer actively maintained
+# BioSTAR
 
-The web version of this project can be accessed here: https://softwaremartins.pythonanywhere.com/biostar
+BioSTAR is an object-oriented Python library for biological sequence analysis.
 
-1 - PROJECT NAME
-BioSTAR (Bioinformatics System for Targeted Analysis and Research)
+## Architecture
 
-2 - PROJECT DESCRIPTION
-It kickstarted my journey to learn how to program and transition from a Biochemistry Major to working with software.
-The library is inteded to be as simple as possible to use and also complete complex tasks effectively.
+The **BioSTAR package is the engine**. It contains the biological domain model and reusable analysis functionality and does not depend on a web framework or API layer.
 
-3 - MAIN USAGE
-The 3 main classes on this library as DNA, RNA and Protein
+- `BioStar/domain/` — DNA, RNA, Protein and other biological objects.
+- `BioStar/data/` — biochemical constants and reference tables.
+- `BioStar/analysis/` — sequence-analysis algorithms.
+- `BioStar/io/` — input parsing such as FASTA.
+- `BioStar/utils/` — small framework-independent helpers.
 
-All of those classes will have a property named sequence, which stores the genetic/peptide sequence as string. I also added a how_to_use.txt to make things more practical
+The package is intentionally independent of HTTP, FastAPI, databases and authentication.
 
-DNA and RNA both inherit from the NucleicAcid parent class
-get_peptide_sequence()
-    Returns a string which represents the peptide sequence of a given NucleicAcid when translated intto a protein.
-    If you wish to return a protein object instead, use the method to_protein()
+## Future API
 
-to_protein()
-    Returns a protein object of a given NucleicAcid when translated into a protein.
-    If you wish to return a protein object instead, use the method to_protein()
+A future v2 API can be a separate FastAPI package/project:
 
-When creating an instance of DNA("SEQUENCE") or RNA("SEQUENCE") you must pass the sequence when instantiating the new variable as a DNA object.
-The recommended approach is to create a string variable first then pass it as an property, although it is only a matter of preference.
+```
+FastAPI API -> BioSTAR engine -> biological domain
+```
 
-This is a summary of all functionality
-DNA: peptide_sequence(), to_protein(), rna_sequence(), to_rna(), at_skew(), at_content(), gc_content(), gc_skew(), template_strand(), get_orf_map()
-RNA: peptide_sequence(), to_protein(), dna_sequence(), to_dna()
-Protein: aromacity(), charge_at_pH(), composition_ratio(), extinction_coefficient(), hydrophobic_index(), isoelectric_point(), molecular_weight(), secondary_structure_propensity()
+The API should depend on BioSTAR, never the other way around.
 
-There will be more changes added latter.
-- Protein: pI and charge at pH, identify possible signal peptide sequences
-- Nucleic Acids: Optimize sequence for expression in model organisms
+## Public API
+
+```python
+from BioStar import DNA, RNA, Protein, NucleicAcid, OpenReadFrame
+```
+
+Legacy module imports are retained as compatibility shims while new code should use the organized package structure.
