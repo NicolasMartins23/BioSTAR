@@ -6,7 +6,7 @@ C_TERM_PKA: float = 3.5
 AMINOACIDS: list[str] = ["A", "C", "D", "E", "F", "G", "H", "I", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "V", "W", "Y"]
 AMINOACIDS_AROMATIC: list[str] = ["F", "W", "Y"]
 AMINOACIDS_NONPOLAR: list[str] = ["A", "C", "G", "I", "L", "M", "P", "V"]
-AMINOACIDS_POLAR: list[str] = ["D", "E", "H", "K", "N", "Q", "R", "S", "T", "Q"]
+AMINOACIDS_POLAR: list[str] = ["D", "E", "H", "K", "N", "Q", "R", "S", "T"]
 AMINOACIDS_POSITIVE: list[str] = ["K", "R", "H"]
 AMINOACIDS_NEGATIVE: list[str] = ["D", "E"]
 
@@ -113,16 +113,17 @@ TABLE_RNA_CODON_TO_AMINOACID: dict[str, str] = {
 
 #U
 # A           C           G           U
-'UAA': '_', 'UCA': 'S', 'UGA': '_', 'UUA': 'L', #A
+'UAA': '*', 'UCA': 'S', 'UGA': '*', 'UUA': 'L', #A
 'UAC': 'Y', 'UCC': 'S', 'UGC': 'C', 'UUC': 'F', #C
-'UAG': '_', 'UCG': 'S', 'UGG': 'W', 'UUG': 'L', #G
+'UAG': '*', 'UCG': 'S', 'UGG': 'W', 'UUG': 'L', #G
 'UAU': 'Y', 'UCU': 'S', 'UGU': 'C', 'UUU': 'F', #U
 }
 
 START_CODON_DNA: str = "ATG"
 STOP_CODON_DNA: list[str] = ["TAA", "TAG", "TGA"]
 
-START_CODON_TNA: str = "ATG"
+START_CODON_RNA: str = "AUG"
+START_CODON_TNA: str = START_CODON_DNA
 STOP_CODON_RNA: list[str] = ["UAA", "UAG", "UGA"]
 
 AMINOACID_TABLE: dict[str, dict[str, str]] = {
