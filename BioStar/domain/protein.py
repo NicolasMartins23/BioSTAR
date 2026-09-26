@@ -3,7 +3,7 @@ from re import sub
 from BioStar.engine.biochemistry import BiochemistryData
 from BioStar.engine.default_data import get_default_biochemistry
 
-WATER_MASS = 18.015
+WATER_MASS = 18.01528
 
 
 class Protein:
@@ -69,8 +69,8 @@ class Protein:
             if pKr is not None:
                 negative += counts[aa] / (1.0 + 10 ** (pKr - normalized_pH))
 
-        positive += 1.0 / (1.0 + 10 ** (normalized_pH - 9.69))
-        negative += 1.0 / (1.0 + 10 ** (2.34 - normalized_pH))
+        positive += 1.0 / (1.0 + 10 ** (normalized_pH - 7.7))
+        negative += 1.0 / (1.0 + 10 ** (3.5 - normalized_pH))
         return round(positive - negative, 2)
 
     def composition_ratio(self, multiply_by: float = 1.0, decimal_places: int = 4) -> dict[str, float]:
