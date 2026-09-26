@@ -21,7 +21,6 @@ class CreateAPIKeyResponse(BaseModel):
     id: int
     name: str | None
     api_key: str
-    
 
 
 @router.post("/keys", response_model=APIResponse[CreateAPIKeyResponse])
