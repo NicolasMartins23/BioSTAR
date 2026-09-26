@@ -35,9 +35,7 @@ def seed_database() -> None:
 
 
 def _seed_amino_acids(session: Session) -> None:
-    existing: set[str] = set(
-        session.scalars(select(AminoAcid.symbol))
-    )
+    existing: set[str] = set(session.scalars(select(AminoAcid.symbol)))
 
     for symbol, data in AMINOACID_TABLE.items():
         if symbol in existing:
@@ -46,7 +44,7 @@ def _seed_amino_acids(session: Session) -> None:
         session.add(
             AminoAcid(
                 symbol=symbol,
-                abbreviation=data["abbreviation"],
+                abbreviation="Stp" if symbol == "*" else data["abbreviation"],
                 name=data["name"],
                 molecular_weight=data["weight"],
                 hydrophobicity=data["hydrophobicity"],
@@ -107,19 +105,11 @@ def _seed_nucleotides(session: Session) -> None:
 
     for symbol, name, molecule_type in nucleotides:
         if symbol not in existing:
-            session.add(
-                Nucleotide(
-                    symbol=symbol,
-                    name=name,
-                    molecule_type=molecule_type,
-                )
-            )
+            session.add(Nucleotide(symbol=symbol, name=name, molecule_type=molecule_type))
 
 
 def _seed_genetic_code(session: Session) -> None:
-    genetic_code = session.scalar(
-        select(GeneticCode).where(GeneticCode.ncbi_id == 1)
-    )
+    genetic_code = session.scalar(select(GeneticCode).where(GeneticCode.ncbi_id == 1))
 
     if genetic_code is None:
         genetic_code = GeneticCode(
@@ -146,10 +136,7 @@ def _seed_genetic_code(session: Session) -> None:
         )
         session.add(source)
 
-    for molecule_type, table in (
-        ("DNA", TABLE_DNA_CODON_TO_AMINOACID),
-        ("RNA", TABLE_RNA_CODON_TO_AMINOACID),
-    ):
+    for molecule_type, table in (("DNA", TABLE_DNA_CODON_TO_AMINOACID), ("RNA", TABLE_RNA_CODON_TO_AMINOACID)):
         for sequence, symbol in table.items():
             exists = session.scalar(
                 select(Codon).where(
