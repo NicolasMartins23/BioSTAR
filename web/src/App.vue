@@ -76,13 +76,13 @@ const toggleDarkMode = (): void => {
 
 <style scoped>
 .site-header {
-  background: #123d59;
+  background: linear-gradient(115deg, #123d59 0%, #176b87 58%, #238b8f 100%);
   color: white;
 }
 
 .site-toolbar {
-  min-height: 68px;
-  padding: 0 22px;
+  min-height: 4.25rem;
+  padding: 0 2%;
 }
 
 .menu-button,
@@ -93,28 +93,28 @@ const toggleDarkMode = (): void => {
 .brand {
   display: flex;
   align-items: center;
-  gap: 11px;
-  margin-left: 12px;
+  gap: 0.7rem;
+  margin-left: 0.75rem;
 }
 
 .brand-mark {
   display: flex;
+  width: 1.875rem;
+  height: 1.875rem;
   align-items: flex-end;
-  gap: 2px;
-  width: 30px;
-  height: 30px;
+  gap: 0.125rem;
 }
 
 .brand-mark span {
-  width: 7px;
-  border-radius: 5px 5px 2px 2px;
+  width: 0.4375rem;
+  border-radius: 0.3rem 0.3rem 0.125rem 0.125rem;
   background: #5bc6c0;
   transform: skewY(-22deg);
 }
 
-.brand-mark span:nth-child(1) { height: 15px; }
-.brand-mark span:nth-child(2) { height: 23px; }
-.brand-mark span:nth-child(3) { height: 30px; }
+.brand-mark span:nth-child(1) { height: 0.95rem; }
+.brand-mark span:nth-child(2) { height: 1.45rem; }
+.brand-mark span:nth-child(3) { height: 1.875rem; }
 
 .brand-name {
   font-size: 1.15rem;
@@ -123,7 +123,7 @@ const toggleDarkMode = (): void => {
 }
 
 .brand-caption {
-  margin-top: 1px;
+  margin-top: 0.0625rem;
   color: rgb(255 255 255 / 58%);
   font-size: 0.56rem;
   letter-spacing: 0.13em;
@@ -138,11 +138,11 @@ const toggleDarkMode = (): void => {
   display: flex;
   min-height: 100%;
   flex-direction: column;
-  padding: 28px 12px 18px;
+  padding: 1.75rem 0.75rem 1.125rem;
 }
 
 .drawer-title {
-  padding: 0 13px 8px;
+  padding: 0 0.8rem 0.5rem;
   color: #82929c;
   font-size: 0.65rem;
   font-weight: 800;
@@ -150,9 +150,9 @@ const toggleDarkMode = (): void => {
 }
 
 .nav-link {
-  min-height: 44px;
-  margin: 2px 0;
-  border-radius: 5px;
+  min-height: 2.75rem;
+  margin: 0.125rem 0;
+  border-radius: 0.35rem;
   color: #435963;
   font-size: 0.9rem;
 }
@@ -162,7 +162,7 @@ const toggleDarkMode = (): void => {
 }
 
 .nav-link.q-router-link--active {
-  background: #e8f4f5;
+  background: linear-gradient(100deg, #e3f3f4 0%, #edf8f8 100%);
   color: #126d79;
   font-weight: 700;
 }
@@ -173,13 +173,13 @@ const toggleDarkMode = (): void => {
 
 .drawer-divider {
   height: 1px;
-  margin: 18px 12px;
+  margin: 1.125rem 0.75rem;
   background: #e4eaee;
 }
 
 .drawer-footer {
-  margin: 18px 12px 0;
-  padding-top: 14px;
+  margin: 1.125rem 0.75rem 0;
+  padding-top: 0.875rem;
   border-top: 1px solid #e4eaee;
   color: #536872;
   font-size: 0.75rem;
@@ -188,9 +188,27 @@ const toggleDarkMode = (): void => {
 
 .drawer-footer span {
   display: block;
-  margin-top: 3px;
+  margin-top: 0.1875rem;
   color: #91a0a8;
   font-size: 0.68rem;
   font-weight: 400;
 }
-</style>
+
+@media (max-width: 37.49rem) {
+  .site-toolbar {
+    min-height: 3.75rem;
+  }
+
+  .brand-caption {
+    display: none;
+  }
+
+  .brand {
+    gap: 0.55rem;
+    margin-left: 0.35rem;
+  }
+
+  .brand-name {
+    font-size: 1rem;
+  }
+}
