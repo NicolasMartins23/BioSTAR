@@ -103,6 +103,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { Notify } from "quasar";
+import type { APIResponse, SequenceResponse } from "../services/api";
 
 import {
   convertDnaToProtein,
@@ -146,7 +147,7 @@ const convert = async (): Promise<void> => {
   result.value = "";
 
   try {
-    let response;
+    let response: APIResponse<SequenceResponse>;
 
     if (conversion.value === "dna-rna") {
       response = await convertDnaToRna(input);
