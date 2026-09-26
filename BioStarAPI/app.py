@@ -28,19 +28,33 @@ def get_sequence_service(
 @app.middleware("http")
 async def api_rate_limit_middleware(request: Request, call_next):
     path = request.url.path
+
+    if path == "/health" or path == "/api/v1/health":
+        return await call_next(request)
+
     if path.startswith("/api/auth/"):
         _check_short_rate_limit(request, authenticated=True)
     elif path.startswith("/api/"):
         api_key_id = resolve_api_key(request.headers.get("X-API-Key"))
         enforce_request_limits(request, api_key_id)
+
     return await call_next(request)
+
+
+def _check_database_health() -> dict[str, str]:
+    with engine.connect() as connection:
+        connection.execute(text("SELECT 1"))
+    return {"status": "ok"}
 
 
 @app.get("/health", tags=["System"], summary="Check API health")
 def health() -> dict[str, str]:
-    with engine.connect() as connection:
-        connection.execute(text("SELECT 1"))
-    return {"status": "ok"}
+    return _check_database_health()
+
+
+@app.get("/api/v1/health", tags=["System"], summary="Check API health")
+def api_health() -> dict[str, str]:
+    return _check_database_health()
 
 
 @app.get("/api/dna-rna", tags=["Conversions"])
