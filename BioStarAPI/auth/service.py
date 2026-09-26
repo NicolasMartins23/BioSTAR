@@ -9,6 +9,8 @@ from fastapi import HTTPException, Request
 from sqlalchemy import text
 
 from BioStarAPI.database.connection import engine
+from BioStarAPI.resources.exceptions import BioStarAPIError
+from BioStarAPI.resources.messages import MessageCode
 
 API_KEY_PREFIX = "bst_live_"
 UNAUTH_DAILY_LIMIT = 8_640
@@ -81,11 +83,7 @@ def _check_short_rate_limit(request: Request, authenticated: bool) -> None:
     previous = state.get(key)
     if previous is not None and now - previous < interval:
         retry_after = max(1, int(interval - (now - previous) + 0.999))
-        raise HTTPException(
-            status_code=429,
-            detail="Rate limit exceeded",
-            headers={"Retry-After": str(retry_after)},
-        )
+        raise BioStarAPIError(429, MessageCode.RATE_LIMIT_EXCEEDED)
     state[key] = now
 
 
@@ -111,7 +109,7 @@ def _check_daily_limit(scope: str, scope_id: str | int, limit: int) -> None:
             },
         ).first()
     if result is None:
-        raise HTTPException(status_code=429, detail="Daily request limit exceeded")
+        raise BioStarAPIError(429, MessageCode.DAILY_LIMIT_EXCEEDED)
 
 
 def enforce_request_limits(request: Request, api_key_id: int | None) -> None:
@@ -126,5 +124,5 @@ def enforce_request_limits(request: Request, api_key_id: int | None) -> None:
 def require_api_key(request: Request) -> int:
     api_key_id = resolve_api_key(request.headers.get("X-API-Key"))
     if api_key_id is None:
-        raise HTTPException(status_code=401, detail="A valid X-API-Key is required")
+        raise BioStarAPIError(401, MessageCode.AUTHENTICATION_REQUIRED)
     return api_key_id
