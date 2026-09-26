@@ -57,7 +57,10 @@ services:
 
   open-studio:
     build:
-      context: https://github.com/andersmyrmel/open-studio.git#main
+      context: .
+      dockerfile: docker/open-studio.Dockerfile
+      additional_contexts:
+        openstudio: https://github.com/andersmyrmel/open-studio.git#main
     container_name: biostar-open-studio
     restart: unless-stopped
     depends_on:
