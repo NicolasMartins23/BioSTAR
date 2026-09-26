@@ -13,11 +13,11 @@ from BioStar.io.fasta import FastaParserDNA
 class NucleicAcid:
     """Base class for DNA and RNA sequence operations."""
 
-    def __init__(self, sequence: str, codon_table: dict[str, str]) -> None:
+    def __init__(self, sequence: str, codon_table: dict[str, str], data: BiochemistryData) -> None:
         self.sequence: str = sequence.upper()
         self.sequence_size: int = len(self.sequence)
         self.sequence_map: dict[str, int] = self.get_sequence_map()
-        self.codon_table: dict[str, str] = codon_table
+        self.codon_table: dict[str, str] = codon_table\n        self.data: BiochemistryData = data
 
     def get_sequence_map(self) -> dict[str, int]:
         raise NotImplementedError
@@ -88,7 +88,7 @@ class DNA(NucleicAcid):
         return self.sequence.replace("T", "U")
 
     def to_rna(self) -> "RNA":
-        return RNA(self.rna_sequence())
+        return RNA(self.rna_sequence(), self.data)
 
     def orf_map(self, length_threshold: int = 0) -> list[dict[str, object]]:
         return OpenReadFrame(self.sequence, length_threshold).orf_map
@@ -119,7 +119,7 @@ class RNA(NucleicAcid):
     def trim_on_stop_codon(self) -> str:
         for index in range(0, self.sequence_size - (CODON_SIZE - 1), CODON_SIZE):
             codon: str = self.sequence[index:index + CODON_SIZE]
-            if codon in STOP_CODON_RNA:
+            if codon in self.data.rna_stop_codons:
                 return self.sequence[:index + CODON_SIZE]
         return self.sequence
 
@@ -127,7 +127,7 @@ class RNA(NucleicAcid):
         return self.sequence.replace("U", "T")
 
     def to_dna(self) -> DNA:
-        return DNA(self.dna_sequence())
+        return DNA(self.dna_sequence(), self.data)
 
 
 class OpenReadFrame:
@@ -161,13 +161,13 @@ class OpenReadFrame:
         for index in range(sequence_size)[n::CODON_SIZE]:
             codon: str = sequence[index:index + CODON_SIZE]
             if not frame_sequence:
-                if codon == START_CODON_DNA:
+                if codon == self.data.dna_start_codon:
                     codon_start = self.find_start_codon(index, frame_reference, sequence_size)
                     frame_sequence = codon
                 continue
 
             frame_sequence += codon
-            if codon in STOP_CODON_DNA:
+            if codon in self.data.dna_stop_codons:
                 if len(frame_sequence) > self.length_threshold:
                     self.orf_map.append({
                         "codon_start": codon_start,
@@ -194,7 +194,7 @@ class OpenReadFrame:
         frame_references: list[str] = ["+", "++", "+++", "-", "--", "---"]
 
         for item in self.fasta_map:
-            dna: DNA = DNA(item["sequence"])
+            dna: DNA = DNA(item["sequence"], self.data)
             for frame_index in range(CODON_SIZE):
                 self.extract_data_from_fasta_map(
                     dna.sequence, item["label"], frame_index,
