@@ -212,3 +212,5 @@ const toggleDarkMode = (): void => {
     font-size: 1rem;
   }
 }
+
+</style>
