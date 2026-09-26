@@ -28,19 +28,30 @@ Controller -> Service -> Repository -> SQLAlchemy -> PostgreSQL
 - users
 - refresh_tokens
 
-## Migrations
+## Local database
 
-Set:
+Start PostgreSQL:
 
 ```bash
-export BIOSTAR_DATABASE_URL="postgresql+psycopg://user:password@localhost:5432/biostar"
+docker compose -f docker-compose.database.yml up -d
 ```
 
-Then run:
+Set the connection string:
+
+```bash
+export BIOSTAR_DATABASE_URL="postgresql+psycopg://biostar:biostar@localhost:5432/biostar"
+```
+
+Create the schema:
 
 ```bash
 alembic upgrade head
 ```
 
-The first migration creates the schema only. Scientific reference-data seeding
-will be added separately so schema changes and data imports remain distinct.
+Load the initial biochemical reference data:
+
+```bash
+python -m BioStarAPI.database.seed
+```
+
+Schema migrations and scientific data imports remain separate.
