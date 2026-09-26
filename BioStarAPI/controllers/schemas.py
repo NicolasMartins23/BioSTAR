@@ -20,3 +20,7 @@ class ProteinAnalysisRequest(BaseModel):
 class MutationCompareRequest(BaseModel):
     reference: str = Field(min_length=1)
     sequence: str = Field(min_length=1)
+
+
+class BatchSequenceRequest(BaseModel):
+    sequence: str = Field(min_length=1)
