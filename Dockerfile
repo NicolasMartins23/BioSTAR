@@ -14,4 +14,6 @@ COPY alembic.ini ./
 RUN python -m pip install --upgrade pip \
     && python -m pip install .
 
-CMD ["python", "-m", "BioStarAPI.database.seed"]
+EXPOSE 8000
+
+CMD ["uvicorn", "BioStarAPI.app:app", "--host", "0.0.0.0", "--port", "8000"]
