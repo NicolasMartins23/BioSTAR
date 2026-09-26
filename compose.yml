@@ -63,10 +63,8 @@ services:
     depends_on:
       api:
         condition: service_healthy
-    environment:
-      BIOSTAR_API_URL: http://api:8000
     ports:
-      - "3000:3000"
+      - "3000:80"
 
   pgadmin:
     image: dpage/pgadmin4:latest
