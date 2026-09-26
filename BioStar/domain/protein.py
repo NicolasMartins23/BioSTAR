@@ -1,20 +1,36 @@
 from re import sub
-from BioStar.data.biochemistry import AMINOACIDS, AMINOACIDS_AROMATIC, AMINOACIDS_NEGATIVE, AMINOACIDS_NONPOLAR, AMINOACIDS_POLAR, AMINOACIDS_POSITIVE, AMINOACID_TABLE, C_TERM_PKA, N_TERM_PKA, WATER_MASS
+
+from BioStar.data.biochemistry import (
+    AMINOACIDS,
+    AMINOACIDS_AROMATIC,
+    AMINOACIDS_NEGATIVE,
+    AMINOACIDS_NONPOLAR,
+    AMINOACIDS_POLAR,
+    AMINOACIDS_POSITIVE,
+    AMINOACID_TABLE,
+    C_TERM_PKA,
+    N_TERM_PKA,
+    WATER_MASS,
+)
+
 
 class Protein:
+    """Represents a protein sequence and provides sequence analyses."""
+
     def __init__(self, sequence: str = "") -> None:
         self.sequence: str = sub(r"[^ACDEFGHIKLMNPQRSTVWY]", "", sequence.upper())
-        self.count: dict = self._update_count()
-        self.sequence_size: int = self.count["total"]
+        self.count: dict[str, int | dict[str, int]] = self._update_count()
+        self.sequence_size: int = int(self.count["total"])
 
-    def _update_count(self) -> dict:
-        count: dict = {aa: 0 for aa in AMINOACIDS}
+    def _update_count(self) -> dict[str, int | dict[str, int]]:
+        count: dict[str, int] = {aa: 0 for aa in AMINOACIDS}
         aromatic: int = 0
         nonpolar: int = 0
         polar: int = 0
         polar_negative: int = 0
         polar_neutral: int = 0
         polar_positive: int = 0
+
         for aa in self.sequence:
             count[aa] += 1
             if aa in AMINOACIDS_AROMATIC:
@@ -29,38 +45,62 @@ class Protein:
                     polar_neutral += 1
                 elif aa in AMINOACIDS_POSITIVE:
                     polar_positive += 1
-        return {"by_aminoacid": count, "aromatic": aromatic, "nonpolar": nonpolar, "polar": polar, "polar_negative": polar_negative, "polar_neutral": polar_neutral, "polar_positive": polar_positive, "total": len(self.sequence)}
+
+        return {
+            "by_aminoacid": count,
+            "aromatic": aromatic,
+            "nonpolar": nonpolar,
+            "polar": polar,
+            "polar_negative": polar_negative,
+            "polar_neutral": polar_neutral,
+            "polar_positive": polar_positive,
+            "total": len(self.sequence),
+        }
+
+    def _aminoacid_counts(self) -> dict[str, int]:
+        return self.count["by_aminoacid"]  # type: ignore[return-value]
 
     def aromacity(self, multiply_by: float = 1.0, decimal_places: int = 4) -> float:
         if self.sequence_size == 0:
             return 0.0
-        return round((self.count["aromatic"] / self.sequence_size) * multiply_by, decimal_places)
+        return round((int(self.count["aromatic"]) / self.sequence_size) * multiply_by, decimal_places)
 
     def charge_at_pH(self, pH: float = 7.0) -> float:
-        pH = round(pH, 3)
+        normalized_pH: float = round(pH, 3)
         positive: float = 0.0
         negative: float = 0.0
+        counts: dict[str, int] = self._aminoacid_counts()
+
         for aa in AMINOACIDS_POSITIVE:
             pKa = AMINOACID_TABLE[aa].get("pKr")
             if pKa is not None:
-                positive += self.count["by_aminoacid"][aa] / (1.0 + 10 ** (pH - pKa))
+                positive += counts[aa] / (1.0 + 10 ** (normalized_pH - pKa))
+
         for aa in AMINOACIDS_NEGATIVE:
             pKa = AMINOACID_TABLE[aa].get("pKr")
             if pKa is not None:
-                negative += self.count["by_aminoacid"][aa] / (1.0 + 10 ** (pKa - pH))
-        positive += 1.0 / (1.0 + 10 ** (pH - N_TERM_PKA))
-        negative += 1.0 / (1.0 + 10 ** (C_TERM_PKA - pH))
+                negative += counts[aa] / (1.0 + 10 ** (pKa - normalized_pH))
+
+        positive += 1.0 / (1.0 + 10 ** (normalized_pH - N_TERM_PKA))
+        negative += 1.0 / (1.0 + 10 ** (C_TERM_PKA - normalized_pH))
         return round(positive - negative, 2)
 
-    def composition_ratio(self, multiply_by: float = 1.0, decimal_places: int = 4) -> dict:
+    def composition_ratio(self, multiply_by: float = 1.0, decimal_places: int = 4) -> dict[str, float]:
+        counts: dict[str, int] = self._aminoacid_counts()
         if self.sequence_size == 0:
-            return {aa: 0.0 for aa in self.count["by_aminoacid"]}
-        return {aa: round((value / self.sequence_size) * multiply_by, decimal_places) for aa, value in self.count["by_aminoacid"].items()}
+            return {aa: 0.0 for aa in counts}
+        return {
+            aa: round((count / self.sequence_size) * multiply_by, decimal_places)
+            for aa, count in counts.items()
+        }
 
-    def extinction_coefficient(self) -> dict:
+    def extinction_coefficient(self) -> dict[str, float]:
         cys: int = self.sequence.count("C")
         coefficient: float = (self.sequence.count("W") * 5500) + (self.sequence.count("Y") * 1490)
-        return {"cys_cystines": round(coefficient + ((cys // 2) * 125), 2), "cys_reduced": round(coefficient, 2)}
+        return {
+            "cys_cystines": round(coefficient + ((cys // 2) * 125), 2),
+            "cys_reduced": round(coefficient, 2),
+        }
 
     def hydrophobic_index(self) -> float:
         if self.sequence_size == 0:
@@ -71,14 +111,17 @@ class Protein:
     def isoelectric_point(self) -> float:
         low: float = 0.0
         high: float = 14.0
+
         while high - low > 0.01:
             middle: float = (low + high) / 2.0
-            if abs(self.charge_at_pH(middle)) < 0.01:
+            charge: float = self.charge_at_pH(middle)
+            if abs(charge) < 0.01:
                 return round(middle, 2)
-            if self.charge_at_pH(middle) > 0:
+            if charge > 0:
                 low = middle
             else:
                 high = middle
+
         return round((low + high) / 2.0, 2)
 
     def molecular_weight(self) -> float:
@@ -88,9 +131,14 @@ class Protein:
         weight -= (self.sequence_size - 1) * WATER_MASS
         return round(weight, 2)
 
-    def secondary_structure_propensity(self) -> dict:
+    def secondary_structure_propensity(self) -> dict[str, float]:
         if self.sequence_size == 0:
             return {"alpha_helix": 0.0, "beta_sheet": 0.0, "coil": 0.0}
+
         alpha: float = sum(AMINOACID_TABLE[aa]["alpha_helix"] for aa in self.sequence) / self.sequence_size
         beta: float = sum(AMINOACID_TABLE[aa]["beta_sheet"] for aa in self.sequence) / self.sequence_size
-        return {"alpha_helix": round(alpha * 100, 2), "beta_sheet": round(beta * 100, 2), "coil": round((1 - alpha - beta) * 100, 2)}
+        return {
+            "alpha_helix": round(alpha * 100, 2),
+            "beta_sheet": round(beta * 100, 2),
+            "coil": round((1 - alpha - beta) * 100, 2),
+        }
