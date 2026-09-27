@@ -143,6 +143,10 @@ onMounted(async (): Promise<void> => {
   color: white;
 }
 
+.title-break {
+  display: block;
+}
+
 .welcome-copy {
   position: relative;
   z-index: 2;
@@ -350,6 +354,10 @@ onMounted(async (): Promise<void> => {
 }
 
 @media (max-width: 37.49rem) {
+  .title-break {
+    display: inline;
+  }
+
   .welcome {
     min-height: 23rem;
     align-items: flex-start;
