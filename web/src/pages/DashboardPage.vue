@@ -1,5 +1,5 @@
 <template>
-  <q-page class="biostar-page">
+  <div class="biostar-page">
     <main class="biostar-content">
       <section class="welcome">
         <div class="welcome-copy">
@@ -52,9 +52,9 @@
           >
             <div class="tool-card__top">
               <div class="tool-icon">
-                <q-icon :name="card.icon" />
+                <span class="material-icons">{{ card.icon }}</span>
               </div>
-              <q-icon name="arrow_outward" class="tool-arrow" />
+              <span class="material-icons tool-arrow">arrow_outward</span>
             </div>
             <div class="tool-card__body">
               <div class="tool-number">{{ card.number }}</div>
@@ -63,13 +63,13 @@
             </div>
             <div class="tool-card__footer">
               <span>Open workspace</span>
-              <q-icon name="arrow_forward" />
+              <span class="material-icons">arrow_forward</span>
             </div>
           </div>
         </div>
       </section>
     </main>
-  </q-page>
+  </div>
 </template>
 
 <script setup lang="ts">
