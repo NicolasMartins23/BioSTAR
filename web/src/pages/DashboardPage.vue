@@ -1,58 +1,69 @@
 <template>
   <q-page class="biostar-page">
     <main class="biostar-content">
-      <section class="hero">
-        <div class="hero-copy">
-          <div class="biostar-eyebrow">BioSTAR · Bioinformatics resource</div>
-          <h1 class="biostar-title">Explore biological data.<br />Run the analysis.</h1>
+      <section class="welcome">
+        <div class="welcome-copy">
+          <div class="biostar-eyebrow">BioSTAR workspace</div>
+          <h1 class="biostar-title">What are you<br class="gt-xs" /> working on?</h1>
           <p class="biostar-subtitle">
-            A focused workspace for sequence conversion and biochemical protein analysis,
-            built around the BioSTAR scientific computing engine.
+            Run focused sequence and protein analyses through one scientific workspace.
           </p>
         </div>
 
-        <div class="hero-art" aria-hidden="true">
-          <div class="helix">
-            <i v-for="n in 7" :key="n" :style="{ '--n': n }"></i>
-          </div>
+        <div class="welcome-orbit" aria-hidden="true">
+          <div class="orbit orbit--outer"></div>
+          <div class="orbit orbit--inner"></div>
+          <span class="orbit-dot orbit-dot--one"></span>
+          <span class="orbit-dot orbit-dot--two"></span>
+          <span class="orbit-dot orbit-dot--three"></span>
         </div>
       </section>
 
-      <section class="status-line">
-        <span class="status-marker" :class="apiStatus"></span>
-        <span class="status-label">BioSTAR API</span>
-        <span class="status-value">{{ apiStatusLabel }}</span>
+      <section class="workspace-meta">
+        <div class="api-state">
+          <span class="state-dot" :class="apiStatus"></span>
+          <span class="api-name">API</span>
+          <span>{{ apiStatusLabel }}</span>
+        </div>
+        <span class="meta-separator">·</span>
+        <span>Scientific computing engine</span>
       </section>
 
-      <section class="tools">
-        <div class="tools-heading">
+      <section class="tools-section">
+        <header class="section-header">
           <div>
-            <div class="biostar-eyebrow">Analysis tools</div>
-            <h2>Choose a workflow</h2>
+            <div class="biostar-eyebrow">Tools</div>
+            <h2>Start an analysis</h2>
           </div>
-        </div>
+          <span class="tool-count">{{ cards.length }} workflows</span>
+        </header>
 
-        <div class="tool-list">
-          <q-item
-            v-for="(card, index) in cards"
+        <div class="tool-grid">
+          <q-card
+            v-for="card in cards"
             :key="card.title"
+            flat
+            bordered
+            class="tool-card"
             clickable
-            v-ripple
-            :to="card.to"
-            class="tool-row"
+            @click="$router.push(card.to)"
           >
-            <q-item-section side class="tool-index">0{{ index + 1 }}</q-item-section>
-            <q-item-section avatar>
-              <q-icon :name="card.icon" size="28px" color="primary" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label class="tool-title">{{ card.title }}</q-item-label>
-              <q-item-label caption>{{ card.description }}</q-item-label>
-            </q-item-section>
-            <q-item-section side>
-              <q-icon name="arrow_forward" color="primary" />
-            </q-item-section>
-          </q-item>
+            <q-card-section class="tool-card__top">
+              <div class="tool-icon">
+                <q-icon :name="card.icon" />
+              </div>
+              <q-icon name="arrow_outward" class="tool-arrow" />
+            </q-card-section>
+            <q-card-section class="tool-card__body">
+              <div class="tool-number">{{ card.number }}</div>
+              <h3>{{ card.title }}</h3>
+              <p>{{ card.description }}</p>
+            </q-card-section>
+            <q-card-section class="tool-card__footer">
+              <span>Open workspace</span>
+              <q-icon name="arrow_forward" />
+            </q-card-section>
+          </q-card>
         </div>
       </section>
     </main>
@@ -66,6 +77,7 @@ import { getHealth } from "../services/api";
 type ApiStatus = "checking" | "connected" | "unavailable";
 
 interface AnalysisCard {
+  number: string;
   title: string;
   description: string;
   icon: string;
@@ -82,18 +94,21 @@ const apiStatusLabel = computed<string>(() => {
 
 const cards: AnalysisCard[] = [
   {
+    number: "01",
     title: "Sequence conversion",
-    description: "DNA ↔ RNA conversion and nucleotide-to-protein translation.",
+    description: "Convert DNA and RNA sequences, or translate nucleotides into proteins.",
     icon: "biotech",
     to: "/sequences",
   },
   {
+    number: "02",
     title: "Protein analysis",
-    description: "Physicochemical properties, composition and biochemical measurements.",
+    description: "Explore physicochemical properties, composition and biochemical measurements.",
     icon: "science",
     to: "/proteins",
   },
   {
+    number: "03",
     title: "Mutation analysis",
     description: "Compare biological sequences and inspect sequence-level changes.",
     icon: "compare_arrows",
@@ -112,212 +127,249 @@ onMounted(async (): Promise<void> => {
 </script>
 
 <style scoped>
-.hero {
+.welcome {
   position: relative;
   display: flex;
-  min-height: 20rem;
+  min-height: 21rem;
   align-items: center;
   overflow: hidden;
-  padding: 3.25rem 5%;
-  border-radius: 0.9rem;
-  background: linear-gradient(115deg, #123d59 0%, #176b87 62%, #238b8f 100%);
-  box-shadow: 0 1.5rem 3rem rgb(18 61 89 / 14%);
+  padding: clamp(2rem, 5vw, 4rem);
+  border: 1px solid rgb(20 125 131 / 18%);
+  border-radius: 1.25rem;
+  background:
+    radial-gradient(circle at 88% 40%, rgb(83 184 174 / 22%), transparent 18rem),
+    linear-gradient(135deg, #103b4b 0%, #126b73 58%, #167f7e 100%);
+  box-shadow: var(--bio-shadow);
   color: white;
 }
 
-.hero .biostar-eyebrow {
-  color: #6ed1ca;
-}
-
-.hero .biostar-subtitle {
-  color: rgb(255 255 255 / 70%);
-}
-
-.hero-copy {
+.welcome-copy {
   position: relative;
-  z-index: 1;
-  max-width: 45rem;
+  z-index: 2;
+  max-width: 42rem;
 }
 
-.hero .biostar-title {
+.welcome .biostar-eyebrow {
+  color: #7bd2ca;
+}
+
+.welcome .biostar-title {
   color: white;
 }
 
-.hero-art {
-  position: absolute;
-  inset: 0 0 0 auto;
-  width: 38%;
-  opacity: 0.5;
+.welcome .biostar-subtitle {
+  max-width: 38rem;
+  color: rgb(255 255 255 / 72%);
 }
 
-.helix {
+.welcome-orbit {
   position: absolute;
-  top: 12%;
-  right: 16%;
-  width: 8rem;
-  height: 15rem;
-  transform: rotate(16deg);
+  top: 50%;
+  right: 8%;
+  width: clamp(10rem, 25vw, 18rem);
+  aspect-ratio: 1;
+  transform: translateY(-50%);
 }
 
-.helix::before,
-.helix::after {
+.orbit {
   position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 0.2rem;
-  content: "";
-  background: #55c7c0;
-  border-radius: 0.25rem;
+  inset: 0;
+  border: 1px solid rgb(255 255 255 / 20%);
+  border-radius: 50%;
 }
 
-.helix::before { left: 12%; transform: rotate(8deg); }
-.helix::after { right: 12%; transform: rotate(-8deg); }
-
-.helix i {
-  position: absolute;
-  top: calc((var(--n) - 1) * 2.375rem + 0.5rem);
-  left: 23%;
-  width: 54%;
-  height: 0.125rem;
-  background: rgb(255 255 255 / 55%);
-  transform: rotate(calc((var(--n) - 4) * 7deg));
+.orbit--inner {
+  inset: 16%;
+  border-color: rgb(123 210 202 / 34%);
+  transform: rotate(28deg) scaleX(0.48);
 }
 
-.status-line {
+.orbit--outer {
+  transform: rotate(-28deg) scaleX(0.55);
+}
+
+.orbit-dot {
+  position: absolute;
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 50%;
+  background: #78d5cc;
+  box-shadow: 0 0 0 0.4rem rgb(120 213 204 / 10%);
+}
+
+.orbit-dot--one { top: 15%; left: 28%; }
+.orbit-dot--two { right: 5%; bottom: 24%; }
+.orbit-dot--three { bottom: 8%; left: 44%; }
+
+.workspace-meta {
   display: flex;
   align-items: center;
   gap: 0.55rem;
-  margin: 1.25rem 0.125rem 3.5rem;
+  margin: 1rem 0 3.25rem;
   color: var(--bio-muted);
-  font-size: 0.78rem;
+  font-size: 0.75rem;
 }
 
-.status-marker {
+.api-state {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.state-dot {
   width: 0.45rem;
   height: 0.45rem;
   border-radius: 50%;
-  background: #d6a23d;
+  background: #d4a33e;
 }
 
-.status-marker.connected { background: #55a863; }
-.status-marker.unavailable { background: #c65a56; }
+.state-dot.connected { background: #49a36f; }
+.state-dot.unavailable { background: #c75c59; }
 
-.status-label {
+.api-name {
   color: var(--bio-ink);
   font-weight: 750;
 }
 
-.tools-heading h2 {
-  margin: 0.375rem 0 1.25rem;
+.meta-separator {
+  color: var(--bio-line);
+}
+
+.section-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.section-header h2 {
+  margin: 0.4rem 0 0;
   color: var(--bio-ink);
-  font-size: 1.65rem;
+  font-size: 1.55rem;
   letter-spacing: -0.025em;
 }
 
-.tool-list {
-  border-top: 1px solid var(--bio-line);
-}
-
-.tool-row {
-  min-height: 6rem;
-  padding: 0.75rem 0.5rem;
-  border-bottom: 1px solid var(--bio-line);
-  border-radius: 0;
-  transition: background 160ms ease, padding 160ms ease;
-}
-
-.tool-row:hover {
-  background: linear-gradient(90deg, rgb(23 107 135 / 6%), rgb(40 165 160 / 2%));
-  padding-inline: 0.75rem;
-}
-
-.tool-index {
-  width: 2.75rem;
-  color: #9aabb2;
-  font-family: "Roboto Mono", "Courier New", monospace;
+.tool-count {
+  color: var(--bio-muted);
   font-size: 0.72rem;
 }
 
-.tool-title {
-  color: var(--bio-ink);
-  font-size: 1rem;
-  font-weight: 700;
+.tool-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
 }
 
-.tool-row :deep(.q-item__label--caption) {
-  margin-top: 0.25rem;
+.tool-card {
+  min-height: 18rem;
+  overflow: hidden;
+  border-color: var(--bio-line);
+  border-radius: 1rem;
+  background: var(--bio-paper);
+  box-shadow: none;
+  transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.tool-card:hover {
+  transform: translateY(-0.2rem);
+  border-color: rgb(20 125 131 / 35%);
+  box-shadow: var(--bio-shadow-small);
+}
+
+.tool-card__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 1.25rem 1.25rem 0;
+}
+
+.tool-icon {
+  display: grid;
+  width: 2.8rem;
+  height: 2.8rem;
+  place-items: center;
+  border-radius: 0.8rem;
+  background: var(--bio-soft);
+  color: var(--bio-primary);
+  font-size: 1.35rem;
+}
+
+.tool-arrow {
   color: var(--bio-muted);
 }
 
+.tool-card__body {
+  padding: 1rem 1.25rem 1.25rem;
+}
+
+.tool-number {
+  color: var(--bio-muted);
+  font-family: "Roboto Mono", "Courier New", monospace;
+  font-size: 0.68rem;
+}
+
+.tool-card h3 {
+  margin: 0.5rem 0 0;
+  color: var(--bio-ink);
+  font-size: 1.08rem;
+  font-weight: 750;
+}
+
+.tool-card p {
+  margin: 0.65rem 0 0;
+  color: var(--bio-muted);
+  font-size: 0.86rem;
+  line-height: 1.6;
+}
+
+.tool-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding: 0.9rem 1.25rem;
+  border-top: 1px solid var(--bio-line);
+  color: var(--bio-primary);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
 @media (max-width: 59.99rem) {
-  .hero {
-    min-height: 18rem;
-    padding: 2.75rem 5%;
+  .welcome-orbit {
+    right: -2%;
   }
 
-  .hero-art {
-    width: 30%;
+  .tool-grid {
+    grid-template-columns: 1fr;
   }
 
-  .status-line {
-    margin-bottom: 2.75rem;
+  .tool-card {
+    min-height: 14rem;
   }
 }
 
 @media (max-width: 37.49rem) {
-  .hero {
-    min-height: 25rem;
+  .welcome {
+    min-height: 23rem;
     align-items: flex-start;
     padding: 2rem 1.25rem;
   }
 
-  .hero .biostar-title {
-    font-size: clamp(2rem, 10vw, 2.8rem);
-  }
-
-  .hero .biostar-subtitle {
-    max-width: 100%;
-    font-size: 0.92rem;
-  }
-
-  .hero-art {
+  .welcome-orbit {
     top: auto;
-    right: -10%;
-    bottom: -20%;
-    width: 75%;
-    height: 60%;
-    opacity: 0.28;
+    right: -8%;
+    bottom: -18%;
+    width: 12rem;
+    transform: none;
+    opacity: 0.8;
   }
 
-  .helix {
-    top: 0;
-    right: 12%;
+  .workspace-meta {
+    margin-bottom: 2.5rem;
   }
 
-  .status-line {
-    margin: 1rem 0.125rem 2.5rem;
-  }
-
-  .tool-row {
-    min-height: 5.5rem;
-    padding: 0.75rem 0;
-  }
-
-  .tool-row:hover {
-    padding-inline: 0.25rem;
-  }
-
-  .tool-index {
-    display: none;
-  }
-
-  .tool-row :deep(.q-item__section--avatar) {
-    min-width: 2.75rem;
-  }
-
-  .tool-row :deep(.q-item__section--side:last-child) {
-    padding-left: 0.5rem;
+  .section-header {
+    align-items: flex-start;
   }
 }
-
-</style>
