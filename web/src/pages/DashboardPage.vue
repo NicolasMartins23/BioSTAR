@@ -4,11 +4,9 @@
       <section class="welcome">
         <div class="welcome-copy">
           <div class="biostar-eyebrow">BioSTAR workspace</div>
-          <h1 class="biostar-title">
-            Explore biological data.<span class="title-break"></span> Run the analysis.
-          </h1>
+          <h1 class="biostar-title">Explore biological data.<span class="title-break"></span> Run the analysis.</h1>
           <p class="biostar-subtitle">
-            Analyze sequences, proteins, and biological changes through one scientific workspace.
+            Explore sequences, proteins, and biological data through one scientific workspace.
           </p>
         </div>
 
@@ -41,28 +39,31 @@
         </header>
 
         <div class="tool-grid">
-          <router-link
+          <q-card
             v-for="card in cards"
             :key="card.title"
-            :to="card.to"
+            flat
+            bordered
             class="tool-card"
+            clickable
+            @click="$router.push(card.to)"
           >
-            <div class="tool-card__top">
+            <q-card-section class="tool-card__top">
               <div class="tool-icon">
-                <q-icon :name="card.icon" />
+                <q-icon :name="card.icon" ></q-icon>
               </div>
-              <q-icon name="arrow_outward" class="tool-arrow" />
-            </div>
-            <div class="tool-card__body">
+              <q-icon name="arrow_outward" class="tool-arrow" ></q-icon>
+            </q-card-section>
+            <q-card-section class="tool-card__body">
               <div class="tool-number">{{ card.number }}</div>
               <h3>{{ card.title }}</h3>
               <p>{{ card.description }}</p>
-            </div>
-            <div class="tool-card__footer">
+            </q-card-section>
+            <q-card-section class="tool-card__footer">
               <span>Open workspace</span>
-              <q-icon name="arrow_forward" />
-            </div>
-          </router-link>
+              <q-icon name="arrow_forward" ></q-icon>
+            </q-card-section>
+          </q-card>
         </div>
       </section>
     </main>
@@ -265,16 +266,12 @@ onMounted(async (): Promise<void> => {
 }
 
 .tool-card {
-  display: flex;
   min-height: 18rem;
-  flex-direction: column;
   overflow: hidden;
   border-color: var(--bio-line);
   border-radius: 1rem;
   background: var(--bio-paper);
   box-shadow: none;
-  color: inherit;
-  text-decoration: none;
   transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
 }
 
