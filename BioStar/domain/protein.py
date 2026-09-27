@@ -1,29 +1,28 @@
+from __future__ import annotations
+
 from re import sub
 
-from BioStar.data.biochemistry import (
-    AMINOACIDS,
-    AMINOACIDS_AROMATIC,
-    AMINOACIDS_NEGATIVE,
-    AMINOACIDS_NONPOLAR,
-    AMINOACIDS_POLAR,
-    AMINOACIDS_POSITIVE,
-    AMINOACID_TABLE,
-    C_TERM_PKA,
-    N_TERM_PKA,
-    WATER_MASS,
-)
+from BioStar.data.biochemistry import AMINOACIDS
+from BioStar.engine.biochemistry import BiochemistryData
 
 
 class Protein:
     """Represents a protein sequence and provides sequence analyses."""
 
-    def __init__(self, sequence: str = "") -> None:
-        self.sequence: str = sub(r"[^ACDEFGHIKLMNPQRSTVWY]", "", sequence.upper())
+    def __init__(self, sequence: str = "", data: BiochemistryData | None = None) -> None:
+        if data is None:
+            raise ValueError("BiochemistryData is required.")
+        self.data: BiochemistryData = data
+        self.sequence: str = sub(
+            r"[^ACDEFGHIKLMNPQRSTVWY]",
+            "",
+            sequence.upper(),
+        )
         self.count: dict[str, int | dict[str, int]] = self._update_count()
         self.sequence_size: int = int(self.count["total"])
 
     def _update_count(self) -> dict[str, int | dict[str, int]]:
-        count: dict[str, int] = {aa: 0 for aa in AMINOACIDS}
+        count: dict[str, int] = {aa: 0 for aa in self.data.amino_acids}
         aromatic: int = 0
         nonpolar: int = 0
         polar: int = 0
@@ -33,17 +32,17 @@ class Protein:
 
         for aa in self.sequence:
             count[aa] += 1
-            if aa in AMINOACIDS_AROMATIC:
+            if aa in self.data.aromatic:
                 aromatic += 1
-            elif aa in AMINOACIDS_NONPOLAR:
+            elif aa in self.data.nonpolar:
                 nonpolar += 1
-            elif aa in AMINOACIDS_POLAR:
+            elif aa in self.data.polar:
                 polar += 1
-                if aa in ["D", "E"]:
+                if aa in self.data.negative:
                     polar_negative += 1
-                elif aa in ["C", "N", "Q", "S", "T", "Y"]:
+                elif aa not in self.data.positive:
                     polar_neutral += 1
-                elif aa in AMINOACIDS_POSITIVE:
+                else:
                     polar_positive += 1
 
         return {
@@ -71,18 +70,18 @@ class Protein:
         negative: float = 0.0
         counts: dict[str, int] = self._aminoacid_counts()
 
-        for aa in AMINOACIDS_POSITIVE:
-            pKa = AMINOACID_TABLE[aa].get("pKr")
+        for aa in self.data.positive:
+            pKa = self.data.amino_acids[aa].pkr
             if pKa is not None:
                 positive += counts[aa] / (1.0 + 10 ** (normalized_pH - pKa))
 
-        for aa in AMINOACIDS_NEGATIVE:
-            pKa = AMINOACID_TABLE[aa].get("pKr")
+        for aa in self.data.negative:
+            pKa = self.data.amino_acids[aa].pkr
             if pKa is not None:
                 negative += counts[aa] / (1.0 + 10 ** (pKa - normalized_pH))
 
-        positive += 1.0 / (1.0 + 10 ** (normalized_pH - N_TERM_PKA))
-        negative += 1.0 / (1.0 + 10 ** (C_TERM_PKA - normalized_pH))
+        positive += 1.0 / (1.0 + 10 ** (normalized_pH - self.data.n_term_pka))
+        negative += 1.0 / (1.0 + 10 ** (self.data.c_term_pka - normalized_pH))
         return round(positive - negative, 2)
 
     def composition_ratio(self, multiply_by: float = 1.0, decimal_places: int = 4) -> dict[str, float]:
@@ -105,7 +104,10 @@ class Protein:
     def hydrophobic_index(self) -> float:
         if self.sequence_size == 0:
             return 0.0
-        total: float = sum(AMINOACID_TABLE[aa]["hydrophobicity"] for aa in self.sequence)
+        total: float = sum(
+            self.data.amino_acids[aa].hydrophobicity
+            for aa in self.sequence
+        )
         return round(total / self.sequence_size, 2)
 
     def isoelectric_point(self) -> float:
@@ -127,16 +129,25 @@ class Protein:
     def molecular_weight(self) -> float:
         if self.sequence_size == 0:
             return 0.0
-        weight: float = sum(AMINOACID_TABLE[aa]["weight"] for aa in self.sequence)
-        weight -= (self.sequence_size - 1) * WATER_MASS
+        weight: float = sum(
+            self.data.amino_acids[aa].molecular_weight
+            for aa in self.sequence
+        )
+        weight -= (self.sequence_size - 1) * self.data.water_mass
         return round(weight, 2)
 
     def secondary_structure_propensity(self) -> dict[str, float]:
         if self.sequence_size == 0:
             return {"alpha_helix": 0.0, "beta_sheet": 0.0, "coil": 0.0}
 
-        alpha: float = sum(AMINOACID_TABLE[aa]["alpha_helix"] for aa in self.sequence) / self.sequence_size
-        beta: float = sum(AMINOACID_TABLE[aa]["beta_sheet"] for aa in self.sequence) / self.sequence_size
+        alpha: float = sum(
+            self.data.amino_acids[aa].alpha_helix
+            for aa in self.sequence
+        ) / self.sequence_size
+        beta: float = sum(
+            self.data.amino_acids[aa].beta_sheet
+            for aa in self.sequence
+        ) / self.sequence_size
         return {
             "alpha_helix": round(alpha * 100, 2),
             "beta_sheet": round(beta * 100, 2),
