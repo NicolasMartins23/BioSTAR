@@ -1,16 +1,26 @@
-from BioStar.data.biochemistry import CODON_SIZE, STOP_CODON_DNA, TABLE_DNA_CODON_TO_AMINOACID
+from __future__ import annotations
+
+from BioStar.engine import BiochemistryData, get_default_biochemistry
 
 
 class CompareNucleotideSequence:
     """Compares a reference DNA sequence against one or more sequences."""
 
-    def __init__(self, original_sequence: str = "", compared_sequence: str | list[str] = "") -> None:
+    def __init__(
+        self,
+        original_sequence: str = "",
+        compared_sequence: str | list[str] = "",
+        data: BiochemistryData | None = None,
+    ) -> None:
+        if data is None:
+            data = get_default_biochemistry()
         self.original_sequence: str = original_sequence.upper()
         if isinstance(compared_sequence, str):
             self.compared_sequences: list[str] = [compared_sequence.upper()]
         else:
             self.compared_sequences = [sequence.upper() for sequence in compared_sequence]
-        self.classify_mutation: ClassifyNucleotideSequenceMutation = ClassifyNucleotideSequenceMutation()
+        self.data: BiochemistryData = data
+        self.classify_mutation: ClassifyNucleotideSequenceMutation = ClassifyNucleotideSequenceMutation(data)
 
     def compare(self, show_only_mutations: bool = True) -> list[dict[str, object]]:
         reference_codons: list[str] = self._get_codons(self.original_sequence)
@@ -33,17 +43,16 @@ class CompareNucleotideSequence:
 
     def _get_codons(self, sequence: str) -> list[str]:
         return [
-            sequence[index:index + CODON_SIZE]
-            for index in range(0, len(sequence) - (CODON_SIZE - 1), CODON_SIZE)
+            sequence[index:index + 3]
+            for index in range(0, len(sequence) - 2, 3)
         ]
 
 
 class ClassifyNucleotideSequenceMutation:
     """Classifies nucleotide-level mutations within DNA codons."""
 
-    def __init__(self) -> None:
-        self.CODON_TABLE_REF: dict[str, str] = TABLE_DNA_CODON_TO_AMINOACID
-        self.STOP_CODON_REF: list[str] = STOP_CODON_DNA
+    def __init__(self, data: BiochemistryData) -> None:
+        self.data: BiochemistryData = data
         self.reset()
 
     def reset(self) -> None:
@@ -52,11 +61,11 @@ class ClassifyNucleotideSequenceMutation:
         self.__nucleotide_absolute_position: int = 1
 
     def classify(self, reference_codon: str, test_codon: str) -> list[dict[str, object]]:
-        reference_aminoacid: str = self.CODON_TABLE_REF[reference_codon]
-        test_aminoacid: str = self.CODON_TABLE_REF[test_codon]
+        reference_aminoacid: str = self.data.dna_codons[reference_codon]
+        test_aminoacid: str = self.data.dna_codons[test_codon]
         changed: bool = reference_aminoacid != test_aminoacid
 
-        if test_codon in self.STOP_CODON_REF and changed:
+        if test_codon in self.data.dna_stop_codons and changed:
             mutation_name: str = "nonsense"
             self.stop_codon_found = True
         elif changed:
@@ -119,7 +128,7 @@ class ClassifyNucleotideSequenceMutation:
     ) -> list[dict[str, object]]:
         mutation_list: list[dict[str, object]] = []
 
-        for index in range(CODON_SIZE):
+        for index in range(3):
             nucleotide_mutation: str = mutation_name
             if test_codon[index] == reference_codon[index]:
                 nucleotide_mutation = "no_mutation"
