@@ -55,14 +55,6 @@ services:
     ports:
       - "${API_PORT:-8000}:8000"
 
-  frontend:
-    build:
-      context: ./web
-      dockerfile: Dockerfile
-    restart: unless-stopped
-    depends_on:
-      - api
-
   nginx:
     image: nginx:1.27-alpine
     restart: unless-stopped
@@ -72,7 +64,6 @@ services:
     volumes:
       - ./nginx/default.conf.template:/etc/nginx/templates/default.conf.template:ro
     depends_on:
-      - frontend
       - api
     ports:
       - "${HTTP_PORT:-80}:80"

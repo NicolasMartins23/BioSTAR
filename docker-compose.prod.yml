@@ -51,14 +51,6 @@ services:
       seed:
         condition: service_completed_successfully
 
-  frontend:
-    build:
-      context: ./web
-      dockerfile: Dockerfile
-    restart: unless-stopped
-    depends_on:
-      - api
-
   nginx:
     image: nginx:1.27-alpine
     restart: unless-stopped
@@ -68,7 +60,6 @@ services:
     volumes:
       - ./nginx/default.conf.template:/etc/nginx/templates/default.conf.template:ro
     depends_on:
-      - frontend
       - api
     ports:
       - "80:80"

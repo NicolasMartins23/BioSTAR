@@ -56,16 +56,6 @@ services:
       retries: 10
       start_period: 10s
 
-  web:
-    build: ./web
-    container_name: biostar-web
-    restart: unless-stopped
-    depends_on:
-      api:
-        condition: service_healthy
-    ports:
-      - "3000:80"
-
   pgadmin:
     image: dpage/pgadmin4:latest
     container_name: biostar-pgadmin
