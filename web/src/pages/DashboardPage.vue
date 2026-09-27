@@ -4,20 +4,10 @@
       <section class="welcome">
         <div class="welcome-copy">
           <div class="biostar-eyebrow">BioSTAR workspace</div>
-          <h1 class="biostar-title">
-            What are you<span class="title-break"></span> working on?
-          </h1>
+          <h1 class="biostar-title">What are you working on?</h1>
           <p class="biostar-subtitle">
             Run focused sequence and protein analyses through one scientific workspace.
           </p>
-        </div>
-
-        <div class="welcome-orbit" aria-hidden="true">
-          <div class="orbit orbit--outer"></div>
-          <div class="orbit orbit--inner"></div>
-          <span class="orbit-dot orbit-dot--one"></span>
-          <span class="orbit-dot orbit-dot--two"></span>
-          <span class="orbit-dot orbit-dot--three"></span>
         </div>
       </section>
 
@@ -41,11 +31,13 @@
         </header>
 
         <div class="tool-grid">
-          <router-link
+          <div
             v-for="card in cards"
             :key="card.title"
-            :to="card.to"
             class="tool-card"
+            role="link"
+            tabindex="0"
+            @click="$router.push(card.to)"
           >
             <div class="tool-card__top">
               <div class="tool-icon">{{ card.icon }}</div>
@@ -60,7 +52,7 @@
               <span>Open workspace</span>
               <span aria-hidden="true">→</span>
             </div>
-          </router-link>
+          </div>
         </div>
       </section>
     </main>
