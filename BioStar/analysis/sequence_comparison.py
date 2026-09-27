@@ -13,7 +13,7 @@ class CompareNucleotideSequence:
         data: BiochemistryData | None = None,
     ) -> None:
         if data is None:
-            raise ValueError("BiochemistryData is required.")
+            data = get_default_biochemistry()
         self.original_sequence: str = original_sequence.upper()
         if isinstance(compared_sequence, str):
             self.compared_sequences: list[str] = [compared_sequence.upper()]
