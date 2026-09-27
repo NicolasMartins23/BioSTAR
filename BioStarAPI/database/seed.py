@@ -21,8 +21,16 @@ from BioStarAPI.database.models import (
     Codon,
     GeneticCode,
     Nucleotide,
+    ReferenceConstant,
     ReferenceSource,
 )
+
+
+REFERENCE_CONSTANTS: dict[str, tuple[float, str]] = {
+    "water_mass": (18.01528, "Average molecular mass of water."),
+    "n_term_pka": (7.7, "Reference N-terminal pKa."),
+    "c_term_pka": (3.5, "Reference C-terminal pKa."),
+}
 
 
 def seed_database() -> None:
@@ -31,6 +39,7 @@ def seed_database() -> None:
         _seed_amino_acid_classes(session)
         _seed_nucleotides(session)
         _seed_genetic_code(session)
+        _seed_reference_constants(session)
         session.commit()
 
 
@@ -171,6 +180,24 @@ def _seed_genetic_code(session: Session) -> None:
                     is_stop=symbol == "*",
                 )
             )
+
+
+def _seed_reference_constants(session: Session) -> None:
+    existing: set[str] = set(
+        session.scalars(select(ReferenceConstant.key))
+    )
+
+    for key, (value, description) in REFERENCE_CONSTANTS.items():
+        if key in existing:
+            continue
+
+        session.add(
+            ReferenceConstant(
+                key=key,
+                value=value,
+                description=description,
+            )
+        )
 
 
 if __name__ == "__main__":
