@@ -154,13 +154,46 @@ const copyResult = async (): Promise<void> => {
 </script>
 
 <style scoped>
+:deep(.q-field--outlined .q-field__control) {
+  border-radius: 0.7rem;
+  background: var(--bio-paper);
+  transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+:deep(.q-field--outlined:hover .q-field__control::before) {
+  border-color: rgb(20 125 131 / 42%);
+}
+
+:deep(.q-field--outlined.q-field--focused .q-field__control::after) {
+  border-color: var(--bio-primary);
+}
+
+:deep(.q-field--focused .q-field__control) {
+  box-shadow: 0 0 0 0.2rem rgb(20 125 131 / 9%);
+  background: rgb(20 125 131 / 2%);
+}
+
+:deep(.q-field--focused .q-field__label) {
+  color: var(--bio-primary);
+}
+
+:deep(.q-select .q-field__native),
+:deep(.q-input textarea) {
+  color: var(--bio-ink);
+}
+
+:deep(.q-btn.bg-primary) {
+  border-radius: 0.65rem;
+  box-shadow: 0 0.35rem 1rem rgb(20 125 131 / 18%);
+}
+
 .result-box {
-  min-height: 110px;
-  padding: 18px;
+  min-height: 6.875rem;
+  padding: 1rem;
   overflow-x: auto;
-  border: 1px solid var(--biostar-border);
-  border-radius: 4px;
-  background: var(--biostar-bg);
+  border: 1px solid var(--bio-line);
+  border-radius: 0.7rem;
+  background: var(--bio-soft);
   white-space: pre-wrap;
   word-break: break-word;
   line-height: 1.7;
