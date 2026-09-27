@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+from threading import Lock
+from typing import ClassVar
+
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -12,10 +15,31 @@ from BioStarAPI.resources.messages import MessageCode
 class BiochemistryRepository:
     """Loads immutable biochemical reference data from PostgreSQL."""
 
+    _standard_data: ClassVar[BiochemistryData | None] = None
+    _cache_lock: ClassVar[Lock] = Lock()
+
     def __init__(self, session: Session) -> None:
         self.session = session
 
+    @classmethod
+    def clear_cache(cls) -> None:
+        """Clear cached reference data after reference-data changes."""
+        with cls._cache_lock:
+            cls._standard_data = None
+
     def get_standard_data(self) -> BiochemistryData:
+        if self._standard_data is not None:
+            return self._standard_data
+
+        with self._cache_lock:
+            if self._standard_data is not None:
+                return self._standard_data
+
+            standard_data = self._load_standard_data()
+            self._standard_data = standard_data
+            return standard_data
+
+    def _load_standard_data(self) -> BiochemistryData:
         genetic_code = self.session.scalar(
             select(GeneticCode).where(GeneticCode.ncbi_id == 1)
         )
