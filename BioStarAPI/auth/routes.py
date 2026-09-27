@@ -10,7 +10,7 @@ from BioStarAPI.resources.exceptions import BioStarAPIError
 from BioStarAPI.resources.messages import MessageCode, get_message
 from BioStarAPI.resources.responses import APIResponse
 
-router = APIRouter(prefix="/api/auth", tags=["auth"])
+router = APIRouter(prefix="/api/v1/auth", tags=["auth"])
 
 
 class CreateAPIKeyRequest(BaseModel):
