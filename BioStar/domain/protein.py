@@ -3,7 +3,7 @@ from __future__ import annotations
 from re import sub
 
 from BioStar.data.biochemistry import AMINOACIDS
-from BioStar.engine.biochemistry import BiochemistryData
+from BioStar.engine import BiochemistryData, get_default_biochemistry
 
 
 class Protein:
