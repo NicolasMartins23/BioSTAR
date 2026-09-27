@@ -2,7 +2,7 @@
   <q-layout view="hHh Lpr lFf">
     <q-header class="site-header">
       <q-toolbar class="site-toolbar">
-        <q-btn flat round dense icon="menu" class="menu-button" @click="drawerOpen = !drawerOpen" />
+        <q-btn flat round dense icon="menu" class="menu-button" @click="drawerOpen = !drawerOpen" ></q-btn>
         <router-link to="/" class="brand">
           <span class="brand-mark" aria-hidden="true">
             <i></i><i></i><i></i>
@@ -12,9 +12,9 @@
             <small>Biological analysis platform</small>
           </span>
         </router-link>
-        <q-space />
+        <q-space></q-space>
         <div class="header-context gt-xs">Scientific computing workspace</div>
-        <q-btn flat round icon="dark_mode" class="theme-button" @click="toggleDarkMode" />
+        <q-btn flat round icon="dark_mode" class="theme-button" @click="toggleDarkMode" ></q-btn>
       </q-toolbar>
     </q-header>
 
@@ -37,22 +37,22 @@
 
         <nav class="nav-group" aria-label="Analysis tools">
           <q-item clickable v-ripple to="/" exact class="nav-link">
-            <q-item-section avatar><span class="nav-icon"><q-icon name="space_dashboard" /></span></q-item-section>
+            <q-item-section avatar><span class="nav-icon"><q-icon name="space_dashboard" ></q-icon></span></q-item-section>
             <q-item-section>Overview</q-item-section>
             <q-item-section side class="nav-active-mark"><span></span></q-item-section>
           </q-item>
           <q-item clickable v-ripple to="/sequences" class="nav-link">
-            <q-item-section avatar><span class="nav-icon"><q-icon name="biotech" /></span></q-item-section>
+            <q-item-section avatar><span class="nav-icon"><q-icon name="biotech" ></q-icon></span></q-item-section>
             <q-item-section>Sequences</q-item-section>
             <q-item-section side class="nav-active-mark"><span></span></q-item-section>
           </q-item>
           <q-item clickable v-ripple to="/proteins" class="nav-link">
-            <q-item-section avatar><span class="nav-icon"><q-icon name="science" /></span></q-item-section>
+            <q-item-section avatar><span class="nav-icon"><q-icon name="science" ></q-icon></span></q-item-section>
             <q-item-section>Proteins</q-item-section>
             <q-item-section side class="nav-active-mark"><span></span></q-item-section>
           </q-item>
           <q-item clickable v-ripple to="/mutations" class="nav-link">
-            <q-item-section avatar><span class="nav-icon"><q-icon name="compare_arrows" /></span></q-item-section>
+            <q-item-section avatar><span class="nav-icon"><q-icon name="compare_arrows" ></q-icon></span></q-item-section>
             <q-item-section>Mutations</q-item-section>
             <q-item-section side class="nav-active-mark"><span></span></q-item-section>
           </q-item>
@@ -65,12 +65,12 @@
         </div>
 
         <q-item clickable v-ripple to="/settings" class="nav-link">
-          <q-item-section avatar><span class="nav-icon"><q-icon name="tune" /></span></q-item-section>
+          <q-item-section avatar><span class="nav-icon"><q-icon name="tune" ></q-icon></span></q-item-section>
           <q-item-section>Settings</q-item-section>
           <q-item-section side class="nav-active-mark"><span></span></q-item-section>
         </q-item>
 
-        <q-space />
+        <q-space></q-space>
 
         <div class="drawer-status">
           <span class="status-dot"></span>
@@ -83,7 +83,7 @@
     </q-drawer>
 
     <q-page-container>
-      <router-view />
+      <router-view></router-view>
     </q-page-container>
   </q-layout>
 </template>
