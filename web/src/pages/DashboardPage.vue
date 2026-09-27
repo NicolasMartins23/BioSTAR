@@ -4,7 +4,7 @@
       <section class="welcome">
         <div class="welcome-copy">
           <div class="biostar-eyebrow">BioSTAR workspace</div>
-          <h1 class="biostar-title">What are you<br class="gt-xs" ></br> working on?</h1>
+          <h1 class="biostar-title">What are you<span class="title-break"></span> working on?</h1>
           <p class="biostar-subtitle">
             Run focused sequence and protein analyses through one scientific workspace.
           </p>
