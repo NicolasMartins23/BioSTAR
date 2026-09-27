@@ -265,12 +265,16 @@ onMounted(async (): Promise<void> => {
 }
 
 .tool-card {
+  display: flex;
   min-height: 18rem;
+  flex-direction: column;
   overflow: hidden;
   border-color: var(--bio-line);
   border-radius: 1rem;
   background: var(--bio-paper);
   box-shadow: none;
+  color: inherit;
+  text-decoration: none;
   transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
 }
 
