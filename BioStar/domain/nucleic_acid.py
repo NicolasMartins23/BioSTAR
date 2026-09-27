@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 
 from BioStar.data.biochemistry import CODON_SIZE
-from BioStar.engine.biochemistry import BiochemistryData
+from BioStar.engine import BiochemistryData, get_default_biochemistry
 from BioStar.domain.protein import Protein
 from BioStar.io.fasta import FastaParserDNA
 
