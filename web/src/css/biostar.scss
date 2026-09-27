@@ -1,78 +1,87 @@
 :root {
-  --bio-ink: #183746;
-  --bio-muted: #71858f;
-  --bio-blue: #176b87;
-  --bio-teal: #28a5a0;
-  --bio-green: #5b9b62;
-  --bio-line: #dce6ea;
+  --bio-ink: #12232d;
+  --bio-muted: #687b84;
+  --bio-primary: #147d83;
+  --bio-primary-strong: #0d656b;
+  --bio-accent: #53b8ae;
+  --bio-line: #dce7e8;
   --bio-paper: #ffffff;
-  --bio-background: #f6f9fa;
-  --bio-soft: #edf5f6;
-  --bio-shadow: 0 1rem 2.5rem rgb(18 61 89 / 7%);
+  --bio-background: #f3f7f7;
+  --bio-soft: #edf4f4;
+  --bio-soft-strong: #e2eeee;
+  --bio-shadow: 0 1.25rem 3rem rgb(18 54 61 / 8%);
+  --bio-shadow-small: 0 0.5rem 1.5rem rgb(18 54 61 / 6%);
 }
 
 body {
-  background: var(--bio-background);
+  background:
+    radial-gradient(circle at 90% 0%, rgb(83 184 174 / 8%), transparent 28rem),
+    var(--bio-background);
   color: var(--bio-ink);
 }
 
 body.body--dark {
-  --bio-ink: #e5eef2;
-  --bio-muted: #9aadb5;
-  --bio-line: #30434d;
-  --bio-paper: #17252c;
-  --bio-background: #10191e;
-  --bio-soft: #1d3038;
-  --bio-shadow: 0 1rem 2.5rem rgb(0 0 0 / 22%);
+  --bio-ink: #e6f0f0;
+  --bio-muted: #99acad;
+  --bio-primary: #58c2ba;
+  --bio-primary-strong: #72d2ca;
+  --bio-accent: #72d2ca;
+  --bio-line: #294044;
+  --bio-paper: #152226;
+  --bio-background: #0d1518;
+  --bio-soft: #17282c;
+  --bio-soft-strong: #1d3438;
+  --bio-shadow: 0 1.25rem 3rem rgb(0 0 0 / 22%);
+  --bio-shadow-small: 0 0.5rem 1.5rem rgb(0 0 0 / 18%);
 }
 
 .biostar-page {
-  min-height: calc(100vh - 4.25rem);
-  padding: 3rem 4%;
+  min-height: calc(100vh - 4rem);
+  padding: clamp(1.5rem, 4vw, 3.5rem) 4%;
 }
 
 .biostar-content {
-  width: min(70rem, 100%);
+  width: min(72rem, 100%);
   margin: 0 auto;
 }
 
 .biostar-eyebrow {
-  color: var(--bio-blue);
+  color: var(--bio-primary);
   font-size: 0.68rem;
   font-weight: 800;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
 .biostar-title {
   margin: 0.5rem 0 0;
   color: var(--bio-ink);
-  font-size: clamp(2.35rem, 5vw, 4rem);
-  font-weight: 750;
+  font-size: clamp(2.25rem, 5vw, 3.8rem);
+  font-weight: 760;
   letter-spacing: -0.045em;
-  line-height: 0.98;
+  line-height: 1;
 }
 
 .biostar-subtitle {
   max-width: 44rem;
-  margin: 1.125rem 0 0;
+  margin: 1rem 0 0;
   color: var(--bio-muted);
-  font-size: 1.02rem;
+  font-size: 1rem;
   line-height: 1.7;
 }
 
 .biostar-panel {
   overflow: hidden;
   border: 1px solid var(--bio-line);
-  border-radius: 0.75rem;
+  border-radius: 1rem;
   background: var(--bio-paper);
-  box-shadow: var(--bio-shadow);
+  box-shadow: var(--bio-shadow-small);
 }
 
 .biostar-panel__header {
   padding: 1.25rem 1.5rem;
   border-bottom: 1px solid var(--bio-line);
-  background: linear-gradient(135deg, var(--bio-paper) 0%, var(--bio-soft) 100%);
+  background: linear-gradient(135deg, var(--bio-paper), var(--bio-soft));
 }
 
 .biostar-panel__body {
@@ -81,9 +90,9 @@ body.body--dark {
 
 .biostar-section-label {
   color: var(--bio-ink);
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   font-weight: 800;
-  letter-spacing: 0.13em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
@@ -93,21 +102,13 @@ body.body--dark {
 
 @media (max-width: 59.99rem) {
   .biostar-page {
-    padding: 2.5rem 3%;
-  }
-
-  .biostar-title {
-    font-size: clamp(2rem, 8vw, 3rem);
+    padding-inline: 3%;
   }
 }
 
 @media (max-width: 37.49rem) {
   .biostar-page {
-    padding: 2rem 1rem 3rem;
-  }
-
-  .biostar-subtitle {
-    font-size: 0.95rem;
+    padding: 1.5rem 1rem 2.5rem;
   }
 
   .biostar-panel__header,
