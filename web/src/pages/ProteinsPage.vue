@@ -180,7 +180,7 @@ const buildRequest = (): ProteinAnalysisRequest => ({
   get_full_test_results: fullAnalysis.value,
   get_aminoacids_count: options.aminoacidsCount,
   get_isoelectric_point: options.isoelectricPoint,
-  get_charge_at_pH: !fullAnalysis.value && options.chargeAtPh ? chargePh.value : null,
+  get_charge_at_pH: fullAnalysis.value ? 7 : options.chargeAtPh ? chargePh.value : null,
   get_aromaticity: options.aromaticity,
   get_secondary_structure_propensity: options.secondaryStructure,
   get_molecular_weight: options.molecularWeight,
