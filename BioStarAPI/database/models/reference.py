@@ -133,6 +133,15 @@ class ReferenceSource(Base):
     description: Mapped[str | None] = mapped_column(Text)
 
 
+class ReferenceConstant(Base):
+    __tablename__ = "reference_constants"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    key: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
+    value: Mapped[Decimal] = mapped_column(Numeric(12, 6), nullable=False)
+    description: Mapped[str | None] = mapped_column(Text)
+
+
 class CodonUsage(Base):
     __tablename__ = "codon_usage"
     __table_args__ = (
