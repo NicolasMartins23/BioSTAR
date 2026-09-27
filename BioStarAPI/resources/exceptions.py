@@ -43,10 +43,21 @@ def register_exception_handlers(app) -> None:
         request: Request,
         exception: RequestValidationError,
     ) -> JSONResponse:
+        details: list[dict[str, object]] = [
+            {
+                "loc": list(error["loc"]),
+                "type": error["type"],
+                "message": error["msg"],
+            }
+            for error in exception.errors()
+        ]
         return JSONResponse(
             status_code=422,
             content=APIResponse[None](
                 data=None,
-                message=get_message(MessageCode.VALIDATION_ERROR),
+                message=get_message(
+                    MessageCode.VALIDATION_ERROR,
+                    details=details,
+                ),
             ).model_dump(mode="json"),
         )
