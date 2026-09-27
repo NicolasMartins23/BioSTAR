@@ -41,11 +41,14 @@
         </header>
 
         <div class="tool-grid">
-          <router-link
+          <div
             v-for="card in cards"
             :key="card.title"
-            :to="card.to"
             class="tool-card"
+            role="link"
+            tabindex="0"
+            @click="$router.push(card.to)"
+            @keydown.enter="$router.push(card.to)"
           >
             <div class="tool-card__top">
               <div class="tool-icon">
@@ -62,7 +65,7 @@
               <span>Open workspace</span>
               <q-icon name="arrow_forward" />
             </div>
-          </router-link>
+          </div>
         </div>
       </section>
     </main>
