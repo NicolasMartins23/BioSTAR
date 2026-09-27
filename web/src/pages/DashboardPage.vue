@@ -4,7 +4,7 @@
       <section class="welcome">
         <div class="welcome-copy">
           <div class="biostar-eyebrow">BioSTAR workspace</div>
-          <h1 class="biostar-title">What are you<br class="gt-xs" /> working on?</h1>
+          <h1 class="biostar-title">What are you<br class="gt-xs" ></br> working on?</h1>
           <p class="biostar-subtitle">
             Run focused sequence and protein analyses through one scientific workspace.
           </p>
@@ -50,9 +50,9 @@
           >
             <q-card-section class="tool-card__top">
               <div class="tool-icon">
-                <q-icon :name="card.icon" />
+                <q-icon :name="card.icon" ></q-icon>
               </div>
-              <q-icon name="arrow_outward" class="tool-arrow" />
+              <q-icon name="arrow_outward" class="tool-arrow" ></q-icon>
             </q-card-section>
             <q-card-section class="tool-card__body">
               <div class="tool-number">{{ card.number }}</div>
@@ -61,7 +61,7 @@
             </q-card-section>
             <q-card-section class="tool-card__footer">
               <span>Open workspace</span>
-              <q-icon name="arrow_forward" />
+              <q-icon name="arrow_forward" ></q-icon>
             </q-card-section>
           </q-card>
         </div>
