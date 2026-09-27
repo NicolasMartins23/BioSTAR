@@ -8,7 +8,7 @@ from fastapi.testclient import TestClient
 from BioStar.engine import AminoAcidData, BiochemistryData
 from BioStarAPI.app import app
 from BioStarAPI.controllers.analysis import get_sequence_service
-from BioStarAPI.database.repositories.biochemistry import BiochemistryRepository
+from BioStarAPI.services.sequence_service import SequenceService
 
 
 def _test_data() -> BiochemistryData:
@@ -42,14 +42,13 @@ class FakeRepository:
 
 @pytest.fixture
 def client(monkeypatch: pytest.MonkeyPatch) -> Iterator[TestClient]:
-    app.dependency_overrides[get_sequence_service] = lambda: __import__(
-        "BioStarAPI.services.sequence_service",
-        fromlist=["SequenceService"],
-    ).SequenceService(FakeRepository())
+    app.dependency_overrides[get_sequence_service] = lambda: SequenceService(FakeRepository())
     monkeypatch.setattr("BioStarAPI.app.resolve_api_key", lambda raw_key: None)
     monkeypatch.setattr("BioStarAPI.app.enforce_request_limits", lambda request, api_key_id: None)
+
     with TestClient(app) as test_client:
         yield test_client
+
     app.dependency_overrides.clear()
 
 
@@ -58,20 +57,16 @@ def test_dna_to_rna_returns_api_envelope(client: TestClient) -> None:
 
     assert response.status_code == 200
     assert response.json()["data"] == {"sequence": "AUG"}
-    assert "message" in response.json()
+    assert response.json()["message"] is None
 
 
 def test_invalid_api_key_returns_401(client: TestClient) -> None:
-    monkeypatch = pytest.MonkeyPatch()
-    monkeypatch.setattr("BioStarAPI.app.resolve_api_key", lambda raw_key: None)
-
     response = client.get(
         "/api/dna-rna",
         params={"sequence": "ATG"},
         headers={"X-API-Key": "invalid"},
     )
 
-    monkeypatch.undo()
     assert response.status_code == 401
     assert response.json()["data"] is None
     assert response.json()["message"]["code"] == "invalid_api_key"
@@ -82,7 +77,9 @@ def test_validation_error_preserves_field_details(client: TestClient) -> None:
 
     assert response.status_code == 422
     assert response.json()["data"] is None
-    assert response.json()["message"]["code"] == "validation_error"
+    message = response.json()["message"]
+    assert message["code"] == "validation_error"
+    assert message["details"][0]["loc"] == ["body", "sequence"]
 
 
 def test_sequence_normalization_rejects_invalid_dna(client: TestClient) -> None:
@@ -90,3 +87,23 @@ def test_sequence_normalization_rejects_invalid_dna(client: TestClient) -> None:
 
     assert response.status_code == 422
     assert response.json()["message"]["code"] == "invalid_sequence"
+
+
+def test_dna_to_rna_normalizes_fasta(client: TestClient) -> None:
+    response = client.get(
+        "/api/dna-rna",
+        params={"sequence": ">sequence\nATG"},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["data"] == {"sequence": "AUG"}
+
+
+def test_dna_to_rna_rejects_multiple_fasta_records(client: TestClient) -> None:
+    response = client.get(
+        "/api/dna-rna",
+        params={"sequence": ">one\nATG\n>two\nATG"},
+    )
+
+    assert response.status_code == 422
+    assert response.json()["message"]["code"] == "fasta_single_sequence_required"
