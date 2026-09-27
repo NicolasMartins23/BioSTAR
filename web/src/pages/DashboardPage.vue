@@ -50,9 +50,9 @@
           >
             <q-card-section class="tool-card__top">
               <div class="tool-icon">
-                <q-icon :name="card.icon" ></q-icon>
+                <q-icon :name="card.icon" />
               </div>
-              <q-icon name="arrow_outward" class="tool-arrow" ></q-icon>
+              <q-icon name="arrow_outward" class="tool-arrow" />
             </q-card-section>
             <q-card-section class="tool-card__body">
               <div class="tool-number">{{ card.number }}</div>
@@ -61,7 +61,7 @@
             </q-card-section>
             <q-card-section class="tool-card__footer">
               <span>Open workspace</span>
-              <q-icon name="arrow_forward" ></q-icon>
+              <q-icon name="arrow_forward" />
             </q-card-section>
           </q-card>
         </div>
