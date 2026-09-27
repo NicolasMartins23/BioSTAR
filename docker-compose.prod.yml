@@ -50,6 +50,12 @@ services:
     depends_on:
       seed:
         condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
 
   nginx:
     image: nginx:1.27-alpine
@@ -60,7 +66,8 @@ services:
     volumes:
       - ./nginx/default.conf.template:/etc/nginx/templates/default.conf.template:ro
     depends_on:
-      - api
+      api:
+        condition: service_healthy
     ports:
       - "80:80"
 
