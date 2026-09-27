@@ -57,6 +57,14 @@ _MESSAGES: dict[MessageCode, str] = {
 }
 
 
-def get_message(code: MessageCode, **parameters: object) -> MessageResource:
+def get_message(
+    code: MessageCode,
+    details: list[dict[str, object]] | None = None,
+    **parameters: object,
+) -> MessageResource:
     template = _MESSAGES[code]
-    return MessageResource(code=code, message=template.format(**parameters))
+    return MessageResource(
+        code=code,
+        message=template.format(**parameters),
+        details=details,
+    )
