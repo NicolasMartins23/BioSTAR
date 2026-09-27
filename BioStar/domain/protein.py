@@ -11,7 +11,7 @@ class Protein:
 
     def __init__(self, sequence: str = "", data: BiochemistryData | None = None) -> None:
         if data is None:
-            raise ValueError("BiochemistryData is required.")
+            data = get_default_biochemistry()
         self.data: BiochemistryData = data
         self.sequence: str = sub(
             r"[^ACDEFGHIKLMNPQRSTVWY]",
