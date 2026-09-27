@@ -10,6 +10,8 @@ class AminoAcidData:
     hydrophobicity: float
     alpha_helix: float
     beta_sheet: float
+    pka: float | None
+    pkb: float | None
     pkr: float | None
 
 
@@ -27,3 +29,6 @@ class BiochemistryData:
     rna_stop_codons: frozenset[str]
     dna_start_codon: str
     rna_start_codon: str
+    water_mass: float
+    n_term_pka: float
+    c_term_pka: float
