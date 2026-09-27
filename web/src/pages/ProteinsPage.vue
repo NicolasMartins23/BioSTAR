@@ -230,40 +230,83 @@ const formatValue = (value: unknown): string => {
 </script>
 
 <style scoped>
+:deep(.q-field--outlined .q-field__control) {
+  border-radius: 0.7rem;
+  background: var(--bio-paper);
+  transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+:deep(.q-field--outlined:hover .q-field__control::before) {
+  border-color: rgb(20 125 131 / 42%);
+}
+
+:deep(.q-field--outlined.q-field--focused .q-field__control::after) {
+  border-color: var(--bio-primary);
+}
+
+:deep(.q-field--focused .q-field__control) {
+  box-shadow: 0 0 0 0.2rem rgb(20 125 131 / 9%);
+  background: rgb(20 125 131 / 2%);
+}
+
+:deep(.q-field--focused .q-field__label) {
+  color: var(--bio-primary);
+}
+
+:deep(.q-checkbox .q-checkbox__inner--truthy),
+:deep(.q-toggle__inner--truthy) {
+  color: var(--bio-primary);
+}
+
+:deep(.q-checkbox__label),
+:deep(.q-toggle__label) {
+  color: var(--bio-ink);
+}
+
+:deep(.q-btn.bg-primary) {
+  border-radius: 0.65rem;
+  box-shadow: 0 0.35rem 1rem rgb(20 125 131 / 18%);
+}
+
 .options-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 8px 16px;
+  grid-template-columns: repeat(auto-fit, minmax(13.75rem, 1fr));
+  gap: 0.5rem 1rem;
+  padding: 1rem;
+  border: 1px solid var(--bio-line);
+  border-radius: 0.7rem;
+  background: var(--bio-soft);
 }
 
 .ph-input {
-  max-width: 180px;
+  max-width: 11.25rem;
 }
 
 .result-sequence {
-  padding: 16px;
+  padding: 1rem;
   overflow-x: auto;
-  border: 1px solid var(--biostar-border);
-  border-radius: 4px;
-  background: var(--biostar-bg);
+  border: 1px solid var(--bio-line);
+  border-radius: 0.7rem;
+  background: var(--bio-soft);
   line-height: 1.7;
   word-break: break-word;
 }
 
 .result-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(11.25rem, 1fr));
+  gap: 0.75rem;
 }
 
 .metric {
-  padding: 18px;
-  border: 1px solid var(--biostar-border);
-  border-radius: 4px;
+  padding: 1.125rem;
+  border: 1px solid var(--bio-line);
+  border-radius: 0.7rem;
+  background: var(--bio-paper);
 }
 
 .metric__label {
-  color: var(--biostar-muted);
+  color: var(--bio-muted);
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -271,36 +314,39 @@ const formatValue = (value: unknown): string => {
 }
 
 .metric__value {
-  margin-top: 6px;
-  color: var(--biostar-text);
+  margin-top: 0.375rem;
+  color: var(--bio-ink);
   font-size: 1.25rem;
   font-weight: 700;
 }
 
 .result-section {
-  margin-top: 28px;
-  padding-top: 24px;
-  border-top: 1px solid var(--biostar-border);
+  margin-top: 1.75rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--bio-line);
 }
 
 .result-value {
-  margin-top: 8px;
+  margin-top: 0.5rem;
+  color: var(--bio-primary-strong);
   font-size: 1.1rem;
+  font-weight: 650;
 }
 
 .chip-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
-  margin-top: 10px;
+  gap: 0.25rem;
+  margin-top: 0.625rem;
 }
 
 pre {
-  margin: 10px 0 0;
-  padding: 14px;
+  margin: 0.625rem 0 0;
+  padding: 0.875rem;
   overflow-x: auto;
-  border: 1px solid var(--biostar-border);
-  background: var(--biostar-bg);
+  border: 1px solid var(--bio-line);
+  border-radius: 0.7rem;
+  background: var(--bio-soft);
   white-space: pre-wrap;
 }
 </style>
