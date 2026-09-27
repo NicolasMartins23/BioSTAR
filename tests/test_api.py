@@ -53,7 +53,7 @@ def client(monkeypatch: pytest.MonkeyPatch) -> Iterator[TestClient]:
 
 
 def test_dna_to_rna_returns_api_envelope(client: TestClient) -> None:
-    response = client.get("/api/dna-rna", params={"sequence": "ATG"})
+    response = client.get("/api/v1/dna-rna", params={"sequence": "ATG"})
 
     assert response.status_code == 200
     assert response.json()["data"] == {"sequence": "AUG"}
@@ -62,7 +62,7 @@ def test_dna_to_rna_returns_api_envelope(client: TestClient) -> None:
 
 def test_invalid_api_key_returns_401(client: TestClient) -> None:
     response = client.get(
-        "/api/dna-rna",
+        "/api/v1/dna-rna",
         params={"sequence": "ATG"},
         headers={"X-API-Key": "invalid"},
     )
@@ -73,7 +73,7 @@ def test_invalid_api_key_returns_401(client: TestClient) -> None:
 
 
 def test_validation_error_preserves_field_details(client: TestClient) -> None:
-    response = client.post("/api/protein", json={"get_molecular_weight": True})
+    response = client.post("/api/v1/protein", json={"get_molecular_weight": True})
 
     assert response.status_code == 422
     assert response.json()["data"] is None
@@ -83,7 +83,7 @@ def test_validation_error_preserves_field_details(client: TestClient) -> None:
 
 
 def test_sequence_normalization_rejects_invalid_dna(client: TestClient) -> None:
-    response = client.get("/api/dna-rna", params={"sequence": "ATX"})
+    response = client.get("/api/v1/dna-rna", params={"sequence": "ATX"})
 
     assert response.status_code == 422
     assert response.json()["message"]["code"] == "invalid_sequence"
@@ -91,7 +91,7 @@ def test_sequence_normalization_rejects_invalid_dna(client: TestClient) -> None:
 
 def test_dna_to_rna_normalizes_fasta(client: TestClient) -> None:
     response = client.get(
-        "/api/dna-rna",
+        "/api/v1/dna-rna",
         params={"sequence": ">sequence\nATG"},
     )
 
@@ -101,7 +101,7 @@ def test_dna_to_rna_normalizes_fasta(client: TestClient) -> None:
 
 def test_dna_to_rna_rejects_multiple_fasta_records(client: TestClient) -> None:
     response = client.get(
-        "/api/dna-rna",
+        "/api/v1/dna-rna",
         params={"sequence": ">one\nATG\n>two\nATG"},
     )
 
