@@ -68,6 +68,8 @@ class BiochemistryRepository:
                     hydrophobicity=float(amino_acid.hydrophobicity),
                     alpha_helix=float(amino_acid.alpha_helix),
                     beta_sheet=float(amino_acid.beta_sheet),
+                    pka=float(amino_acid.pka) if amino_acid.pka is not None else None,
+                    pkb=float(amino_acid.pkb) if amino_acid.pkb is not None else None,
                     pkr=float(amino_acid.pkr) if amino_acid.pkr is not None else None,
                 )
                 for amino_acid in amino_acids
@@ -81,19 +83,26 @@ class BiochemistryRepository:
             dna_codons=dna_codons,
             rna_codons=rna_codons,
             dna_stop_codons=frozenset(
-                codon.sequence for codon in codons
+                codon.sequence
+                for codon in codons
                 if codon.molecule_type == "DNA" and codon.is_stop
             ),
             rna_stop_codons=frozenset(
-                codon.sequence for codon in codons
+                codon.sequence
+                for codon in codons
                 if codon.molecule_type == "RNA" and codon.is_stop
             ),
             dna_start_codon=next(
-                codon.sequence for codon in codons
+                codon.sequence
+                for codon in codons
                 if codon.molecule_type == "DNA" and codon.is_start
             ),
             rna_start_codon=next(
-                codon.sequence for codon in codons
+                codon.sequence
+                for codon in codons
                 if codon.molecule_type == "RNA" and codon.is_start
             ),
+            water_mass=18.01528,
+            n_term_pka=7.7,
+            c_term_pka=3.5,
         )
