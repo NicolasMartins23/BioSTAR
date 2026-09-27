@@ -11,7 +11,13 @@ from BioStar.io.fasta import FastaParserDNA
 class NucleicAcid:
     """Base class for DNA and RNA sequence operations."""
 
-    def __init__(self, sequence: str, data: BiochemistryData) -> None:
+    def __init__(
+        self,
+        sequence: str,
+        data: BiochemistryData | None = None,
+    ) -> None:
+        if data is None:
+            data = get_default_biochemistry()
         self.sequence: str = sequence.upper()
         self.sequence_size: int = len(self.sequence)
         self.sequence_map: dict[str, int] = self.get_sequence_map()
@@ -39,7 +45,13 @@ class NucleicAcid:
 class DNA(NucleicAcid):
     """Represents a DNA sequence and DNA-specific analyses."""
 
-    def __init__(self, sequence: str, data: BiochemistryData) -> None:
+    def __init__(
+        self,
+        sequence: str,
+        data: BiochemistryData | None = None,
+    ) -> None:
+        if data is None:
+            data = get_default_biochemistry()
         normalized_sequence: str = self._fasta_sequence(sequence)
         super().__init__(normalized_sequence, data)
         self.codon_table: dict[str, str] = data.dna_codons
@@ -99,7 +111,13 @@ class DNA(NucleicAcid):
 class RNA(NucleicAcid):
     """Represents an RNA sequence and RNA-specific analyses."""
 
-    def __init__(self, sequence: str, data: BiochemistryData) -> None:
+    def __init__(
+        self,
+        sequence: str,
+        data: BiochemistryData | None = None,
+    ) -> None:
+        if data is None:
+            data = get_default_biochemistry()
         normalized_sequence: str = self._fasta_sequence(sequence)
         super().__init__(normalized_sequence, data)
         self.codon_table: dict[str, str] = data.rna_codons
