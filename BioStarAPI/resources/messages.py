@@ -10,6 +10,7 @@ class MessageCode(str, Enum):
     API_KEY_REVOKED = "api_key_revoked"
     API_KEY_NOT_FOUND = "api_key_not_found"
     AUTHENTICATION_REQUIRED = "authentication_required"
+    INVALID_API_KEY = "invalid_api_key"
     INVALID_ADMIN_KEY = "invalid_admin_key"
 
     INVALID_FASTA = "invalid_fasta"
@@ -31,6 +32,7 @@ class MessageCode(str, Enum):
 class MessageResource(BaseModel):
     code: MessageCode
     message: str
+    details: list[dict[str, object]] | None = None
 
 
 _MESSAGES: dict[MessageCode, str] = {
@@ -38,6 +40,7 @@ _MESSAGES: dict[MessageCode, str] = {
     MessageCode.API_KEY_REVOKED: "API key revoked successfully.",
     MessageCode.API_KEY_NOT_FOUND: "API key not found.",
     MessageCode.AUTHENTICATION_REQUIRED: "A valid X-API-Key is required.",
+    MessageCode.INVALID_API_KEY: "The provided API key is invalid or revoked.",
     MessageCode.INVALID_ADMIN_KEY: "Invalid authentication administrator key.",
     MessageCode.INVALID_FASTA: "Invalid FASTA sequence.",
     MessageCode.FASTA_SINGLE_SEQUENCE_REQUIRED: "Exactly one FASTA sequence is required.",
