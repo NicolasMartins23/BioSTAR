@@ -15,5 +15,9 @@
   "devDependencies": {
     "@quasar/app-vite": "^3.10.0",
     "typescript": "^5.9.2"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=22.22.0"
   }
 }
