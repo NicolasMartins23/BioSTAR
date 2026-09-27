@@ -1,12 +1,10 @@
 <template>
-  <div class="biostar-page">
+  <q-page class="biostar-page">
     <main class="biostar-content">
       <section class="welcome">
         <div class="welcome-copy">
           <div class="biostar-eyebrow">BioSTAR workspace</div>
-          <h1 class="biostar-title">
-            Explore biological data.<span class="title-break"></span> Run the analysis.
-          </h1>
+          <h1 class="biostar-title">Explore biological data.<span class="title-break"></span> Run the analysis.</h1>
           <p class="biostar-subtitle">
             Explore sequences, proteins, and biological data through one scientific workspace.
           </p>
@@ -41,35 +39,35 @@
         </header>
 
         <div class="tool-grid">
-          <div
+          <q-card
             v-for="card in cards"
             :key="card.title"
+            flat
+            bordered
             class="tool-card"
-            role="link"
-            tabindex="0"
+            clickable
             @click="$router.push(card.to)"
-            @keydown.enter="$router.push(card.to)"
           >
-            <div class="tool-card__top">
+            <q-card-section class="tool-card__top">
               <div class="tool-icon">
-                <span class="material-icons">{{ card.icon }}</span>
+                <q-icon :name="card.icon" ></q-icon>
               </div>
-              <span class="material-icons tool-arrow">arrow_outward</span>
-            </div>
-            <div class="tool-card__body">
+              <q-icon name="arrow_outward" class="tool-arrow" ></q-icon>
+            </q-card-section>
+            <q-card-section class="tool-card__body">
               <div class="tool-number">{{ card.number }}</div>
               <h3>{{ card.title }}</h3>
               <p>{{ card.description }}</p>
-            </div>
-            <div class="tool-card__footer">
+            </q-card-section>
+            <q-card-section class="tool-card__footer">
               <span>Open workspace</span>
-              <span class="material-icons">arrow_forward</span>
-            </div>
-          </div>
+              <q-icon name="arrow_forward" ></q-icon>
+            </q-card-section>
+          </q-card>
         </div>
       </section>
     </main>
-  </div>
+  </q-page>
 </template>
 
 <script setup lang="ts">
