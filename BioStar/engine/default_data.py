@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import gzip
+import os
 import sqlite3
 from functools import lru_cache
 from importlib.resources import files
+from tempfile import NamedTemporaryFile
 
 from BioStar.engine.biochemistry import AminoAcidData, BiochemistryData
 
@@ -13,9 +15,12 @@ def get_default_biochemistry() -> BiochemistryData:
     database_bytes = gzip.decompress(
         files("BioStar.data").joinpath("biostar.sqlite3.gz").read_bytes()
     )
-    connection = sqlite3.connect(":memory:")
+    with NamedTemporaryFile(suffix=".sqlite3", delete=False) as database_file:
+        database_file.write(database_bytes)
+        database_path = database_file.name
+
+    connection = sqlite3.connect(database_path)
     try:
-        connection.deserialize(database_bytes)
         return BiochemistryData(
             amino_acids=_load_amino_acids(connection),
             aromatic=_load_class(connection, "aromatic"),
@@ -35,6 +40,7 @@ def get_default_biochemistry() -> BiochemistryData:
         )
     finally:
         connection.close()
+        os.unlink(database_path)
 
 
 def _load_amino_acids(connection: sqlite3.Connection) -> dict[str, AminoAcidData]:
