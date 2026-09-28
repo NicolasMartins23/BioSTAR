@@ -1,32 +1,19 @@
-# BioSTAR Database
+# BioSTAR API Database
 
-The API owns database access. The BioSTAR engine does not import SQLAlchemy,
-PostgreSQL, or FastAPI.
+The PostgreSQL database belongs to the API application. The BioSTAR engine
+does not depend on SQLAlchemy, PostgreSQL, or FastAPI.
 
-## Layers
+## PostgreSQL data
 
-```
-Controller -> Service -> Repository -> SQLAlchemy -> PostgreSQL
-                    |
-                    -> BioSTAR engine
-```
-
-## Reference data
-
-- amino_acids
-- amino_acid_classes
-- amino_acid_class_members
-- nucleotides
-- genetic_codes
-- codons
-- organisms
-- codon_usage
-- reference_sources
-
-## Authentication
+The API database stores application state such as:
 
 - users
-- refresh_tokens
+- refresh tokens
+- API keys
+- API request usage
+
+Scientific reference data is owned by the BioSTAR engine and bundled as a
+SQLite database under `BioStar/data/`.
 
 ## Local database
 
@@ -48,10 +35,4 @@ Create the schema:
 alembic upgrade head
 ```
 
-Load the initial biochemical reference data:
-
-```bash
-python -m BioStarAPI.database.seed
-```
-
-Schema migrations and scientific data imports remain separate.
+No PostgreSQL seed is required for biochemical reference data.
