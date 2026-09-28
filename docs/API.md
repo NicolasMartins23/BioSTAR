@@ -49,7 +49,7 @@ Example:
 ```bash
 curl \
   -H "X-API-Key: bst_live_YOUR_KEY" \
-  "http://localhost:8000/api/dna-protein?sequence=ATGGCC"
+  "http://localhost:8000/api/v1/dna-protein?sequence=ATGGCC"
 ```
 
 ### Security
@@ -144,13 +144,13 @@ Maximum sequence length: **1,000 nucleotides**.
 ### 5.1 DNA → RNA
 
 ```http
-GET /api/dna-rna?sequence=ATGGCC
+GET /api/v1/dna-rna?sequence=ATGGCC
 ```
 
 cURL:
 
 ```bash
-curl "http://localhost:8000/api/dna-rna?sequence=ATGGCC"
+curl "http://localhost:8000/api/v1/dna-rna?sequence=ATGGCC"
 ```
 
 Response:
@@ -164,13 +164,13 @@ Response:
 ### 5.2 DNA → protein
 
 ```http
-GET /api/dna-protein?sequence=ATGGCC
+GET /api/v1/dna-protein?sequence=ATGGCC
 ```
 
 cURL:
 
 ```bash
-curl "http://localhost:8000/api/dna-protein?sequence=ATGGCC"
+curl "http://localhost:8000/api/v1/dna-protein?sequence=ATGGCC"
 ```
 
 Response:
@@ -184,7 +184,7 @@ Response:
 ### 5.3 RNA → protein
 
 ```http
-GET /api/rna-protein?sequence=AUGGCC
+GET /api/v1/rna-protein?sequence=AUGGCC
 ```
 
 Response:
@@ -198,7 +198,7 @@ Response:
 ### 5.4 RNA → DNA
 
 ```http
-GET /api/rna-dna?sequence=AUGGCC
+GET /api/v1/rna-dna?sequence=AUGGCC
 ```
 
 Response:
@@ -234,7 +234,7 @@ If invalid characters are supplied:
 Endpoint:
 
 ```http
-POST /api/protein
+POST /api/v1/protein
 Content-Type: application/json
 ```
 
@@ -298,7 +298,7 @@ Invalid types such as a string should not be used:
 
 ```bash
 curl -X POST \
-  "http://localhost:8000/api/protein" \
+  "http://localhost:8000/api/v1/protein" \
   -H "Content-Type: application/json" \
   -H "X-API-Key: bst_live_YOUR_KEY" \
   -d '{
@@ -359,7 +359,7 @@ Only requested tests are included unless `get_full_test_results` is enabled.
 Endpoint:
 
 ```http
-POST /api/mutation_compare
+POST /api/v1/mutation_compare
 Content-Type: application/json
 ```
 
@@ -378,7 +378,7 @@ cURL:
 
 ```bash
 curl -X POST \
-  "http://localhost:8000/api/mutation_compare" \
+  "http://localhost:8000/api/v1/mutation_compare" \
   -H "Content-Type: application/json" \
   -d '{
     "reference": "ATGGCCGAA",
@@ -434,10 +434,10 @@ Maximum sequence length: **10,000 nucleotides**.
 Available routes:
 
 ```text
-POST /api/batch/dna-rna
-POST /api/batch/dna-protein
-POST /api/batch/rna-protein
-POST /api/batch/rna-dna
+POST /api/v1/batch/dna-rna
+POST /api/v1/batch/dna-protein
+POST /api/v1/batch/rna-protein
+POST /api/v1/batch/rna-dna
 ```
 
 ### Request structure
@@ -454,7 +454,7 @@ All four endpoints use:
 
 ```bash
 curl -X POST \
-  "http://localhost:8000/api/batch/dna-protein" \
+  "http://localhost:8000/api/v1/batch/dna-protein" \
   -H "Content-Type: application/json" \
   -H "X-API-Key: bst_live_YOUR_KEY" \
   -d '{"sequence":"ATGGCC"}'
@@ -570,7 +570,7 @@ Avoid putting a private BioSTAR API key directly into frontend JavaScript that i
 ## 12. JavaScript example
 
 ```javascript
-const response = await fetch("http://localhost:8000/api/protein", {
+const response = await fetch("http://localhost:8000/api/v1/protein", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
@@ -599,7 +599,7 @@ import os
 import requests
 
 response = requests.post(
-    "http://localhost:8000/api/protein",
+    "http://localhost:8000/api/v1/protein",
     headers={"X-API-Key": os.environ["BIOSTAR_API_KEY"]},
     json={
         "sequence": ">example\nMVLSPADKTNVKAAW",
