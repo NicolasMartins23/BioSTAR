@@ -12,7 +12,7 @@ COPY BioStarAPI ./BioStarAPI
 COPY alembic.ini ./
 
 RUN python -m pip install --upgrade pip \
-    && python -m pip install .
+    && python -m pip install ".[api]"
 
 EXPOSE 8000
 
