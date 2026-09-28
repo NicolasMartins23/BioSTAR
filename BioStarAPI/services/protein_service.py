@@ -2,17 +2,16 @@ from __future__ import annotations
 
 from BioStar.Protein.protein import Protein
 from BioStarAPI.controllers.schemas import ProteinAnalysisRequest
-from BioStarAPI.database.repositories.biochemistry import BiochemistryRepository
+from BioStar.engine import get_default_biochemistry
 from BioStarAPI.services.sequence_service import SequenceService
 
 
 class ProteinService:
-    def __init__(self, repository: BiochemistryRepository) -> None:
-        self.repository = repository
-        self.sequence_service = SequenceService(repository)
+    def __init__(self) -> None:
+        self.sequence_service = SequenceService()
 
     def analyze(self, request: ProteinAnalysisRequest) -> dict[str, object]:
-        data = self.repository.get_standard_data()
+        data = get_default_biochemistry()
         sequence = self.sequence_service.normalize_protein(
             request.sequence,
             10_000,
