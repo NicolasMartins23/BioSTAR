@@ -24,3 +24,6 @@ test = [
 
 [tool.setuptools.packages.find]
 include = ["BioStar*", "BioStarAPI*"]
+
+[tool.setuptools.package-data]
+"BioStar.data" = ["*.sqlite3.gz"]
