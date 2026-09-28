@@ -10,7 +10,7 @@ services:
     volumes:
       - biostar-postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -26,16 +26,6 @@ services:
     command: ["alembic", "upgrade", "head"]
     restart: "no"
 
-  seed:
-    build: .
-    environment:
-      BIOSTAR_DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-biostar}:${POSTGRES_PASSWORD:-biostar}@postgres:5432/${POSTGRES_DB:-biostar}
-    depends_on:
-      migrate:
-        condition: service_completed_successfully
-    command: ["python", "-m", "BioStarAPI.database.seed"]
-    restart: "no"
-
   api:
     build: .
     container_name: biostar-api
@@ -44,7 +34,7 @@ services:
       BIOSTAR_DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-biostar}:${POSTGRES_PASSWORD:-biostar}@postgres:5432/${POSTGRES_DB:-biostar}
       BIOSTAR_AUTH_ADMIN_KEY: ${BIOSTAR_AUTH_ADMIN_KEY}
     depends_on:
-      seed:
+      migrate:
         condition: service_completed_successfully
     ports:
       - "8000:8000"
