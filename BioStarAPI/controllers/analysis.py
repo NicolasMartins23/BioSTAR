@@ -3,9 +3,8 @@ from __future__ import annotations
 from fastapi import Depends
 
 from BioStarAPI.controllers.schemas import BatchSequenceRequest, MutationCompareRequest, ProteinAnalysisRequest
-from BioStarAPI.database.repositories.biochemistry import BiochemistryRepository
 from BioStarAPI.resources.responses import APIResponse
-from BioStarAPI.services.dependencies import get_biochemistry_repository
+from BioStarAPI.services.dependencies import get_sequence_service
 from BioStarAPI.services.mutation_service import MutationService
 from BioStarAPI.services.protein_service import ProteinService
 from BioStarAPI.services.sequence_service import SequenceService
@@ -13,11 +12,6 @@ from BioStarAPI.services.sequence_service import SequenceService
 GET_SEQUENCE_MAX_LENGTH = 1_000
 POST_SEQUENCE_MAX_LENGTH = 10_000
 
-
-def get_sequence_service(
-    repository: BiochemistryRepository = Depends(get_biochemistry_repository),
-) -> SequenceService:
-    return SequenceService(repository)
 
 
 def dna_to_rna(
@@ -54,16 +48,14 @@ def rna_to_dna(
 
 def protein_analysis(
     request: ProteinAnalysisRequest,
-    repository: BiochemistryRepository = Depends(get_biochemistry_repository),
 ) -> APIResponse[dict[str, object]]:
-    return APIResponse(data=ProteinService(repository).analyze(request))
+    return APIResponse(data=ProteinService().analyze(request))
 
 
 def mutation_compare(
     request: MutationCompareRequest,
-    repository: BiochemistryRepository = Depends(get_biochemistry_repository),
 ) -> APIResponse[dict[str, object]]:
-    return APIResponse(data=MutationService(repository).compare(request.reference, request.sequence))
+    return APIResponse(data=MutationService().compare(request.reference, request.sequence))
 
 
 def batch_dna_rna(
