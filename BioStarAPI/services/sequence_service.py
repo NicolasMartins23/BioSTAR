@@ -5,7 +5,7 @@ import re
 from BioStarAPI.resources.exceptions import BioStarAPIError
 from BioStarAPI.resources.messages import MessageCode
 
-from BioStar.domain.nucleic_acid import DNA, RNA
+from BioStar.NucleicAcids.nucleic_acids import DNA, RNA
 from BioStarAPI.database.repositories.biochemistry import BiochemistryRepository
 
 DNA_ALPHABET = frozenset("ACGT")
