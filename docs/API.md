@@ -429,7 +429,8 @@ If the length is not divisible by three:
 
 Batch conversion routes use POST requests so that larger sequences do not need to be placed in a URL.
 
-Maximum sequence length: **10,000 nucleotides**.
+Maximum sequence length: **10,000 nucleotides per sequence**.
+Maximum number of sequences per request: **100**.
 
 Available routes:
 
