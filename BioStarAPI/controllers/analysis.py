@@ -30,7 +30,7 @@ def dna_to_rna(
 
 def dna_to_protein(
     sequence: str,
-    max_length: int = POST_SEQUENCE_MAX_LENGTH,
+    max_length: int = GET_SEQUENCE_MAX_LENGTH,
     service: SequenceService = Depends(get_sequence_service),
 ) -> APIResponse[dict[str, str]]:
     return APIResponse(data=service.dna_to_protein(sequence, max_length))
@@ -38,7 +38,7 @@ def dna_to_protein(
 
 def rna_to_protein(
     sequence: str,
-    max_length: int = POST_SEQUENCE_MAX_LENGTH,
+    max_length: int = GET_SEQUENCE_MAX_LENGTH,
     service: SequenceService = Depends(get_sequence_service),
 ) -> APIResponse[dict[str, str]]:
     return APIResponse(data=service.rna_to_protein(sequence, max_length))
@@ -46,7 +46,7 @@ def rna_to_protein(
 
 def rna_to_dna(
     sequence: str,
-    max_length: int = POST_SEQUENCE_MAX_LENGTH,
+    max_length: int = GET_SEQUENCE_MAX_LENGTH,
     service: SequenceService = Depends(get_sequence_service),
 ) -> APIResponse[dict[str, str]]:
     return APIResponse(data=service.rna_to_dna(sequence, max_length))
