@@ -3,6 +3,7 @@ name: tests
 on:
   push:
     branches:
+      - main
       - master
       - refactor/engine-architecture
       - api-contracts
