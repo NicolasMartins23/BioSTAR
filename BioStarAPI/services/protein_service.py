@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from BioStar.domain.protein import Protein
+from BioStar.Protein.protein import Protein
 from BioStarAPI.controllers.schemas import ProteinAnalysisRequest
 from BioStarAPI.database.repositories.biochemistry import BiochemistryRepository
 from BioStarAPI.services.sequence_service import SequenceService
