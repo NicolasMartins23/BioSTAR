@@ -48,17 +48,17 @@ class SequenceService:
         return {"sequence": DNA(normalized, data).rna_sequence()}
 
     def dna_to_protein(self, sequence: str, max_length: int) -> dict[str, str]:
-        data = self.repository.get_standard_data()
+        data = get_default_biochemistry()
         normalized = self.normalize_dna(sequence, max_length)
         return {"sequence": DNA(normalized, data).to_protein().sequence}
 
     def rna_to_protein(self, sequence: str, max_length: int) -> dict[str, str]:
-        data = self.repository.get_standard_data()
+        data = get_default_biochemistry()
         normalized = self.normalize_rna(sequence, max_length)
         return {"sequence": RNA(normalized, data).to_protein().sequence}
 
     def rna_to_dna(self, sequence: str, max_length: int) -> dict[str, str]:
-        data = self.repository.get_standard_data()
+        data = get_default_biochemistry()
         normalized = self.normalize_rna(sequence, max_length)
         return {"sequence": RNA(normalized, data).dna_sequence()}
 
