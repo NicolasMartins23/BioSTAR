@@ -6,7 +6,7 @@ from BioStarAPI.resources.exceptions import BioStarAPIError
 from BioStarAPI.resources.messages import MessageCode
 
 from BioStar.NucleicAcids.nucleic_acids import DNA, RNA
-from BioStarAPI.database.repositories.biochemistry import BiochemistryRepository
+from BioStar.engine import get_default_biochemistry
 
 DNA_ALPHABET = frozenset("ACGT")
 RNA_ALPHABET = frozenset("ACGU")
@@ -14,9 +14,6 @@ PROTEIN_ALPHABET = frozenset("ACDEFGHIKLMNPQRSTVWY")
 
 
 class SequenceService:
-    def __init__(self, repository: BiochemistryRepository) -> None:
-        self.repository = repository
-
     def normalize(self, sequence: str, alphabet: frozenset[str], kind: str, max_length: int) -> str:
         value = sequence.strip().upper()
         if value.startswith(">"):
@@ -46,7 +43,7 @@ class SequenceService:
         return self.normalize(sequence, PROTEIN_ALPHABET, "protein", max_length)
 
     def dna_to_rna(self, sequence: str, max_length: int) -> dict[str, str]:
-        data = self.repository.get_standard_data()
+        data = get_default_biochemistry()
         normalized = self.normalize_dna(sequence, max_length)
         return {"sequence": DNA(normalized, data).rna_sequence()}
 
