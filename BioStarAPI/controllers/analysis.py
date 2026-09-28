@@ -22,7 +22,7 @@ def get_sequence_service(
 
 def dna_to_rna(
     sequence: str,
-    max_length: int = POST_SEQUENCE_MAX_LENGTH,
+    max_length: int = GET_SEQUENCE_MAX_LENGTH,
     service: SequenceService = Depends(get_sequence_service),
 ) -> APIResponse[dict[str, str]]:
     return APIResponse(data=service.dna_to_rna(sequence, max_length))
