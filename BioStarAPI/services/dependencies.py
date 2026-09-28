@@ -1,13 +1,7 @@
 from __future__ import annotations
 
-from fastapi import Depends
-from sqlalchemy.orm import Session
-
-from BioStarAPI.database.connection import get_session
-from BioStarAPI.database.repositories.biochemistry import BiochemistryRepository
+from BioStarAPI.services.sequence_service import SequenceService
 
 
-def get_biochemistry_repository(
-    session: Session = Depends(get_session),
-) -> BiochemistryRepository:
-    return BiochemistryRepository(session)
+def get_sequence_service() -> SequenceService:
+    return SequenceService()
