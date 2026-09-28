@@ -8,7 +8,8 @@ The **BioSTAR package is the engine**. It contains the biological domain model a
 reusable analysis functionality and does not depend on FastAPI, SQLAlchemy,
 PostgreSQL, authentication, or HTTP.
 
-- `BioStar/domain/` — DNA, RNA, Protein and other biological objects.
+- `BioStar/NucleicAcids/` — DNA, RNA and nucleic-acid sequence functionality.
+- `BioStar/Protein/` — protein sequence and biochemical analysis functionality.
 - `BioStar/data/` — current in-memory biochemical reference data.
 - `BioStar/analysis/` — sequence-analysis algorithms.
 - `BioStar/io/` — input parsing such as FASTA.
@@ -67,8 +68,8 @@ data imports remain independent.
 from BioStar import DNA, RNA, Protein, NucleicAcid, OpenReadFrame
 ```
 
-Legacy module imports are retained as compatibility shims while new engine code
-should use the organized package structure.
+Biological features are organized by molecule type so that the engine remains
+readable for biochemists and other life-science users.
 
 
 ## Local PostgreSQL
