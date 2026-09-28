@@ -5,7 +5,6 @@ from collections.abc import Iterator
 import pytest
 from fastapi.testclient import TestClient
 
-from BioStar.engine import AminoAcidData, BiochemistryData
 from BioStarAPI.app import app
 from BioStarAPI.controllers.analysis import get_sequence_service
 from BioStarAPI.services.sequence_service import SequenceService
