@@ -7,7 +7,13 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from BioStar.engine.biochemistry import AminoAcidData, BiochemistryData
-from BioStarAPI.database.models import AminoAcid, AminoAcidClass, Codon, GeneticCode
+from BioStarAPI.database.models import (
+    AminoAcid,
+    AminoAcidClass,
+    Codon,
+    GeneticCode,
+    ReferenceConstant,
+)
 from BioStarAPI.resources.exceptions import BioStarAPIError
 from BioStarAPI.resources.messages import MessageCode
 
@@ -84,6 +90,16 @@ class BiochemistryRepository:
             if codon.molecule_type == "RNA" and codon.amino_acid is not None
         }
 
+        constants = {
+            constant.key: float(constant.value)
+            for constant in self.session.scalars(select(ReferenceConstant))
+        }
+
+        required_constants = {"water_mass", "n_term_pka", "c_term_pka"}
+        missing_constants = required_constants.difference(constants)
+        if missing_constants:
+            raise BioStarAPIError(500, MessageCode.AMINO_ACID_DATA_NOT_SEEDED)
+
         return BiochemistryData(
             amino_acids={
                 amino_acid.symbol: AminoAcidData(
@@ -126,7 +142,7 @@ class BiochemistryRepository:
                 for codon in codons
                 if codon.molecule_type == "RNA" and codon.is_start
             ),
-            water_mass=18.01528,
-            n_term_pka=7.7,
-            c_term_pka=3.5,
+            water_mass=constants["water_mass"],
+            n_term_pka=constants["n_term_pka"],
+            c_term_pka=constants["c_term_pka"],
         )

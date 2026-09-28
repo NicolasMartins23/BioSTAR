@@ -9,6 +9,7 @@ from .reference import (
     GeneticCode,
     Nucleotide,
     Organism,
+    ReferenceConstant,
     ReferenceSource,
 )
 
@@ -22,6 +23,7 @@ __all__ = [
     "GeneticCode",
     "Nucleotide",
     "Organism",
+    "ReferenceConstant",
     "ReferenceSource",
     "RefreshToken",
     "User",

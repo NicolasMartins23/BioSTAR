@@ -36,9 +36,9 @@ async def api_rate_limit_middleware(request: Request, call_next):
         return await call_next(request)
 
     try:
-        if path.startswith("/api/auth/"):
+        if path.startswith("/api/v1/auth/"):
             _check_short_rate_limit(request, authenticated=True)
-        elif path.startswith("/api/"):
+        elif path.startswith("/api/v1/"):
             raw_api_key = request.headers.get("X-API-Key")
             api_key_id = resolve_api_key(raw_api_key)
             if raw_api_key is not None and api_key_id is None:
@@ -66,16 +66,16 @@ def api_health() -> APIResponse[dict[str, str]]:
     return APIResponse(data=_check_database_health())
 
 
-app.add_api_route("/api/dna-rna", dna_to_rna, methods=["GET"], tags=["Conversions"])
-app.add_api_route("/api/dna-protein", dna_to_protein, methods=["GET"], tags=["Conversions"])
-app.add_api_route("/api/rna-protein", rna_to_protein, methods=["GET"], tags=["Conversions"])
-app.add_api_route("/api/rna-dna", rna_to_dna, methods=["GET"], tags=["Conversions"])
-app.add_api_route("/api/protein", protein_analysis, methods=["POST"], tags=["Protein"])
-app.add_api_route("/api/mutation_compare", mutation_compare, methods=["POST"], tags=["Mutations"])
-app.add_api_route("/api/batch/dna-rna", batch_dna_rna, methods=["POST"], tags=["Batch"])
-app.add_api_route("/api/batch/dna-protein", batch_dna_protein, methods=["POST"], tags=["Batch"])
-app.add_api_route("/api/batch/rna-protein", batch_rna_protein, methods=["POST"], tags=["Batch"])
-app.add_api_route("/api/batch/rna-dna", batch_rna_dna, methods=["POST"], tags=["Batch"])
+app.add_api_route("/api/v1/dna-rna", dna_to_rna, methods=["GET"], tags=["Conversions"])
+app.add_api_route("/api/v1/dna-protein", dna_to_protein, methods=["GET"], tags=["Conversions"])
+app.add_api_route("/api/v1/rna-protein", rna_to_protein, methods=["GET"], tags=["Conversions"])
+app.add_api_route("/api/v1/rna-dna", rna_to_dna, methods=["GET"], tags=["Conversions"])
+app.add_api_route("/api/v1/protein", protein_analysis, methods=["POST"], tags=["Protein"])
+app.add_api_route("/api/v1/mutation_compare", mutation_compare, methods=["POST"], tags=["Mutations"])
+app.add_api_route("/api/v1/batch/dna-rna", batch_dna_rna, methods=["POST"], tags=["Batch"])
+app.add_api_route("/api/v1/batch/dna-protein", batch_dna_protein, methods=["POST"], tags=["Batch"])
+app.add_api_route("/api/v1/batch/rna-protein", batch_rna_protein, methods=["POST"], tags=["Batch"])
+app.add_api_route("/api/v1/batch/rna-dna", batch_rna_dna, methods=["POST"], tags=["Batch"])
 
 app.include_router(auth_router)
 app.openapi = lambda: custom_openapi(app)
