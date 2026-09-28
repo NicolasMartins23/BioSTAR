@@ -69,26 +69,46 @@ def mutation_compare(
 def batch_dna_rna(
     request: BatchSequenceRequest,
     service: SequenceService = Depends(get_sequence_service),
-) -> APIResponse[dict[str, str]]:
-    return APIResponse(data=service.dna_to_rna(request.sequence, POST_SEQUENCE_MAX_LENGTH))
+) -> APIResponse[list[dict[str, str]]]:
+    return APIResponse(
+        data=[
+            service.dna_to_rna(sequence, POST_SEQUENCE_MAX_LENGTH)
+            for sequence in request.sequences
+        ]
+    )
 
 
 def batch_dna_protein(
     request: BatchSequenceRequest,
     service: SequenceService = Depends(get_sequence_service),
-) -> APIResponse[dict[str, str]]:
-    return APIResponse(data=service.dna_to_protein(request.sequence, POST_SEQUENCE_MAX_LENGTH))
+) -> APIResponse[list[dict[str, str]]]:
+    return APIResponse(
+        data=[
+            service.dna_to_protein(sequence, POST_SEQUENCE_MAX_LENGTH)
+            for sequence in request.sequences
+        ]
+    )
 
 
 def batch_rna_protein(
     request: BatchSequenceRequest,
     service: SequenceService = Depends(get_sequence_service),
-) -> APIResponse[dict[str, str]]:
-    return APIResponse(data=service.rna_to_protein(request.sequence, POST_SEQUENCE_MAX_LENGTH))
+) -> APIResponse[list[dict[str, str]]]:
+    return APIResponse(
+        data=[
+            service.rna_to_protein(sequence, POST_SEQUENCE_MAX_LENGTH)
+            for sequence in request.sequences
+        ]
+    )
 
 
 def batch_rna_dna(
     request: BatchSequenceRequest,
     service: SequenceService = Depends(get_sequence_service),
-) -> APIResponse[dict[str, str]]:
-    return APIResponse(data=service.rna_to_dna(request.sequence, POST_SEQUENCE_MAX_LENGTH))
+) -> APIResponse[list[dict[str, str]]]:
+    return APIResponse(
+        data=[
+            service.rna_to_dna(sequence, POST_SEQUENCE_MAX_LENGTH)
+            for sequence in request.sequences
+        ]
+    )
