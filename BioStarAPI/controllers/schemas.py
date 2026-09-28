@@ -23,4 +23,4 @@ class MutationCompareRequest(BaseModel):
 
 
 class BatchSequenceRequest(BaseModel):
-    sequences: list[str] = Field(min_length=1)
+    sequences: list[str] = Field(min_length=1, max_length=100)
