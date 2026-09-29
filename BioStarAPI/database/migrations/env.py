@@ -5,7 +5,7 @@ from alembic import context
 from sqlalchemy import engine_from_config, pool
 
 from BioStarAPI.database.models import Base
-from BioStarAPI.database.models import auth, reference  # noqa: F401
+from BioStarAPI.database.models import auth  # noqa: F401
 
 config = context.config
 database_url: str = os.getenv("BIOSTAR_DATABASE_URL", "")
