@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from BioStar.analysis.sequence_comparison import CompareNucleotideSequence
-from BioStar.engine import get_default_biochemistry
 from BioStarAPI.resources.exceptions import BioStarAPIError
 from BioStarAPI.resources.messages import MessageCode
 from BioStarAPI.services.sequence_service import SequenceService
@@ -26,11 +25,9 @@ class MutationService:
                 MessageCode.MUTATION_SEQUENCES_MULTIPLE_OF_THREE,
             )
 
-        data = get_default_biochemistry()
         mutations = CompareNucleotideSequence(
             reference_dna,
             sequence_dna,
-            data,
         ).compare(show_only_mutations=True)
 
         return {
