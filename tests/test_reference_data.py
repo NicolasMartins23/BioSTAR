@@ -1,13 +1,13 @@
-from BioStar.engine import get_default_biochemistry
+from BioStar.engine import get_reference_data
 
 
 def test_biochemical_reference_data_loads_from_sqlite() -> None:
-    data = get_default_biochemistry()
+    data = get_reference_data()
 
-    assert len(data.amino_acids) == 20
-    assert len(data.dna_codons) == 64
-    assert len(data.rna_codons) == 64
-    assert data.dna_start_codon == "ATG"
-    assert data.rna_start_codon == "AUG"
-    assert data.dna_stop_codons == frozenset({"TAA", "TAG", "TGA"})
-    assert data.rna_stop_codons == frozenset({"UAA", "UAG", "UGA"})
+    assert len(data.amino_acid_symbols()) == 20
+    assert len(data.codon_table("DNA")) == 64
+    assert len(data.codon_table("RNA")) == 64
+    assert data.start_codon("DNA") == "ATG"
+    assert data.start_codon("RNA") == "AUG"
+    assert data.stop_codons("DNA") == frozenset({"TAA", "TAG", "TGA"})
+    assert data.stop_codons("RNA") == frozenset({"UAA", "UAG", "UGA"})
