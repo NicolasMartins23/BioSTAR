@@ -2,16 +2,14 @@ from __future__ import annotations
 
 from re import sub
 
-from BioStar.engine import BiochemistryData, get_default_biochemistry
+from BioStar.engine import get_reference_data
 
 
 class Protein:
     """Represents a protein sequence and provides sequence analyses."""
 
-    def __init__(self, sequence: str = "", data: BiochemistryData | None = None) -> None:
-        if data is None:
-            data = get_default_biochemistry()
-        self.data: BiochemistryData = data
+    def __init__(self, sequence: str = "") -> None:
+        self.reference_data = get_reference_data()
         self.sequence: str = sub(
             r"[^ACDEFGHIKLMNPQRSTVWY]",
             "",
@@ -21,7 +19,7 @@ class Protein:
         self.sequence_size: int = int(self.count["total"])
 
     def _update_count(self) -> dict[str, int | dict[str, int]]:
-        count: dict[str, int] = {aa: 0 for aa in self.data.amino_acids}
+        count: dict[str, int] = {aa: 0 for aa in self.reference_data.amino_acid_symbols()}
         aromatic: int = 0
         nonpolar: int = 0
         polar: int = 0
@@ -31,15 +29,15 @@ class Protein:
 
         for aa in self.sequence:
             count[aa] += 1
-            if aa in self.data.aromatic:
+            if aa in self.reference_data.amino_acid_class("aromatic"):
                 aromatic += 1
-            elif aa in self.data.nonpolar:
+            elif aa in self.reference_data.amino_acid_class("nonpolar"):
                 nonpolar += 1
-            elif aa in self.data.polar:
+            elif aa in self.reference_data.amino_acid_class("polar"):
                 polar += 1
-                if aa in self.data.negative:
+                if aa in self.reference_data.amino_acid_class("negative"):
                     polar_negative += 1
-                elif aa not in self.data.positive:
+                elif aa not in self.reference_data.amino_acid_class("positive"):
                     polar_neutral += 1
                 else:
                     polar_positive += 1
@@ -79,8 +77,8 @@ class Protein:
             if pKa is not None:
                 negative += counts[aa] / (1.0 + 10 ** (pKa - normalized_pH))
 
-        positive += 1.0 / (1.0 + 10 ** (normalized_pH - self.data.n_term_pka))
-        negative += 1.0 / (1.0 + 10 ** (self.data.c_term_pka - normalized_pH))
+        positive += 1.0 / (1.0 + 10 ** (normalized_pH - self.reference_data.constant("n_term_pka")))
+        negative += 1.0 / (1.0 + 10 ** (self.reference_data.constant("c_term_pka") - normalized_pH))
         return round(positive - negative, 2)
 
     def composition_ratio(self, multiply_by: float = 1.0, decimal_places: int = 4) -> dict[str, float]:
@@ -132,7 +130,7 @@ class Protein:
             self.data.amino_acids[aa].molecular_weight
             for aa in self.sequence
         )
-        weight -= (self.sequence_size - 1) * self.data.water_mass
+        weight -= (self.sequence_size - 1) * self.reference_data.constant("water_mass")
         return round(weight, 2)
 
     def secondary_structure_propensity(self) -> dict[str, float]:
