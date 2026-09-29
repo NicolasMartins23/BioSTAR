@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 
-from BioStar.engine import BiochemistryData, get_default_biochemistry
+from BioStar.engine import ReferenceData, get_reference_data
 from BioStar.Protein.protein import Protein
 from BioStar.io.fasta import FastaParserDNA
 
@@ -16,14 +16,14 @@ class NucleicAcid:
     def __init__(
         self,
         sequence: str,
-        data: BiochemistryData | None = None,
+        reference_data: ReferenceData | None = None,
     ) -> None:
-        if data is None:
-            data = get_default_biochemistry()
+        if reference_data is None:
+            reference_data = get_reference_data()
         self.sequence: str = sequence.upper()
         self.sequence_size: int = len(self.sequence)
         self.sequence_map: dict[str, int] = self.get_sequence_map()
-        self.data: BiochemistryData = data
+        self.reference_data: ReferenceData = reference_data
 
     def get_sequence_map(self) -> dict[str, int]:
         raise NotImplementedError
@@ -41,7 +41,7 @@ class NucleicAcid:
         return peptide_sequence
 
     def to_protein(self) -> Protein:
-        return Protein(self.get_peptide_sequence(), self.data)
+        return Protein(self.get_peptide_sequence())
 
 
 class DNA(NucleicAcid):
@@ -50,13 +50,13 @@ class DNA(NucleicAcid):
     def __init__(
         self,
         sequence: str,
-        data: BiochemistryData | None = None,
+        reference_data: ReferenceData | None = None,
     ) -> None:
-        if data is None:
-            data = get_default_biochemistry()
+        if reference_data is None:
+            reference_data = get_reference_data()
         normalized_sequence: str = self._fasta_sequence(sequence)
-        super().__init__(normalized_sequence, data)
-        self.codon_table: dict[str, str] = data.dna_codons
+        super().__init__(normalized_sequence, reference_data)
+        self.codon_table: dict[str, str] = reference_data.codon_table("DNA")
 
     def get_sequence_map(self) -> dict[str, int]:
         count: dict[str, int] = {"A": 0, "C": 0, "G": 0, "T": 0, "total": 0}
@@ -101,10 +101,10 @@ class DNA(NucleicAcid):
         return self.sequence.replace("T", "U")
 
     def to_rna(self) -> "RNA":
-        return RNA(self.rna_sequence(), self.data)
+        return RNA(self.rna_sequence())
 
     def orf_map(self, length_threshold: int = 0) -> list[dict[str, object]]:
-        return OpenReadFrame(self.sequence, self.data, length_threshold).orf_map
+        return OpenReadFrame(self.sequence, self.reference_data, length_threshold).orf_map
 
     def get_orf_map(self, length_threshold: int = 0) -> list[dict[str, object]]:
         return self.orf_map(length_threshold)
@@ -116,13 +116,13 @@ class RNA(NucleicAcid):
     def __init__(
         self,
         sequence: str,
-        data: BiochemistryData | None = None,
+        reference_data: ReferenceData | None = None,
     ) -> None:
-        if data is None:
-            data = get_default_biochemistry()
+        if reference_data is None:
+            reference_data = get_reference_data()
         normalized_sequence: str = self._fasta_sequence(sequence)
-        super().__init__(normalized_sequence, data)
-        self.codon_table: dict[str, str] = data.rna_codons
+        super().__init__(normalized_sequence, reference_data)
+        self.codon_table: dict[str, str] = reference_data.codon_table("RNA")
 
     def get_sequence_map(self) -> dict[str, int]:
         count: dict[str, int] = {"A": 0, "C": 0, "G": 0, "U": 0, "total": 0}
@@ -139,7 +139,7 @@ class RNA(NucleicAcid):
     def trim_on_stop_codon(self) -> str:
         for index in range(0, self.sequence_size - (CODON_SIZE - 1), CODON_SIZE):
             codon: str = self.sequence[index:index + CODON_SIZE]
-            if codon in self.data.rna_stop_codons:
+            if codon in self.reference_data.stop_codons("RNA"):
                 return self.sequence[:index + CODON_SIZE]
         return self.sequence
 
@@ -147,7 +147,7 @@ class RNA(NucleicAcid):
         return self.sequence.replace("U", "T")
 
     def to_dna(self) -> DNA:
-        return DNA(self.dna_sequence(), self.data)
+        return DNA(self.dna_sequence())
 
 
 class OpenReadFrame:
@@ -156,11 +156,11 @@ class OpenReadFrame:
     def __init__(
         self,
         sequence: str,
-        data: BiochemistryData,
+        reference_data: ReferenceData,
         length_threshold: int = 0,
     ) -> None:
         self.length_threshold: int = length_threshold
-        self.data: BiochemistryData = data
+        self.reference_data: ReferenceData = reference_data
         self.fasta_map: list[dict[str, str]] = FastaParserDNA().get_sequence_map(sequence)
         self.orf_map: list[dict[str, object]] = []
         self.update_orf_map()
@@ -187,13 +187,13 @@ class OpenReadFrame:
         for index in range(sequence_size)[n::CODON_SIZE]:
             codon: str = sequence[index:index + CODON_SIZE]
             if not frame_sequence:
-                if codon == self.data.dna_start_codon:
+                if codon == self.reference_data.start_codon("DNA"):
                     codon_start = self.find_start_codon(index, frame_reference, sequence_size)
                     frame_sequence = codon
                 continue
 
             frame_sequence += codon
-            if codon in self.data.dna_stop_codons:
+            if codon in self.reference_data.stop_codons("DNA"):
                 if len(frame_sequence) > self.length_threshold:
                     self.orf_map.append({
                         "codon_start": codon_start,
@@ -220,7 +220,7 @@ class OpenReadFrame:
         frame_references: list[str] = ["+", "++", "+++", "-", "--", "---"]
 
         for item in self.fasta_map:
-            dna: DNA = DNA(item["sequence"], self.data)
+            dna: DNA = DNA(item["sequence"], self.reference_data)
             for frame_index in range(CODON_SIZE):
                 self.extract_data_from_fasta_map(
                     dna.sequence, item["label"], frame_index,
