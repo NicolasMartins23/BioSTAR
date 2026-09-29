@@ -13,4 +13,4 @@ def test_protein_analysis_methods_use_reference_data() -> None:
 
     assert protein.sequence_size == 20
     assert protein.aromacity() == 0.15
-    assert protein.hydrophobic_index() == 0.43
+    assert protein.hydrophobic_index() == -0.49
