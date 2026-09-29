@@ -39,7 +39,7 @@ def test_protein_service_analyzes_requested_result() -> None:
 
     assert result["sequence"] == "MG"
     assert result["length"] == 2
-    assert result["molecular_weight"] == 280.37
+    assert result["molecular_weight"] == 206.27
 
 
 def test_mutation_service_returns_only_mutations() -> None:
