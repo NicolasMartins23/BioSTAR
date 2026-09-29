@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 DATABASE_URL: str = os.getenv(
     "BIOSTAR_DATABASE_URL",
-    "postgresql+psycopg://biostar:biostar@localhost:5432/biostar",
+    "sqlite:///./biostar.db",
 )
 
 engine = create_engine(DATABASE_URL, pool_pre_ping=True)
