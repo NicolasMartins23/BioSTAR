@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from BioStar.Protein.protein import Protein
 from BioStarAPI.controllers.schemas import ProteinAnalysisRequest
-from BioStar.engine import get_default_biochemistry
 from BioStarAPI.services.sequence_service import SequenceService
 
 
@@ -11,12 +10,11 @@ class ProteinService:
         self.sequence_service = SequenceService()
 
     def analyze(self, request: ProteinAnalysisRequest) -> dict[str, object]:
-        data = get_default_biochemistry()
         sequence = self.sequence_service.normalize_protein(
             request.sequence,
             10_000,
         )
-        protein = Protein(sequence, data)
+        protein = Protein(sequence)
 
         requested = {
             "aminoacids_count": request.get_aminoacids_count,
