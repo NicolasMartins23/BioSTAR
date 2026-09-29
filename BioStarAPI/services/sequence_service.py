@@ -6,7 +6,7 @@ from BioStarAPI.resources.exceptions import BioStarAPIError
 from BioStarAPI.resources.messages import MessageCode
 
 from BioStar.NucleicAcids.nucleic_acids import DNA, RNA
-from BioStar.engine import get_default_biochemistry
+
 
 DNA_ALPHABET = frozenset("ACGT")
 RNA_ALPHABET = frozenset("ACGU")
@@ -43,24 +43,20 @@ class SequenceService:
         return self.normalize(sequence, PROTEIN_ALPHABET, "protein", max_length)
 
     def dna_to_rna(self, sequence: str, max_length: int) -> dict[str, str]:
-        data = get_default_biochemistry()
         normalized = self.normalize_dna(sequence, max_length)
-        return {"sequence": DNA(normalized, data).rna_sequence()}
+        return {"sequence": DNA(normalized).rna_sequence()}
 
     def dna_to_protein(self, sequence: str, max_length: int) -> dict[str, str]:
-        data = get_default_biochemistry()
         normalized = self.normalize_dna(sequence, max_length)
-        return {"sequence": DNA(normalized, data).to_protein().sequence}
+        return {"sequence": DNA(normalized).to_protein().sequence}
 
     def rna_to_protein(self, sequence: str, max_length: int) -> dict[str, str]:
-        data = get_default_biochemistry()
         normalized = self.normalize_rna(sequence, max_length)
-        return {"sequence": RNA(normalized, data).to_protein().sequence}
+        return {"sequence": RNA(normalized).to_protein().sequence}
 
     def rna_to_dna(self, sequence: str, max_length: int) -> dict[str, str]:
-        data = get_default_biochemistry()
         normalized = self.normalize_rna(sequence, max_length)
-        return {"sequence": RNA(normalized, data).dna_sequence()}
+        return {"sequence": RNA(normalized).dna_sequence()}
 
     @staticmethod
     def _parse_fasta(value: str) -> list[str]:
