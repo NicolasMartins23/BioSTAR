@@ -67,13 +67,13 @@ class Protein:
         negative: float = 0.0
         counts: dict[str, int] = self._aminoacid_counts()
 
-        for aa in self.data.positive:
-            pKa = self.data.amino_acids[aa].pkr
+        for aa in self.reference_data.amino_acid_class("positive"):
+            pKa = self.reference_data.amino_acid(aa).pkr
             if pKa is not None:
                 positive += counts[aa] / (1.0 + 10 ** (normalized_pH - pKa))
 
-        for aa in self.data.negative:
-            pKa = self.data.amino_acids[aa].pkr
+        for aa in self.reference_data.amino_acid_class("negative"):
+            pKa = self.reference_data.amino_acid(aa).pkr
             if pKa is not None:
                 negative += counts[aa] / (1.0 + 10 ** (pKa - normalized_pH))
 
@@ -102,7 +102,7 @@ class Protein:
         if self.sequence_size == 0:
             return 0.0
         total: float = sum(
-            self.data.amino_acids[aa].hydrophobicity
+            self.reference_data.amino_acid(aa).hydrophobicity
             for aa in self.sequence
         )
         return round(total / self.sequence_size, 2)
@@ -127,7 +127,7 @@ class Protein:
         if self.sequence_size == 0:
             return 0.0
         weight: float = sum(
-            self.data.amino_acids[aa].molecular_weight
+            self.reference_data.amino_acid(aa).molecular_weight
             for aa in self.sequence
         )
         weight -= (self.sequence_size - 1) * self.reference_data.constant("water_mass")
@@ -138,11 +138,11 @@ class Protein:
             return {"alpha_helix": 0.0, "beta_sheet": 0.0, "coil": 0.0}
 
         alpha: float = sum(
-            self.data.amino_acids[aa].alpha_helix
+            self.reference_data.amino_acid(aa).alpha_helix
             for aa in self.sequence
         ) / self.sequence_size
         beta: float = sum(
-            self.data.amino_acids[aa].beta_sheet
+            self.reference_data.amino_acid(aa).beta_sheet
             for aa in self.sequence
         ) / self.sequence_size
         return {
