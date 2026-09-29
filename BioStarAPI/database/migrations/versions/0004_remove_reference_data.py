@@ -30,5 +30,5 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     raise RuntimeError(
-        "Biochemical reference data is now owned by the BioSTAR engine SQLite database."
+        "Biochemical reference data is now owned by the BioSTAR engine as bundled Python data."
     )
