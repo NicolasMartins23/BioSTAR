@@ -26,6 +26,37 @@ def test_production_api_uses_biostar_as_root_path() -> None:
     assert '"--root-path", "/biostar"' in compose
 
 
+def test_production_stack_uses_only_sqlite() -> None:
+    compose = (
+        PROJECT_ROOT / "docker-compose.prod.yml"
+    ).read_text(encoding="utf-8")
+
+    assert "sqlite:////data/biostar.db" in compose
+    assert "postgres" not in compose.lower()
+    assert "mysql" not in compose.lower()
+    assert "pgadmin" not in compose.lower()
+
+
+def test_development_stack_uses_only_sqlite() -> None:
+    compose = (
+        PROJECT_ROOT / "docker-compose.dev.yml"
+    ).read_text(encoding="utf-8")
+
+    assert "sqlite:////data/biostar.db" in compose
+    assert "postgres" not in compose.lower()
+    assert "mysql" not in compose.lower()
+    assert "pgadmin" not in compose.lower()
+
+
+def test_environment_examples_do_not_define_external_database_services() -> None:
+    for filename in (".env.dev.example", ".env.prod.example"):
+        content = (PROJECT_ROOT / filename).read_text(encoding="utf-8").lower()
+
+        assert "postgres" not in content
+        assert "mysql" not in content
+        assert "pgadmin" not in content
+
+
 def test_production_stack_does_not_depend_on_removed_seed_service() -> None:
     compose = (
         PROJECT_ROOT / "docker-compose.prod.yml"
