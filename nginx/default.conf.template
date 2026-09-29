@@ -10,17 +10,11 @@ server {
         add_header Content-Type text/plain;
     }
 
-    location /api/ {
-        proxy_pass http://api:8000;
-        proxy_http_version 1.1;
-
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
+    location = /biostar {
+        return 301 /biostar/;
     }
 
-    location / {
+    location /biostar/ {
         proxy_pass http://api:8000;
         proxy_http_version 1.1;
 
