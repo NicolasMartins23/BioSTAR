@@ -1,7 +1,7 @@
 from BioStar.engine import get_reference_data
 
 
-def test_biochemical_reference_data_loads_from_sqlite() -> None:
+def test_biochemical_reference_data_loads_from_python() -> None:
     data = get_reference_data()
 
     assert len(data.amino_acid_symbols()) == 20
