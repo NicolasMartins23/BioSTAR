@@ -21,7 +21,8 @@ class ReferenceData:
             database_file.write(database_bytes)
             self._database_path: str = database_file.name
         self._connection: sqlite3.Connection = sqlite3.connect(
-            self._database_path
+            self._database_path,
+            check_same_thread=False,
         )
 
     def amino_acid(self, symbol: str) -> AminoAcidData:
