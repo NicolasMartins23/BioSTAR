@@ -1,13 +1,29 @@
 services:
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-biostar}
+      POSTGRES_USER: ${POSTGRES_USER:-biostar}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-biostar}
+    volumes:
+      - biostar-postgres-dev:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
   migrate:
     build:
       context: .
       dockerfile: Dockerfile
     command: ["alembic", "upgrade", "head"]
     environment:
-      BIOSTAR_DATABASE_URL: sqlite:////data/biostar.db
-    volumes:
-      - biostar-sqlite-dev:/data
+      BIOSTAR_DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-biostar}:${POSTGRES_PASSWORD:-biostar}@db:5432/${POSTGRES_DB:-biostar}
+    depends_on:
+      db:
+        condition: service_healthy
 
   api:
     build:
@@ -16,12 +32,10 @@ services:
     restart: unless-stopped
     environment:
       BIOSTAR_ENV: dev
-      BIOSTAR_DATABASE_URL: sqlite:////data/biostar.db
+      BIOSTAR_DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-biostar}:${POSTGRES_PASSWORD:-biostar}@db:5432/${POSTGRES_DB:-biostar}
       BIOSTAR_ALLOWED_ORIGINS: ${BIOSTAR_ALLOWED_ORIGINS}
       BIOSTAR_PUBLIC_URL: ${BIOSTAR_PUBLIC_URL}
       BIOSTAR_AUTH_ADMIN_KEY: ${BIOSTAR_AUTH_ADMIN_KEY}
-    volumes:
-      - biostar-sqlite-dev:/data
     depends_on:
       migrate:
         condition: service_completed_successfully
@@ -43,4 +57,4 @@ services:
       - "${HTTP_PORT:-80}:80"
 
 volumes:
-  biostar-sqlite-dev:
+  biostar-postgres-dev:
